@@ -262,7 +262,7 @@ unrepresentableDomainDict = {
      'Age':'Positive real number. Zero or negative value may indicate non-numeric (e.g., limiting) age.',
      'AgePlusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'AgeMinusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
-     'Notes':'Unrepresentable domain. Free text. Values of <null> or #null indicate no entry.',
+     'Notes':'Unrepresentable domain. Free text. Values of <Null> or #null indicate no entry.',
      'Value':'Real number.',
      'default':'Unrepresentable domain.',
      'MapProperty':'Unrepresentable domain. Free text.',
