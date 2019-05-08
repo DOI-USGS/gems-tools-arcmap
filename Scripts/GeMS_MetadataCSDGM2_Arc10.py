@@ -87,7 +87,8 @@ def __fieldNameList(fc):
     fldList = arcpy.ListFields(fc)
     nameList = []
     for fld in fldList:
-        if not fld.name in ('OBJECTID', 'SHAPE','Shape', 'Shape_Length', 'Shape_Area'):
+        if not fld.name in ('OBJECTID', 'SHAPE','Shape', 'Shape_Length', 'Shape_Area','SHAPE_Length','shape_Length','shape_Area',
+                            'objectid','shape','shape_length','shape_area'): #These are added for dbs extracted from sde dbs
             nameList.append(fld.name)    
     return nameList
 
@@ -460,7 +461,7 @@ def updateTableDom(dom,fc,logFile):
                 enttyp = enttypl[0].parentNode
                 # entity description node
                 if fc[0:2] == 'CS':
-                    descriptionText = entityDict[fc[2:]]
+                    descriptionText = entityDict[fc[3:]] #Changed this from a 2 to a 3
                 else:
                     descriptionText = entityDict[fc]
                 newEnttypd = __newElement(dom,'enttypd',descriptionText)
@@ -632,6 +633,7 @@ for aTable in tables:
 # import to feature datasets and constituent feature classes
 arcpy.env.workspace = inGdb
 fds = arcpy.ListDatasets('','Feature')
+addMsgAndPrint(fds)
 for anFds in fds:
     revisedMetadata = gdb+'-'+anFds+'.xml'
     addMsgAndPrint('  Creating XML for '+anFds)
@@ -656,6 +658,7 @@ for anFds in fds:
     writeDomToFile(workDir,dom,revisedMetadata)
     arcpy.ImportMetadata_conversion(os.path.join(workDir,revisedMetadata),'FROM_FGDC',inGdb+'/'+anFds,'ENABLED')   
     fcs = arcpy.ListFeatureClasses('','All',anFds)
+    addMsgAndPrint(fcs)
     del dom
     for anFc in fcs:
         revisedMetadata = inGdb + '-' + anFc + '.xml'
