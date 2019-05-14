@@ -142,10 +142,11 @@ def __updateEdom(fld, defs, dom):
     for attrlabl in labelNodes:
         if attrlabl.firstChild.data == fld:
             attr = attrlabl.parentNode
-            attrdomv = dom.createElement('attrdomv')
+
             for k in defs.iteritems():
+                attrdomv = dom.createElement('attrdomv')  # Moved this inside the loop to create tags that don't need to be 'upgraded'
                 edom = dom.createElement('edom')
-                edomv = __newElement(dom,'edomv',k[0])
+                edomv = __newElement(dom,'edomv',k[0]) #creates a new tag with the last input variable being the text in the tag
                 edomvd = __newElement(dom,'edomvd',k[1][0])
                 edom.appendChild(edomv)
                 edom.appendChild(edomvd)
@@ -153,7 +154,8 @@ def __updateEdom(fld, defs, dom):
                     edomvds = __newElement(dom,'edomvds',k[1][1])
                     edom.appendChild(edomvds)                                
                 attrdomv.appendChild(edom)
-            __appendOrReplace(attr,attrdomv,'attrdomv')
+                attr.appendChild(attrdomv)
+                #__appendOrReplace(attr,attrdomv,'attrdomv') #Can't replace the tag because there are supposed to be multiple tags of this type
     return dom
 
 def __updateEntityAttributes(fc, fldList, dom, logFile):
