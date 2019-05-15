@@ -146,7 +146,7 @@ def dumpTable(fc,outName,isSpatial,outputDir,logfile,isOpen,fcName):
             logfile.write('      '+field.name+' > '+shortFieldName[field.name]+'\n')
         else:
             shortFieldName[field.name] = fName
-        if field.name not in ('OBJECTID','Shape','SHAPE','Shape_Length','Shape_Area'):
+        if field.name not in ('OBJECTID','Shape','SHAPE','Shape_Length','Shape_Area','shape','shape_Length','SHAPE_Length','SHAPE_Area'):
             arcpy.AlterField_management(fc,field.name,shortFieldName[field.name])
         if field.length > 254:
             longFields.append(shortFieldName[field.name])
