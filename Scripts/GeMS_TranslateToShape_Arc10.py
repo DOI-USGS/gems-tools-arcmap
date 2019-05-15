@@ -70,6 +70,7 @@ shortFieldNameDict = {
         
 
 def remapFieldName(name):
+    #addMsgAndPrint(name)
     if shortFieldNameDict.has_key(name):
         return shortFieldNameDict[name]
     elif len(name) <= 10:
@@ -80,6 +81,8 @@ def remapFieldName(name):
         name2 = name2.replace('Unit','Un')
         name2 = name2.replace('Source','Src')
         name2 = name2.replace('Shape','Shp')
+        name2 = name2.replace('shape','Shp')
+        name2 = name2.replace('SHAPE', 'Shp')
         name2 = name2.replace('Hierarchy','H')
         name2 = name2.replace('Description','Descript')
         name2 = name2.replace('AreaFill','')
@@ -133,6 +136,7 @@ def dumpTable(fc,outName,isSpatial,outputDir,logfile,isOpen,fcName):
     fields = arcpy.ListFields(fc)
     longFields = []
     shortFieldName = {}
+    requiredFields = ('OBJECTID','Shape','SHAPE','Shape_Length','Shape_Area','shape','shape_Length','SHAPE_Length','SHAPE_Area','objectid','shape_Area')
     for field in fields:
         # translate field names
         #  NEED TO FIX TO DEAL WITH DescriptionOfMapUnits_ and DataSources_
@@ -140,14 +144,18 @@ def dumpTable(fc,outName,isSpatial,outputDir,logfile,isOpen,fcName):
         for prefix in ('DescriptionOfMapUnits','DataSources','Glossary',fcName):
             if fc <> prefix and fName.find(prefix) == 0 and fName <> fcName+'_ID':
                 fName = fName[len(prefix)+1:]
+        #if len(fName) > 10 and field.name not in requiredFields: #Had issues for required field 'shape_Length' but only in one feature class ???
         if len(fName) > 10:
             shortFieldName[field.name] = remapFieldName(fName)
             # write field name translation to logfile
             logfile.write('      '+field.name+' > '+shortFieldName[field.name]+'\n')
         else:
             shortFieldName[field.name] = fName
-        if field.name not in ('OBJECTID','Shape','SHAPE','Shape_Length','Shape_Area','shape','shape_Length','SHAPE_Length','SHAPE_Area'):
+        if field.name not in requiredFields:
+            addMsgAndPrint("Field: " + field.name)
             arcpy.AlterField_management(fc,field.name,shortFieldName[field.name])
+        else:
+            addMsgAndPrint("Required field: "+field.name)
         if field.length > 254:
             longFields.append(shortFieldName[field.name])
         if debug:
@@ -171,20 +179,28 @@ def dumpTable(fc,outName,isSpatial,outputDir,logfile,isOpen,fcName):
             fields = fieldNameList(fc)
             if isSpatial:
                 try:
+                    addMsgAndPrint("Trying to remove shape")
                     fields.remove('Shape')
                 except:
                     try:
                         fields.remove('SHAPE')
                     except:
-                        addMsgAndPrint('No Shape field present.')
+                        try:
+                            fields.remove('shape')
+                        except:
+                            addMsgAndPrint('No Shape field present.')
+            addMsgAndPrint("FC name: "+ fc)
             with arcpy.da.SearchCursor(fc,fields) as cursor:
                 for row in cursor:
                     rowString = str(row[0])
-                    for i in range(1,len(row)):
+                    for i in range(1,len(row)): #use enumeration here?
+                        addMsgAndPrint("Index: "+str(i))
+                        addMsgAndPrint("Current row is: " + str(row[i]))
                         if row[i] <> None:
                             if isinstance(row[i],Number):
                                 xString = str(row[i])
                             else:
+                                addMsgAndPrint("Current row type is: " + str(type(row[i])))
                                 xString = row[i].encode('ascii','xmlcharrefreplace')
                             rowString = rowString+'|'+xString
                         else:
