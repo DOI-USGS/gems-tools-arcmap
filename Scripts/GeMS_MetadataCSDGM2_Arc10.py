@@ -155,7 +155,6 @@ def __updateEdom(fld, defs, dom):
                 attrdomv.appendChild(edom)
                 attr.appendChild(attrdomv)
                 #__appendOrReplace(attr,attrdomv,'attrdomv') #Can't replace the tag because there are supposed to be multiple tags of this type
-
     return dom
 
 def __updateEntityAttributes(fc, fldList, dom, logFile):
