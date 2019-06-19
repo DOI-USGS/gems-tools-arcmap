@@ -175,7 +175,8 @@ def dumpTable(fc,outName,isSpatial,outputDir,logfile,isOpen,fcName):
         if len(longFields) > 0:
             outText = outName[0:-4]+'.txt'
             logfile.write('    table '+fc+' has long fields, thus dumped to file '+outText+'\n')
-            csvFile = open(outputDir+'/'+outText,'w')
+            csv_path = os.path.join(outputDir, outText)
+            csvFile = open(csv_path, 'w')
             fields = fieldNameList(fc)
             if isSpatial:
                 try:
@@ -359,8 +360,21 @@ def linesAndPoints(fc,outputDir,logfile):
     arcpy.CopyFeatures_management(LIN,LIN2)
     arcpy.Delete_management(LIN)
     dumpTable(LIN2,fcShp,True,outputDir,logfile,False,fc[cp+1:])
+    
+def remove_rc(gdb):
+    addMsgAndPrint('Deleting any relationship classes in {}'.format(gdb))
+    for rc in arcpy.da.Walk(gdb, datatype='RelationshipClass'):
+        wks = rc[0]
+        if rc[2]:
+            for n in rc[2]:
+                r_path = os.path.join(wks, n)
+                arcpy.Delete_management(r_path)
 
 def main(gdbCopy,outWS,oldgdb):
+    # fields cannot be deleted if they are involved in relationships,
+    # so remove any
+    remove_rc(gdbCopy)
+    
     #
     # Simple version
     #
@@ -443,8 +457,9 @@ else:
     ows = os.path.abspath(sys.argv[2])
     arcpy.env.QualifiedFieldNames = False
     arcpy.env.overwriteoutput = True
+    gdb_name = os.path.basename(gdb)
     ## fix the new workspace name so it is guaranteed to be novel, no overwrite
-    newgdb = ows+'/xx'+os.path.basename(gdb)
+    newgdb = os.path.join(ows, 'xx{}'.format(gdb_name))
     if arcpy.Exists(newgdb):
         arcpy.Delete_management(newgdb)
     addMsgAndPrint('  Copying '+os.path.basename(gdb)+' to temporary geodatabase...')
