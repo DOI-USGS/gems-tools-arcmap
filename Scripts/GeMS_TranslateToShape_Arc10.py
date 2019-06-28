@@ -15,6 +15,7 @@
 #    rhaugerud@usgs.gov
 
 # 10 Dec 2017. Fixed bug that prevented dumping of not-GeologicMap feature datasets to OPEN version
+# 27 June 2019. Many fixes when investigating Issue 30 (described at master github repo)
 
 import arcpy
 import sys, os, glob, time
@@ -23,7 +24,7 @@ import glob
 from GeMS_utilityFunctions import *
 from numbers import Number
 
-versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 10 December 2017'
+versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
 
 debug = True
 
@@ -317,7 +318,6 @@ def mapUnitPolys(stdLithDict, outputDir, logfile):
                         DM+'symbol', DM+'descriptionsourceid', DS+'objectid', DS+DS+'id', DS+'notes']
         for f in arcpy.ListFields('MUP2'):
             if f.name.lower() in delete_fields:
-                arcpy.AddMessage('{} to be deleted'.format(f.name))
                 arcpy.DeleteField_management('MUP2', f.name)
                 
         dumpTable('MUP2', 'MapUnitPolys.shp', True, outputDir, logfile, False, 'MapUnitPolys')
