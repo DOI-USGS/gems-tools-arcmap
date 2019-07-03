@@ -361,8 +361,8 @@ def eaoverviewDom(dom,eainfo,eaoverText,edcTxt):
 def purgeChildren(dom,nodeTag):
     nodes = dom.getElementsByTagName(nodeTag)
     for aNode in nodes:
-        while len(aNode.childNodes) > 0:
-            aNode.removeChild(aNode.lastChild)
+        while len(aNode.childNodes) > 0: #aNode.childNodes makes a list of all the child nodes
+            aNode.removeChild(aNode.lastChild) #removed the last child node
     return dom
 
 def purgeIdenticalSiblings(dom,ndTag,ndTxt):
@@ -577,12 +577,17 @@ for nodeTag in ('eainfo','spdoinfo'):
 ## fix title
 domMR = cleanTitle(domMR)
 ##  ensure that there is an eainfo node
+arcpy.AddMessage('Checking for eainfo tag')
 try:
     eanode = domMR.getElementsByTagName('eainfo')[0]
 except:
+    arcpy.AddMessage('Adding eainfo tag')
     rtNode = domMR.getElementsByTagName('metadata')[0]
+    distNode = domMR.getElementsByTagName('distinfo')[0]
     eanode = domMR.createElement('eainfo')
-    rtNode.appendChild(eanode)
+    #rtNode.appendChild(eanode)
+    arcpy.AddMessage('Inserting it where it should be')
+    rtNode.insertBefore(eanode,distNode) #This keeps the order correct - should fail if there is no <distinfo> tag
     
 writeDomToFile(workDir,domMR,xmlFileMR)
 addMsgAndPrint('  Running mp on master metadata record '+xmlFileMR+':')
