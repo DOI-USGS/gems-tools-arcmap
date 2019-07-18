@@ -26,7 +26,7 @@ from numbers import Number
 
 versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
 
-debug = True
+debug = False
 
 # equivalentFraction is used to rank ProportionTerms from most 
 #  abundant to least
