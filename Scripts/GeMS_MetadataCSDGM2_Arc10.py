@@ -484,8 +484,13 @@ def writeGdbDesc(gdb):
     desc = 'The geodatabase contains the following elements: '
     arcpy.env.workspace = gdb
     for aTable in arcpy.ListTables():
+        addMsgAndPrint(aTable)
         desc = desc+'non-spatial table '+ aTable+' ('+str(numberOfRows(aTable))+' rows); '
-    for anFds in arcpy.ListDatasets():
+    for aRaster in arcpy.ListRasters():
+        addMsgAndPrint(aRaster)
+        desc = desc + 'raster ' + aRaster+'; '
+    for anFds in arcpy.ListDatasets(feature_type="Feature"):
+        addMsgAndPrint(anFds)
         desc = desc + 'feature dataset '+anFds+' which contains '
         fcs = arcpy.ListFeatureClasses('','All',anFds)
         if len(fcs) == 1:
@@ -633,7 +638,27 @@ for aTable in tables:
         arcpy.ImportMetadata_conversion(os.path.join(workDir,revisedMetadata),'FROM_FGDC',inGdb+'/'+aTable,'ENABLED')
     except:
         addMsgAndPrint('Failed to import '+os.path.join(workDir,revisedMetadata))
-        
+
+#import to rasters
+arcpy.env.workspace = inGdb
+rasters = arcpy.ListRasters()
+addMsgAndPrint("RASTER")
+for aRaster in rasters:
+    revisedMetadata = gdb + '-' + aRaster + '.xml'
+    addMsgAndPrint('  Creating XML for ' + aRaster)
+    dom = xml.dom.minidom.parse(os.path.join(workDir, xmlFileMR))
+    dom = titleSuffix(dom, ': raster ' + aRaster)
+    supplementaryInfo = 'Raster ' + aRaster + gdbDesc0b + gdbDesc2
+    dom = addSupplinf(dom, supplementaryInfo)
+    dom = updateTableDom(dom, aRaster, logFile)
+    addMsgAndPrint('  Importing XML to metadata for raster ' + aRaster)
+    writeDomToFile(workDir, dom, revisedMetadata)
+    try:
+        arcpy.ImportMetadata_conversion(os.path.join(workDir, revisedMetadata), 'FROM_FGDC', inGdb + '/' + aRaster,
+                                        'ENABLED')
+    except:
+        addMsgAndPrint('Failed to import ' + os.path.join(workDir, revisedMetadata))
+
 # import to feature datasets and constituent feature classes
 arcpy.env.workspace = inGdb
 fds = arcpy.ListDatasets('','Feature')

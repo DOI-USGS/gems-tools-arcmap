@@ -29,6 +29,7 @@ fds = arcpy.ListDatasets()
 #     if fc1 <> None:
 #       for fc in fc1:
 #         featureClasses.append(fd+'/'+fc)
+rasters = arcpy.ListRasters()
 
 arcpy.ImportToolbox(egis.Toolbox, "usgs")
 
@@ -84,6 +85,14 @@ for table in tables:
     addMsgAndPrint('  ')
     addMsgAndPrint('Table '+table)
     purgeGeoprocessingFGDC(inGdb+'\\'+table,metadataFile)
+
+# rasters
+for raster in rasters:
+    metadataFile = outDir[:-1]+'\\'+rootName+'-'+raster+'-metadata.xml'
+    testAndDelete(metadataFile)
+    addMsgAndPrint('  ')
+    addMsgAndPrint('Raster '+raster)
+    purgeGeoprocessingFGDC(inGdb+'\\'+raster,metadataFile)
 
 addMsgAndPrint('  ')
 addMsgAndPrint('DONE')
