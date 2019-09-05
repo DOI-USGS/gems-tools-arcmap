@@ -18,22 +18,28 @@ if not outDir[-1:] in ('/','\\'):
 arcpy.env.workspace = inGdb
 
 tables = arcpy.ListTables()
-featureClasses = []
+# featureClasses = []
 fds = arcpy.ListDatasets()
-for fd in fds:
-    arcpy.env.workspace = fd
-    fc1 = arcpy.ListFeatureClasses()
-    if fc1 <> None:
-      for fc in fc1:
-        featureClasses.append(fd+'/'+fc)
+# arcpy.AddMessage(fds)
+# for fd in fds:
+#     arcpy.env.workspace = fd
+#     arcpy.AddMessage(fd)
+#     fc1 = arcpy.ListFeatureClasses()
+#     arcpy.AddMessage(fcl)
+#     if fc1 <> None:
+#       for fc in fc1:
+#         featureClasses.append(fd+'/'+fc)
+rasters = arcpy.ListRasters()
 
 arcpy.ImportToolbox(egis.Toolbox, "usgs")
 
 
 transDir = arcpy.GetInstallInfo("desktop")["InstallDir"]
-translator = os.path.join(transDir, "Metadata/Translator/ARCGIS2FGDC.xml")
+translator = os.path.join(transDir, r"Metadata\Translator\ARCGIS2FGDC.xml")
+arcpy.env.scratchWorkspace = arcpy.env.scratchGDB #After banging head against it this stopped me from having an "ERROR 000584: Implementation of this Tool's Validate is invalid."
 
 def purgeGeoprocessingFGDC(table,metadataFile):
+    addMsgAndPrint('  exporting metadata from ' + table)
     addMsgAndPrint('  exporting metadata to '+metadataFile)
     arcpy.ExportMetadata_conversion(table,translator,metadataFile)
     addMsgAndPrint('  clearing internal metadata')
@@ -42,7 +48,11 @@ def purgeGeoprocessingFGDC(table,metadataFile):
     arcpy.ImportMetadata_conversion (metadataFile,"FROM_FGDC",table)
     
 # gdb as a whole
-metadataFile = outDir+os.path.basename(inGdb)[:-4]+'-metadata.xml'
+
+fileName=os.path.basename(inGdb)[:-4]+'-metadata.xml'
+arcpy.AddMessage(fileName)
+arcpy.AddMessage(outDir[:-1])
+metadataFile = outDir[:-1]+'\\'+fileName
 testAndDelete(metadataFile)
 addMsgAndPrint('  ')
 addMsgAndPrint(inGdb)
@@ -53,30 +63,36 @@ rootName = str(os.path.basename(inGdb)[:-4])
 
 # feature datasets
 for fd in fds:
-    metadataFile = outDir+'/'+rootName+'-'+os.path.basename(fd)+'-metadata.xml'
+    metadataFile = outDir[:-1]+'\\'+rootName+'-'+fd+'-metadata.xml'
     testAndDelete(metadataFile)
     addMsgAndPrint('  ')
     addMsgAndPrint('Feature dataset '+fd)
-    purgeGeoprocessingFGDC(fd,metadataFile)
-    
-# feature classes
-for fc in featureClasses:
-    metadataFile = outDir+'/'+rootName+'-'+os.path.basename(fc)+'-metadata.xml'
-    testAndDelete(metadataFile)
-    addMsgAndPrint('  ')
-    addMsgAndPrint('Feature class '+fc)
-    purgeGeoprocessingFGDC(fc,metadataFile)
+    purgeGeoprocessingFGDC(inGdb+"\\"+fd,metadataFile)
+    arcpy.env.workspace = inGdb+'\\'+fd
+    fcs = arcpy.ListFeatureClasses()
+    arcpy.AddMessage(fcs)
+    for fc in fcs:
+        metadataFile = outDir[:-1]+'\\'+rootName+'-'+fd+'-'+fc+'-metadata.xml'
+        testAndDelete(metadataFile)
+        addMsgAndPrint('  ')
+        addMsgAndPrint('Feature class '+fc)
+        purgeGeoprocessingFGDC(inGdb+'\\'+fd+'\\'+fc,metadataFile)
 
-"""
 # tables
 for table in tables:
-    metadataFile = outDir+'/'+rootName+'-'+os.path.basename(table)+'-metadata.xml'
+    metadataFile = outDir[:-1]+'\\'+rootName+'-'+table+'-metadata.xml'
     testAndDelete(metadataFile)
     addMsgAndPrint('  ')
     addMsgAndPrint('Table '+table)
-    # the next line fails!
-    purgeGeoprocessingFGDC(table,metadataFile)
-"""
+    purgeGeoprocessingFGDC(inGdb+'\\'+table,metadataFile)
+
+# rasters
+for raster in rasters:
+    metadataFile = outDir[:-1]+'\\'+rootName+'-'+raster+'-metadata.xml'
+    testAndDelete(metadataFile)
+    addMsgAndPrint('  ')
+    addMsgAndPrint('Raster '+raster)
+    purgeGeoprocessingFGDC(inGdb+'\\'+raster,metadataFile)
 
 addMsgAndPrint('  ')
 addMsgAndPrint('DONE')

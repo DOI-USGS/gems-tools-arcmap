@@ -361,8 +361,8 @@ def eaoverviewDom(dom,eainfo,eaoverText,edcTxt):
 def purgeChildren(dom,nodeTag):
     nodes = dom.getElementsByTagName(nodeTag)
     for aNode in nodes:
-        while len(aNode.childNodes) > 0:
-            aNode.removeChild(aNode.lastChild)
+        while len(aNode.childNodes) > 0: #aNode.childNodes makes a list of all the child nodes
+            aNode.removeChild(aNode.lastChild) #removed the last child node
     return dom
 
 def purgeIdenticalSiblings(dom,ndTag,ndTxt):
@@ -484,8 +484,13 @@ def writeGdbDesc(gdb):
     desc = 'The geodatabase contains the following elements: '
     arcpy.env.workspace = gdb
     for aTable in arcpy.ListTables():
+        addMsgAndPrint(aTable)
         desc = desc+'non-spatial table '+ aTable+' ('+str(numberOfRows(aTable))+' rows); '
-    for anFds in arcpy.ListDatasets():
+    for aRaster in arcpy.ListRasters():
+        addMsgAndPrint(aRaster)
+        desc = desc + 'raster ' + aRaster+'; '
+    for anFds in arcpy.ListDatasets(feature_type="Feature"):
+        addMsgAndPrint(anFds)
         desc = desc + 'feature dataset '+anFds+' which contains '
         fcs = arcpy.ListFeatureClasses('','All',anFds)
         if len(fcs) == 1:
@@ -577,12 +582,17 @@ for nodeTag in ('eainfo','spdoinfo'):
 ## fix title
 domMR = cleanTitle(domMR)
 ##  ensure that there is an eainfo node
+arcpy.AddMessage('Checking for eainfo tag')
 try:
     eanode = domMR.getElementsByTagName('eainfo')[0]
 except:
+    arcpy.AddMessage('Adding eainfo tag')
     rtNode = domMR.getElementsByTagName('metadata')[0]
+    distNode = domMR.getElementsByTagName('distinfo')[0]
     eanode = domMR.createElement('eainfo')
-    rtNode.appendChild(eanode)
+    #rtNode.appendChild(eanode)
+    arcpy.AddMessage('Inserting it where it should be')
+    rtNode.insertBefore(eanode,distNode) #This keeps the order correct - should fail if there is no <distinfo> tag
     
 writeDomToFile(workDir,domMR,xmlFileMR)
 addMsgAndPrint('  Running mp on master metadata record '+xmlFileMR+':')
@@ -628,7 +638,27 @@ for aTable in tables:
         arcpy.ImportMetadata_conversion(os.path.join(workDir,revisedMetadata),'FROM_FGDC',inGdb+'/'+aTable,'ENABLED')
     except:
         addMsgAndPrint('Failed to import '+os.path.join(workDir,revisedMetadata))
-        
+
+#import to rasters
+arcpy.env.workspace = inGdb
+rasters = arcpy.ListRasters()
+addMsgAndPrint("RASTER")
+for aRaster in rasters:
+    revisedMetadata = gdb + '-' + aRaster + '.xml'
+    addMsgAndPrint('  Creating XML for ' + aRaster)
+    dom = xml.dom.minidom.parse(os.path.join(workDir, xmlFileMR))
+    dom = titleSuffix(dom, ': raster ' + aRaster)
+    supplementaryInfo = 'Raster ' + aRaster + gdbDesc0b + gdbDesc2
+    dom = addSupplinf(dom, supplementaryInfo)
+    dom = updateTableDom(dom, aRaster, logFile)
+    addMsgAndPrint('  Importing XML to metadata for raster ' + aRaster)
+    writeDomToFile(workDir, dom, revisedMetadata)
+    try:
+        arcpy.ImportMetadata_conversion(os.path.join(workDir, revisedMetadata), 'FROM_FGDC', inGdb + '/' + aRaster,
+                                        'ENABLED')
+    except:
+        addMsgAndPrint('Failed to import ' + os.path.join(workDir, revisedMetadata))
+
 # import to feature datasets and constituent feature classes
 arcpy.env.workspace = inGdb
 fds = arcpy.ListDatasets('','Feature')
