@@ -16,6 +16,10 @@
 
 # 10 Dec 2017. Fixed bug that prevented dumping of not-GeologicMap feature datasets to OPEN version
 # 27 June 2019. Many fixes when investigating Issue 30 (described at master github repo)
+# 5 Sept 2019. Edited to address issue 35 at GeMS Tools repo: Translate to Shapefile failing to write out
+#   unicode characters to text files. Changes made in def dumpTable so that output csv is created with unicode
+#   encoding and all strings written to it are encoded as unicode. Ran ok with demo data including degree symbol,
+#   plus/minus symbol, and smart (curly) quotes.
 
 import arcpy
 import sys, os, glob, time
@@ -23,6 +27,7 @@ import datetime
 import glob
 from GeMS_utilityFunctions import *
 from numbers import Number
+import io
 
 versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
 
@@ -208,12 +213,12 @@ def dumpTable(fc, outName, isSpatial, outputDir, logfile, isOpen, fcName):
             outText = outName[0:-4]+'.txt'
             logfile.write('    table '+fc+' has long fields, thus dumped to file '+outText+'\n')
             csv_path = os.path.join(outputDir, outText)
-            csvFile = open(csv_path, 'w')
+            csvFile = io.open(csv_path, 'w', encoding="utf-8")
             fields = arcpy.ListFields(fc)
             f_names = [f.name for f in fields if f.type not in ['Blob', 'Geometry', 'Raster']]
             
             col_names = "|".join(f_names)
-            csvFile.write("{}\n|".format(col_names))
+            csvFile.write(unicode("{}\n|".format(col_names)))
             #addMsgAndPrint("FC name: "+ fc)
             with arcpy.da.SearchCursor(fc, f_names) as cursor:
                 for row in cursor:
@@ -222,15 +227,11 @@ def dumpTable(fc, outName, isSpatial, outputDir, logfile, isOpen, fcName):
                         #if debug: addMsgAndPrint("Index: "+str(i))
                         #if debug: addMsgAndPrint("Current row is: " + str(row[i]))
                         if row[i] <> None:
-                            if isinstance(row[i],Number) or isinstance(row[i], datetime.datetime):
-                                xString = str(row[i])
-                            else:
-                                #if debug: addMsgAndPrint("Current row type is: " + str(type(row[i])))
-                                xString = row[i].encode('ascii','xmlcharrefreplace')
+                            xString = unicode(row[i])
                             rowString = rowString+'|'+xString
                         else:
                             rowString = rowString+'|'
-                    csvFile.write(rowString+'\n')
+                    csvFile.write(unicode(rowString+'\n'))
             csvFile.close()
     addMsgAndPrint('    Finished dump\n')
               
