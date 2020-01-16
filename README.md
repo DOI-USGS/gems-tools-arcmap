@@ -1,5 +1,8 @@
 # GeMS Tools
 
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community)
+
+
 This repository contains an ArcGIS toolbox and associated Python scripts and resources for creating, manipulating, and validating GeMS-style geologic map databases, as well as documentation.  
 
 See below for download and installation. See the Wiki (tab above) for documentation of the tools and instructions on the use of the GeMS schema. For information on NCGMP09, the precursor to the GeMS database schema, see the Archive section at http://ngmdb.usgs.gov/Info/standards/GeMS/.
