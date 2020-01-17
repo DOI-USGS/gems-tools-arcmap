@@ -260,6 +260,7 @@ unrepresentableDomainDict = {
      'PlotAtScale':'Positive real number.',
      'OrientationConfidenceDegrees':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'LocationConfidenceMeters':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
+     'Age':'Unrepresentable domain. Free text.',		
      'NumericAge':'Positive real number. Zero or negative value may indicate non-numeric (e.g., limiting) age.',
      'AgePlusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'AgeMinusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
@@ -271,6 +272,7 @@ unrepresentableDomainDict = {
      }
 attribDict = {
     '_ID':'Primary key.',
+    'Age':'Geologic age as shown in traditional DMU (commonly as bold text within parentheses). Null values may be used for map units that inherit Age from a parent unit, or for headings, headnotes, or overlay units.', 
     'NumericAge':'May be interpreted (preferred) age calculated from geochronological analysis, not necessarily the date calculated from a single set of measurements.',
     'AgeMinusError':'Negative (younger) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
     'AgePlusError':'Positive (older) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
