@@ -260,7 +260,7 @@ unrepresentableDomainDict = {
      'PlotAtScale':'Positive real number.',
      'OrientationConfidenceDegrees':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'LocationConfidenceMeters':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
-     'Age':'Positive real number. Zero or negative value may indicate non-numeric (e.g., limiting) age.',
+     'NumericAge':'Positive real number. Zero or negative value may indicate non-numeric (e.g., limiting) age.',
      'AgePlusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'AgeMinusError':'Positive real number. Value of -9, -99, or -999 indicates value is unknown.',
      'Notes':'Unrepresentable domain. Free text. Values of <null> or #null indicate no entry.',
@@ -271,10 +271,10 @@ unrepresentableDomainDict = {
      }
 attribDict = {
     '_ID':'Primary key.',
-    'Age':'May be interpreted (preferred) age calculated from geochronological analysis, not necessarily the date calculated from a single set of measurements.',
+    'NumericAge':'May be interpreted (preferred) age calculated from geochronological analysis, not necessarily the date calculated from a single set of measurements.',
     'AgeMinusError':'Negative (younger) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
     'AgePlusError':'Positive (older) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
-    'AgeUnits':'Units for Age, AgePlusError, AgeMinusError.',
+    'AgeUnits':'Units for NumericAge, AgePlusError, AgeMinusError.',
     'AlternateSampleID':'Museum #, lab #, etc.',
     'AnalysisSourceID':'Source of analysis; foreign key to table DataSources.',
     'AreaFillPatternDescription':'Text description (e.g., "random small red dashes") provided as a convenience for users who must recreate symbolization.',
