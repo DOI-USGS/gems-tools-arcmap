@@ -6,11 +6,15 @@ import arcpy, sys, time, os.path, math, uuid
 from string import whitespace
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_reID_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_reID_Arc10.py, version of 10 February 2020'
 # modified to not work on a copy of the input database. Backup first!
 # 15 Sept 2016: modified to, by default, not reset DataSource_ID values
 # 26 April 2018: extended idRootDict to cover all classes defined in GeMS_Definion.py
 #   with thanks to freewheelCarto!
+# 10 February 2020: Added MapUnitPolys to idRootDict and changed abbreviation for MapUnitPoints from 
+#   MUP to MPT! With this table missing, a user reported that MUP_IDs were being written with the 
+#   prefix 'X3X'. I think it's absence is the reason for line "if tableName == 'MapUnitPoints'" 
+#   around line 208.  - Evan Thoms
 
 idRootDict = {
         'CartographicLines':'CAL',
@@ -32,7 +36,8 @@ idRootDict = {
         'GeologicLines':'GEL',
         'Glossary':'GLO',
         'IsoValueLines':'IVL',
-        'MapUnitPoints':'MUP',
+        'MapUnitPoints':'MPT',
+        'MapUnitPolys':'MUP',
         'MapUnitOverlayPolys':'MUO',
         'MiscellaneousMapInformation':'MMI',
         'OrientationPoints':'ORP',
