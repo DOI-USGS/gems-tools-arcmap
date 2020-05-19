@@ -2,9 +2,9 @@
 
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community)
 
-If you are looking for tools that work in ArcGIS Pro using Python 3.6, go to https://github.com/usgs/gems-tools-pro
+This repository contains an ArcGIS toolbox and associated Python scripts and resources for creating, manipulating, and validating GeMS-style geologic map databases, as well as documentation. 
 
-This repository contains an ArcGIS toolbox and associated Python scripts and resources for creating, manipulating, and validating GeMS-style geologic map databases, as well as documentation.  
+If you are looking for tools that work in ArcGIS Pro using Python 3.6, go to https://github.com/usgs/gems-tools-pro
 
 See below for download and installation. See the Wiki (tab above) for documentation of the tools and instructions on the use of the GeMS schema. For information on NCGMP09, the precursor to the GeMS database schema, see the Archive section at http://ngmdb.usgs.gov/Info/standards/GeMS/.
 
