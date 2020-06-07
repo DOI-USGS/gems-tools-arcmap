@@ -797,7 +797,7 @@ else:
     workdir = os.path.dirname(inGdb)
 refreshGeoMaterialDict = sys.argv[3]
 
-refgmd = os.path.dirname(sys.argv[0])+'/Resources/GeMS_lib.gdb/GeoMaterialDict'
+refgmd = os.path.dirname(sys.argv[0])+'../Resources/GeMS_lib.gdb/GeoMaterialDict'
 
 ##validate inputs
 
