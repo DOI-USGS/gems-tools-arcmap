@@ -7,17 +7,20 @@
 # RUN AS TOOLBOX SCRIPT FROM ArcCatalog OR ArcMap
 
 # 9 Sept 2016: Made all fields NULLABLE
-# 19 Dec 2016: Added GeoMaterials table, domains
+# 19 Dec 2016: Added GeoMaterialDict table, domains
 # 8 March 2017: Added  ExistenceConfidence, IdentityConfidence, ScientificConfidence domains, definitions, and definitionsource
 # 17 March 2017  Added optional table MiscellaneousMapInformation
 # 30 Oct 2017  Moved CartoRepsAZGS and GeMS_lib.gdb to ../Resources
 # 4 March 2018  changed to use writeLogfile()
+# 8 June 2020 In transDict (line 31), changed 'NoNulls':'NON_NULLABLE' to 'NoNulls':'NULLABLE'
+#   " "       Fixed bug with addTracking(), where EnableEditorTracking_management apparently wants in_dataset to be a full pathname
+#   " "       Added MapUnitLines to list of feature classes that could be created (line 153)
 
 import arcpy, sys, os, os.path
 from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDConfidenceValues
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_CreateDatabase_Arc10.py, version of 4 March 2018'
+versionString = 'GeMS_CreateDatabase_Arc10.py, version of 8 June 2020'
 
 debug = True
 
@@ -28,8 +31,9 @@ default = '#'
 transDict =     { 'String': 'TEXT',
                   'Single': 'FLOAT',
                   'Double': 'DOUBLE',
-                  'NoNulls':'NON_NULLABLE',
+                  'NoNulls':'NULLABLE',
                   'NullsOK':'NULLABLE',
+                  'Optional':'NULLABLE',
                   'Date'  : 'DATE'  }
 
 usage = """Usage:
@@ -95,7 +99,7 @@ def createFeatureClass(thisDB,featureDataSet,featureClass,shapeType,fieldDefs):
                     # note that we are ignoring fDef[2], NullsOK or NoNulls
                     arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#',fDef[3],'#','NULLABLE')
                 else:
-                     # note that we are ignoring fDef[2], NullsOK or NoNulls
+                    # note that we are ignoring fDef[2], NullsOK or NoNulls
                     arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#','#','#','NULLABLE')
             except:
                 addMsgAndPrint('Failed to add field '+fDef[0]+' to feature class '+featureClass)
@@ -146,11 +150,9 @@ def main(thisDB,coordSystem,nCrossSections):
             
     # line feature classes
     featureClasses = ['ContactsAndFaults']
-    for fc in ['GeologicLines','CartographicLines','IsoValueLines']:
+    for fc in ['GeologicLines','CartographicLines','IsoValueLines','MapUnitLines']:
         if fc in OptionalElements:
             featureClasses.append(fc)
-    if debug:
-        addMsgAndPrint('Feature classes = '+str(featureClasses))
     for featureClass in featureClasses:
         fieldDefs = tableDict[featureClass]
         if featureClass in ['ContactsAndFaults','GeologicLines'] and addLTYPE:
@@ -247,7 +249,7 @@ def main(thisDB,coordSystem,nCrossSections):
             addMsgAndPrint(arcpy.GetMessages())
 
     ### GeoMaterials
-    addMsgAndPrint('  Setting up GeoMaterials table and domains...')
+    addMsgAndPrint('  Setting up GeoMaterialDict table and domains...')
     #  Copy GeoMaterials table
     arcpy.Copy_management(os.path.dirname(sys.argv[0])+'/../Resources/GeMS_lib.gdb/GeoMaterialDict', thisDB+'/GeoMaterialDict')
     #   make GeoMaterials domain
@@ -330,13 +332,13 @@ def main(thisDB,coordSystem,nCrossSections):
                     except:
                         addMsgAndPrint(arcpy.GetMessages(2))
                 if trackEdits:
-                    addTracking(fc)
+                    addTracking(os.path.join(thisDB,fc))
         if trackEdits:
             addMsgAndPrint('  Tables ')
             arcpy.env.workspace = thisDB
             for aTable in tables:
                 if aTable <> 'GeoMaterialDict':
-                    addTracking(aTable)
+                    addTracking(os.path.join(thisDB,aTable))
 
 def createDatabase(outputDir,thisDB):
     addMsgAndPrint('  Creating geodatabase '+thisDB+'...')
