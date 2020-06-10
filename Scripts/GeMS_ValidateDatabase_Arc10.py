@@ -205,7 +205,7 @@ def getHKeyErrors(HKs):
                 try:
                     key.append(int(fragment))
                 except: # fails, probably because frag can't be translated to an integer
-                    hKeyErrs.appen(hk+' --probable non-numeric fragment')
+                    hKeyErrs.append(hk+' --probable non-numeric fragment')
                 # inconsistent fragment length or bad separator
                 if len(fragment) <> fragmentLength:
                     hKeyErrs.append(hk+' --bad fragment length')
