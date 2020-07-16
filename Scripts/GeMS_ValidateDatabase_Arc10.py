@@ -4,6 +4,8 @@
 #   * Check, via mp.exe, of formal .gdb-level metadata. Note that metadata
 #        for constituent tables, datasets, and feature classes remain the users responsibility
 #   * Inclusion of basic topology check
+# 16 July 2020: added ".encode('ascii','xmlcharrefreplace')" in line 316
+#   Problem with non-ASCII characters will probably crop up again. Probably should be fixed at its root in scanTable
 
 import arcpy, os, os.path, sys, time, glob
 from GeMS_utilityFunctions import *
@@ -311,7 +313,7 @@ def matchRefs(definedVals, allRefs):
         ### problem here with values in Unicode. Not sure solution will be generally valid
         if not i[0].encode("ascii",'xmlcharrefreplace') in definedVals and not i[0] in usedVals:
             missing.append('<span class="value">'+str(i[0])+'</span>, field <span class="field">'+
-                           i[1]+'</span>, table <span class="table">'+i[2]+'</span>')
+                           i[1]+'</span>, table <span class="table">'+i[2].encode('ascii','xmlcharrefreplace')+'</span>')
         usedVals.append(i[0])
     missing.sort()
     for i in definedVals:
