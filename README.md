@@ -8,7 +8,7 @@ If you are looking for tools that work in ArcGIS Pro using Python 3.6, go to htt
 
 See below for download and installation. See the Wiki (tab above) for documentation of the tools and instructions on the use of the GeMS schema. For information on NCGMP09, the precursor to the GeMS database schema, see the Archive section at http://ngmdb.usgs.gov/Info/standards/GeMS/.
 
-GeMS Tools was written in Python 2.7 by Ralph Haugerud, Evan Thoms, and others. Scripts have been developed and tested on Windows 7, using various versions of ArcGIS (9.1 - 10.7). 
+GeMS Tools was written in Python 2.7 by Ralph Haugerud, Evan Thoms, and others. Scripts have been developed and tested on Windows 7 and 10, using various versions of ArcGIS (9.1 - 10.7). 
 
 This software is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The software has not received final approval by the U.S. Geological Survey (USGS). No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. The software is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the software.
 
