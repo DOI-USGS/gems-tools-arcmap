@@ -6,7 +6,7 @@
 #  Ralph Haugerud, 19 August 2016 
 # 
 
-versionString = 'GeMS_Definition.py, version of 6 October 2017'
+versionString = 'GeMS_Definition.py, version of 19 July 2020'
 # fixes errors in Station feature class definition
 # 16 Jan 2014: added ObservedMapUnit to Station feature class definition
 # 8 April 2016: Fixed ObservedMapUnit.  Put _ID field at end of each field list
@@ -22,6 +22,7 @@ versionString = 'GeMS_Definition.py, version of 6 October 2017'
 # 29 October 2019: Added MapUnitLines, MapUnitPoints to as-needed feature classes
 # 4 April 2020:  Changed NullsOK to NoNulls for some fields in DescriptionOfMapUnits, to conform with documentation
 # 9 April 2020: Changed NullsOK for Notes fields to Optional. Added definition of table LayerList
+# 19 July 2020: Added 'Age' to attribDict. Improved definition of attribute NumericAge
 
 
 
@@ -300,7 +301,7 @@ unrepresentableDomainDict = {
      }
 attribDict = {
     '_ID':'Primary key.',
-    'NumericAge':'May be interpreted (preferred) age calculated from geochronological analysis, not necessarily the date calculated from a single set of measurements.',
+    'Age':'Age of map unit as shown in Description of Map Units. Examples of values are "late Holocene", "Pliocene and Miocene", "Lower Cretaceous".',
     'AgeMinusError':'Negative (younger) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
     'AgePlusError':'Positive (older) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
     'AgeUnits':'Units for Age, AgePlusError, AgeMinusError.',
@@ -339,6 +340,7 @@ attribDict = {
     'Name':'Name of map unit, as shown in boldface in traditional DMU, e.g., "Shnabkaib Member". Identifies unit within its hierarchical context.',
     'NewExplanation':'Explanation of usage of symbol in this map portrayal',
     'Notes':'Additional information specific to a particular feature or table entry.',
+    'NumericAge':'Numeric age of sample, measured in AgeUnits. May be interpreted from one or several analyses; is not necessarily the date calculated from a single set of measurements.',
     'OldExplanation':'Explanatory text from FGDC standard for meaning of symbol',
     'OrientationConfidenceDegrees':'Estimated angular precision of combined azimuth AND inclination measurements, in degrees.',
     'OrientationSourceID':'Source of orientation data; foreign key to table DataSources.',
