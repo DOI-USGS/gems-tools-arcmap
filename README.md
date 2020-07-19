@@ -59,4 +59,4 @@ Known issues with these scripts include:
 * ".docx to DMU" and "DMU to .docx" are incomplete and do not fully produce the desired output. These modules also 
 require the lxml Python module, which some find difficult to install. The other scripts run without lxml.  
 
-* "Purge Metadata" requires that the USGS EGIS tools for ArcGIS be installed. 
+* "Purge Metadata" requires that an older version of USGS EGIS tools for ArcGIS be installed. 
