@@ -1,4 +1,4 @@
-versionString = 'GeMS_FGDC3_Arc10.py version of 30 July 2020'
+versionString = 'GeMS_FGDC3_Arc10.py version of 6 August 2020'
 
 import arcpy, os, sys, glob
 from GeMS_utilityFunctions import *
@@ -22,6 +22,8 @@ if purgeProcessing:
     arcpy.ImportToolbox(egis.Toolbox, "usgs")
 """
     
+purgeProcessing = True 
+
 ######################################
 def clearImport(objName,gdbObj,gdb,purgeProcessing):
     gdbName = os.path.basename(gdb)[:-4]
