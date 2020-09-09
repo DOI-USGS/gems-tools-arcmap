@@ -6,7 +6,7 @@ This repository contains an ArcGIS toolbox and associated Python scripts and res
 
 If you are looking for tools that work in ArcGIS Pro using Python 3.6, go to https://github.com/usgs/gems-tools-pro
 
-See below for download and installation. See the Wiki (tab above) for documentation of the tools and instructions on the use of the GeMS schema. For information on NCGMP09, the precursor to the GeMS database schema, see the Archive section at http://ngmdb.usgs.gov/Info/standards/GeMS/.
+See below for download and installation. See the [Wiki](https://github.com/usgs/gems-tools-arcmap/wiki) (tab above) for documentation of the tools and instructions on the use of the GeMS schema. For more information on the GeMS database schema, go to https://ngmdb.usgs.gov/Info/standards/GeMS/
 
 GeMS Tools was written in Python 2.7 by Ralph Haugerud, Evan Thoms, and others. Scripts have been developed and tested on Windows 7 and 10, using various versions of ArcGIS (9.1 - 10.7). 
 
