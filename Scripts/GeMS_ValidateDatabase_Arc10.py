@@ -4,15 +4,20 @@
 #   * Check, via mp.exe, of formal .gdb-level metadata. Note that metadata
 #        for constituent tables, datasets, and feature classes remain the users responsibility
 #   * Inclusion of basic topology check
-# 16 July 2020: added ".encode('ascii','xmlcharrefreplace')" in line 316
-#   Problem with non-ASCII characters will probably crop up again. Probably should be fixed at its root in scanTable
+# 16 July 2020: added ".encode('ascii','xmlcharrefreplace')" in line 314
+#    Problem with non-ASCII characters will probably crop up again. Probably should be fixed in scanTable
+# 22 July 2020: removed ".encode('ascii','xmlcharrefreplace')" in line 314, left it in line 316
+#    flagged lines in scanTable where it could be added with "#$@"
+# 7 October 2020: quoted path names at ~line 484 so that folder names with spaces are handled properly
+#    moved output topology gdb to output workspace (was being created in same folder as input gdb)
+#    added switch to skip topology checks
 
 import arcpy, os, os.path, sys, time, glob
 from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 
 versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 7 June 2020'
-
+debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
 metadataErrorsSuffix = '-vFgdcMetadataErrors.txt'
@@ -311,7 +316,7 @@ def matchRefs(definedVals, allRefs):
     missing = []
     for i in used:
         ### problem here with values in Unicode. Not sure solution will be generally valid
-        if not i[0].encode("ascii",'xmlcharrefreplace') in definedVals and not i[0] in usedVals:
+        if not i[0] in definedVals and not i[0] in usedVals:
             missing.append('<span class="value">'+str(i[0])+'</span>, field <span class="field">'+
                            i[1]+'</span>, table <span class="table">'+i[2].encode('ascii','xmlcharrefreplace')+'</span>')
         usedVals.append(i[0])
@@ -474,7 +479,8 @@ def checkMetadata(inGdb,txtFile,errFile,xmlFile):
         addMsgAndPrint('Failed to delete '+xmlFile)
         addMsgAndPrint('Delete it manually and re-run validation tool.')
     # run it through mp
-    command = 'mp -t '+txtFile+' -e '+errFile+' '+xmlFile
+#    command = 'mp -t '+txtFile+' -e '+errFile+' '+xmlFile
+    command = 'mp -t "'+txtFile+'" -e "'+errFile+'" "'+xmlFile+'"'
     os.system(command)
     mpErrors = open(errFile).readlines()
     for aline in mpErrors:
@@ -567,6 +573,8 @@ def fixNull(x):
 
 def scanTable(table, fds=''):
     addMsgAndPrint('  scanning '+table)
+    if debug:
+        addMsgAndPrint('wksp = '+arcpy.env.workspace)
     dsc = arcpy.Describe(table)
 ### check table and field definition against GeMS_Definitions
     if table == 'GeoMaterialDict':
@@ -655,13 +663,13 @@ def scanTable(table, fds=''):
                 xx = row[termFieldIndex]
                 if notEmpty(xx):
                     #addMsgAndPrint(xx)
-                    glossaryTerms.append(fixNull(xx))
+                    glossaryTerms.append(fixNull(xx))       # fixNull does xmlcharrefreplace
             if hasIdField:
                 xx = row[idIndex]
                 if notEmpty(xx):
                     all_IDs.append([xx,table])
                     if table == 'DataSources':
-                        dataSources_IDs.append(fixNull(xx))
+                        dataSources_IDs.append(fixNull(xx)) 
             for i in mapUnitFieldIndex:
                 xx = row[i]
                 if notEmpty(xx):
@@ -691,13 +699,13 @@ def scanTable(table, fds=''):
                         allGeoMaterialValues.append(row[i])                    
             for i in glossTermIndices:
                 if notEmpty(row[i]):
-                    xxft = [row[i],fieldNames[i],table]
+                    xxft = [row[i],fieldNames[i],table] #$@
                     if not xxft in allGlossaryRefs:
                         allGlossaryRefs.append(xxft)
             for i in dataSourceIndices:
                 xx = row[i]
                 if notEmpty(xx):
-                    xxft = [xx,fieldNames[i],table]
+                    xxft = [xx,fieldNames[i],table]     #$@
                     if not xx in allDataSourcesRefs:
                         allDataSourcesRefs.append(xxft)
             if mapUnitFieldIndex <> [] and row[mapUnitFieldIndex[0]] <> None:
@@ -798,6 +806,7 @@ if sys.argv[2] <> '#':
 else:
     workdir = os.path.dirname(inGdb)
 refreshGeoMaterialDict = sys.argv[3]
+skipTopology = sys.argv[4]
 
 refgmd = os.path.dirname(sys.argv[0])+'/../Resources/GeMS_lib.gdb/GeoMaterialDict'
 
@@ -832,7 +841,7 @@ else:
     mdXmlFile = mdTxtFile[:-3]+'xml'
 
     # delete errors gdb if it exists and make a new one
-    outErrorsGdb = inGdb[:-4]+'_Validation.gdb'
+    outErrorsGdb = workdir+'/'+os.path.basename(inGdb)[:-4]+'_Validation.gdb'
     if not arcpy.Exists(outErrorsGdb):
         outFolder,outName = os.path.split(outErrorsGdb)
         arcpy.CreateFileGDB_management(outFolder, outName)
@@ -860,9 +869,13 @@ else:
                 schemaErrorsMissingElements.append('Feature class <span class="table">GeologicMap/'+fc+'</span>')
         isMap,MUP,CAF = isFeatureDatasetAMap('GeologicMap')
         if isMap:
-            nTopoErrors = checkTopology(workdir,inGdb,outErrorsGdb,'GeologicMap',MUP,CAF,2)
-            if nTopoErrors > 0:
-                topologyErrors.append(str(nTopoErrors)+' Level 2 errors in <span class="table">GeologicMap</span>')
+            if skipTopology == 'false':
+                nTopoErrors = checkTopology(workdir,inGdb,outErrorsGdb,'GeologicMap',MUP,CAF,2)
+                if nTopoErrors > 0:
+                    topologyErrors.append(str(nTopoErrors)+' Level 2 errors in <span class="table">GeologicMap</span>')
+            else:
+                addMsgAndPrint('  skipping topology check')
+                topologyErrors.append('Level 2 topology check was skipped')
         arcpy.env.workspace = inGdb
     
     addMsgAndPrint('  getting unused, missing, and duplicated key values')
@@ -920,9 +933,13 @@ else:
                     addMsgAndPrint('  ** skipping data set '+fc+', featureType = '+dsc.featureType)
         isMap,MUP,CAF = isFeatureDatasetAMap(fd)
         if isMap:
-            nTopoErrors = checkTopology(workdir,inGdb,outErrorsGdb,fd,MUP,CAF,3)
-            if nTopoErrors > 0:
-                topologyErrors.append(str(nTopoErrors)+' Level 3 errors in <span class="table">'+fd+'</span>')
+            if skipTopology == 'false':
+                nTopoErrors = checkTopology(workdir,inGdb,outErrorsGdb,fd,MUP,CAF,3)
+                if nTopoErrors > 0:
+                    topologyErrors.append(str(nTopoErrors)+' Level 3 errors in <span class="table">'+fd+'</span>')
+            else:
+                addMsgAndPrint('  skipping topology check')
+                topologyErrors.append('Level 3 topology check was skipped')
         fds_MapUnits.append([fd,fdMapUnitList])
         arcpy.env.workspace = inGdb
 
