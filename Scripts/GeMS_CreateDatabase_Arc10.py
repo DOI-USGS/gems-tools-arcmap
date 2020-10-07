@@ -15,12 +15,14 @@
 # 8 June 2020 In transDict (line 31), changed 'NoNulls':'NON_NULLABLE' to 'NoNulls':'NULLABLE'
 #   " "       Fixed bug with addTracking(), where EnableEditorTracking_management apparently wants in_dataset to be a full pathname
 #   " "       Added MapUnitLines to list of feature classes that could be created (line 153)
+# 28 Sept 2020 Now defines coordinate system for CMU and cross section feature datasets (= map coordinate system)
+# 7 Oct 2020 Improved definition of cross section feature classes to match specification
 
 import arcpy, sys, os, os.path
-from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDConfidenceValues
+from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDConfidenceValues, IDLength
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_CreateDatabase_Arc10.py, version of 8 June 2020'
+versionString = 'GeMS_CreateDatabase_Arc10.py, version of 7 October 2020'
 
 debug = True
 
@@ -31,8 +33,8 @@ default = '#'
 transDict =     { 'String': 'TEXT',
                   'Single': 'FLOAT',
                   'Double': 'DOUBLE',
-                  'NoNulls':'NULLABLE',
-                  'NullsOK':'NULLABLE',
+                  'NoNulls':'NULLABLE', #NB-enforcing NoNulls at gdb level creates headaches; instead, check while validating
+                  'NullsOK':'NULLABLE',   
                   'Optional':'NULLABLE',
                   'Date'  : 'DATE'  }
 
@@ -187,7 +189,7 @@ def main(thisDB,coordSystem,nCrossSections):
     # create feature dataset CorrelationOfMapUnits
     if 'CorrelationOfMapUnits' in OptionalElements:
         addMsgAndPrint('  Creating feature dataset CorrelationOfMapUnits...')
-        arcpy.CreateFeatureDataset_management(thisDB,'CorrelationOfMapUnits')
+        arcpy.CreateFeatureDataset_management(thisDB,'CorrelationOfMapUnits',coordSystem)
         fieldDefs = tableDict['CMUMapUnitPolys']
         createFeatureClass(thisDB,'CorrelationOfMapUnits','CMUMapUnitPolys','POLYGON',fieldDefs)
         fieldDefs = tableDict['CMULines']
@@ -207,24 +209,21 @@ def main(thisDB,coordSystem,nCrossSections):
         xsLetter = alphabet[n]
         xsName = 'CrossSection'+xsLetter
         xsN = 'CS'+xsLetter
-        #create feature dataset CrossSectionA
         addMsgAndPrint('  Creating feature data set CrossSection'+xsLetter+'...')
-        arcpy.CreateFeatureDataset_management(thisDB,xsName)
+        arcpy.CreateFeatureDataset_management(thisDB,xsName,coordSystem)
+        
         fieldDefs = tableDict['MapUnitPolys']
-        if addLTYPE:
-            fieldDefs.append(['PTYPE','String','NullsOK',100])
-        fieldDefs[0][0] = xsN+'MapUnitPolys_ID'
         createFeatureClass(thisDB,xsName,xsN+'MapUnitPolys','POLYGON',fieldDefs)
+        arcpy.AlterField_management(xsN+'MapUnitPolys','MapUnitPolys_ID',xsN+'MapUnitPolys_ID')
+        
         fieldDefs = tableDict['ContactsAndFaults']
-        if addLTYPE:
-            fieldDefs.append(['LTYPE','String','NullsOK',100])
-        fieldDefs[0][0] = xsN+'ContactsAndFaults_ID'
         createFeatureClass(thisDB,xsName,xsN+'ContactsAndFaults','POLYLINE',fieldDefs)
-        fieldDefs = tableDict['OrientationPoints']
-        if addLTYPE:
-            fieldDefs.append(['PTTYPE','String','NullsOK',100]) 
-        fieldDefs[0][0] = xsN+'OrientationPoints_ID'
-        createFeatureClass(thisDB,xsName,xsN+'OrientationPoints','POINT',fieldDefs)
+        arcpy.AlterField_management(xsN+'ContactsAndFaults','ContactsAndFaults_ID',xsN+'ContactsAndFaults_ID')
+
+        if 'OrientationPoints' in OptionalElements:
+            fieldDefs = tableDict['OrientationPoints']
+            createFeatureClass(thisDB,xsName,xsN+'OrientationPoints','POINT',fieldDefs)
+            arcpy.AlterField_management(xsN+'OrientationPoints','OrientationPoints_ID',xsN+'OrientationPoints_ID')
 
     # create tables
     tables = ['DescriptionOfMapUnits','DataSources','Glossary']

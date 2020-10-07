@@ -22,9 +22,9 @@ versionString = 'GeMS_Definition.py, version of 19 July 2020'
 # 29 October 2019: Added MapUnitLines, MapUnitPoints to as-needed feature classes
 # 4 April 2020:  Changed NullsOK to NoNulls for some fields in DescriptionOfMapUnits, to conform with documentation
 # 9 April 2020: Changed NullsOK for Notes fields to Optional. Added definition of table LayerList
-# 19 July 2020: Added 'Age' to attribDict. Improved definition of attribute NumericAge
-
-
+# 19 July 2020: Added 'Age' to attribDict
+# 25 Sept 2020: Swapped Symbol and Label in ContactsAndFaults
+# 28 Sept 2020: Removed definitions of CSA feature classes, as this is handled in Create Database and in cross-section projection tools
 
 # to think about: Maybe change all NoNulls to NullsOK?
 
@@ -49,8 +49,8 @@ startDict = {
 					['LocationConfidenceMeters','Single','NoNulls'],
 					['ExistenceConfidence','String','NoNulls',IDLength],
                                         ['IdentityConfidence','String','NoNulls',IDLength],
-                                        ['Symbol','String','NullsOK',defaultLength],
 					['Label','String','NullsOK',IDLength],
+                                        ['Symbol','String','NullsOK',defaultLength],
                                         ['DataSourceID','String','NoNulls',IDLength],
 					['Notes','String','Optional',defaultLength]],
              'DescriptionOfMapUnits':  [['MapUnit','String','NullsOK',mapUnitLength],  
@@ -304,7 +304,7 @@ attribDict = {
     'Age':'Age of map unit as shown in Description of Map Units. Examples of values are "late Holocene", "Pliocene and Miocene", "Lower Cretaceous".',
     'AgeMinusError':'Negative (younger) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
     'AgePlusError':'Positive (older) age error, measured in AgeUnits. Type of error (RMSE, 1 sigma, 2 sigma, 95% confidence limit) should be stated in Notes field.',
-    'AgeUnits':'Units for Age, AgePlusError, AgeMinusError.',
+    'AgeUnits':'Units for NumericAge, AgePlusError, AgeMinusError.',
     'AlternateSampleID':'Museum #, lab #, etc.',
     'AnalysisSourceID':'Source of analysis; foreign key to table DataSources.',
     'AreaFillPatternDescription':'Text description (e.g., "random small red dashes") provided as a convenience for users who must recreate symbolization.',
@@ -390,11 +390,6 @@ entityDict = {
 
 #***************************************************
 tableDict = {}
-
-# build CSA feature class attribute definitions
-startDict['CSAMapUnitPolys'] = startDict['MapUnitPolys']
-startDict['CSAContactsAndFaults'] = startDict['ContactsAndFaults']
-startDict['CSAOrientationPoints'] = startDict['OrientationPoints']
 
 # set feature_ID definitions
 for table in startDict.keys():
