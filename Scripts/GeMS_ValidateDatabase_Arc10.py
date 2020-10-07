@@ -16,7 +16,7 @@ import arcpy, os, os.path, sys, time, glob
 from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 7 June 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 7 October 2020'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
