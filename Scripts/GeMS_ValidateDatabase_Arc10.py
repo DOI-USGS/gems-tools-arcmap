@@ -11,6 +11,7 @@
 # 7 October 2020: quoted path names at ~line 484 so that folder names with spaces are handled properly
 #    moved output topology gdb to output workspace (was being created in same folder as input gdb)
 #    added switch to skip topology checks
+# 8 October 2020: Fixed (I hope) special character problems with function fixSpecialChars()
 
 import arcpy, os, os.path, sys, time, glob
 from GeMS_utilityFunctions import *
@@ -189,6 +190,13 @@ colorCodes = """
 
 ##########END HTML STUFF####################
 
+def fixSpecialChars(s):
+    try:
+        return s.encode('ascii','xmlcharrefreplace')
+    except:
+        addMsgAndPrint('**'+s)
+        return 'failed to encode special chars'    
+
 def getHKeyErrors(HKs):
     # getHKeyErrors collects values with bad separators, bad element sizes, duplicates, and missing sequential values
     addMsgAndPrint('Checking DescriptionOfMapUnits HKey values')
@@ -249,12 +257,10 @@ def checkTopology(workdir,inGdb,outGdb,fd,MUP,CAF,level=2):
     if not arcpy.Exists(outFd):
         arcpy.CreateFeatureDataset_management(outGdb, fd, inGdb+'/'+fd)
     # delete any existing topology, CAF, MUP and copy MUP and CAF to errors fd
-    ##addMsgAndPrint('Got to here #1')
     outCaf = outFd+'/'+CAF
     outMup = outFd+'/'+MUP
     outTop = outFd+'/'+fd+'_topology'
     for i in outTop,outMup,outCaf:
-        ##addMsgAndPrint('got to here #2 '+i)
         testAndDelete(i)
     arcpy.Copy_management(inGdb+'/'+fd+'/'+MUP,outMup)
     arcpy.Copy_management(inGdb+'/'+fd+'/'+CAF,outCaf)
@@ -317,8 +323,8 @@ def matchRefs(definedVals, allRefs):
     for i in used:
         ### problem here with values in Unicode. Not sure solution will be generally valid
         if not i[0] in definedVals and not i[0] in usedVals:
-            missing.append('<span class="value">'+str(i[0])+'</span>, field <span class="field">'+
-                           i[1]+'</span>, table <span class="table">'+i[2].encode('ascii','xmlcharrefreplace')+'</span>')
+            missing.append('<span class="value">'+fixSpecialChars(i[0])+'</span>, field <span class="field">'+
+                           i[1]+'</span>, table <span class="table">'+fixSpecialChars(i[2])+'</span>')  #$@
         usedVals.append(i[0])
     missing.sort()
     for i in definedVals:
@@ -657,7 +663,7 @@ def scanTable(table, fds=''):
 ### open search cursor and run through rows
     with arcpy.da.SearchCursor(table, fieldNames) as cursor:
         for row in cursor:
-            if hasHKey:
+            if hasHKey and row[hKeyIndex]<>None:
                 allDMUHKeyValues.append(row[hKeyIndex])
             if hasTermField:
                 xx = row[termFieldIndex]
@@ -699,13 +705,13 @@ def scanTable(table, fds=''):
                         allGeoMaterialValues.append(row[i])                    
             for i in glossTermIndices:
                 if notEmpty(row[i]):
-                    xxft = [row[i],fieldNames[i],table] #$@
+                    xxft = [fixSpecialChars(row[i]),fieldNames[i],table] #$@
                     if not xxft in allGlossaryRefs:
                         allGlossaryRefs.append(xxft)
             for i in dataSourceIndices:
                 xx = row[i]
                 if notEmpty(xx):
-                    xxft = [xx,fieldNames[i],table]     #$@
+                    xxft = [fixSpecialChars(xx),fieldNames[i],table]     #$@
                     if not xx in allDataSourcesRefs:
                         allDataSourcesRefs.append(xxft)
             if mapUnitFieldIndex <> [] and row[mapUnitFieldIndex[0]] <> None:
