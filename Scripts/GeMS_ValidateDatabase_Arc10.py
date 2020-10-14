@@ -12,8 +12,10 @@
 #    moved output topology gdb to output workspace (was being created in same folder as input gdb)
 #    added switch to skip topology checks
 # 8 October 2020: Fixed (I hope) special character problems with function fixSpecialChars()
+# 14 October: addressing issue #50 at repo. def checkFieldDefinitions was failing when scanTable was evaluating 'CSBMapUnitPolys'. CSBMapUnitPolys is not a key in tableDict and MapUnitPolys is not a table in the current environment. Added optional argument to checkFieldDefinitions
 
 import arcpy, os, os.path, sys, time, glob
+import traceback
 from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 
@@ -507,11 +509,21 @@ def checkForLockFiles(inGdb):
     os.chdir(oldDir)
     return
 
-def checkFieldDefinitions(table):
+def checkFieldDefinitions(def_table, compare_table=''):
+    """Compares the fields in a compare_table to those in a controlled def_table
+       There are two arguments, one optional, to catch the case where, for example
+       we want to compare the fields in CSAMapUnitPolys with MapUnitPolys. 
+       tableDict will not have the key 'CSAMapUnitPolys'. The key MapUnitPolys is derived in 
+       def ScanTable from CSAMapUnitPolys as the table to which it should be compared.
+       If the compare_table IS the name of a table in the GeMS definition; it doesn't need to be derived,
+       it does not need to be supplied. 
+    """
+    if not compare_table:
+        compare_table = def_table
     # build dictionary of required fields 
     requiredFields = {}
     optionalFields = {}
-    requiredFieldDefs = tableDict[table]
+    requiredFieldDefs = tableDict[def_table]
     for fieldDef in requiredFieldDefs:
         if fieldDef[2] <> 'Optional':
             requiredFields[fieldDef[0]] = fieldDef
@@ -520,27 +532,29 @@ def checkFieldDefinitions(table):
     # build dictionary of existing fields
     try:
         existingFields = {}
-        fields = arcpy.ListFields(table)
+        fields = arcpy.ListFields(compare_table)
         for field in fields:
           existingFields[field.name] = field
         # now check to see what is excess / missing
         for field in requiredFields.keys():
           if field not in existingFields:
-            schemaErrorsMissingFields.append('<span class="table">'+table+
+            schemaErrorsMissingFields.append('<span class="table">'+compare_table+
                                              '</span>, field <span class="field">'+field+'</span> is missing')
         for field in existingFields.keys():
             if not (field.lower() in lcStandardFields) and not (field in requiredFields.keys()) and not (field in optionalFields.keys()):
-                schemaExtensions.append('<span class="table">'+table+'</span>, field <span class="field">'+field+'</span>')
+                schemaExtensions.append('<span class="table">'+compare_table+'</span>, field <span class="field">'+field+'</span>')
             # check field definition
             fType = existingFields[field].type
             if field in requiredFields.keys() and fType <> requiredFields[field][1]:
-                schemaErrorsMissingFields.append('<span class="table">'+table+'</span>, field <span class="field">'+
+                schemaErrorsMissingFields.append('<span class="table">'+compare_table+'</span>, field <span class="field">'+
                                                  field+'</span>, type should be '+requiredFields[field][1])
             if field in optionalFields.keys() and fType <> optionalFields[field][1]:
-                schemaErrorsMissingFields.append('<span class="table">'+table+'</span>, field <span class="field">'+
+                schemaErrorsMissingFields.append('<span class="table">'+compare_table+'</span>, field <span class="field">'+
                                                  field+'</span>, type should be '+optionalFields[field][1])
-    except:
-        schemaErrorsMissingFields.append('<span class="table">'+table+
+    except Exception:
+        s = traceback.format_exc()
+        arcpy.AddMessage(s)
+        schemaErrorsMissingFields.append('<span class="table">'+compare_table+
                                      '</span> could not get field list. Fields not checked.')
 
 def notEmpty(x):
@@ -592,7 +606,7 @@ def scanTable(table, fds=''):
     elif fds[:12] == 'CrossSection' and table[:3] == 'CS'+fds[12] and tableDict.has_key(table[3:]):
         isExtension = False
         fieldDefs = tableDict[table[3:]]
-        checkFieldDefinitions(table[3:])
+        checkFieldDefinitions(table[3:], table)
 
     else:  # is an extension
         isExtension = True
