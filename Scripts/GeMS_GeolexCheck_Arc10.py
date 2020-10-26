@@ -1,0 +1,83 @@
+"""
+Geologic Names Check
+name-fullname - This version checks for Geolex names in both the name and fullname and then processes the set 
+with the fewest entries to minimize the number of Geolex names and usages that are reported.
+
+Arguments: 
+    DMU - GeMS DescriptionOfMapUnits table. Geodatabase, CSV, tab delimeted TXT, or DBF. Required.
+    Extent - one or more (comma separated) state or US region abbreviations. Required.
+    open report - open the Excel report file when finished. True (default) or False. Optional.
+    
+Enclose any arguments with spaces within double-quotes.
+
+Arguments are sent to \Resources\GeMS_GeolexCheck.exe which contains bundled Python 3 libraries used in the original development
+rather than requiring the user to install the equivalent Python 2.7 versions
+"""
+
+import os, sys
+import tempfile
+import arcpy
+import re
+from distutils.util import strtobool
+
+versionString = "GeMS_GeolexCheck_AGP2.py, 10/22/2020"
+
+ # START
+#------------------------------------------------------------------------
+if len(sys.argv) == 1:
+    print(__doc__)
+    quit()
+
+arcpy.AddMessage(versionString)
+
+# collect the path to the DMU table
+dmu = sys.argv[1]
+arcpy.AddMessage("Evaluating {}".format(dmu))
+       
+# get parent directory
+head_tail = os.path.split(dmu)
+dmu_home = head_tail[0]
+dmu_name = os.path.splitext(head_tail[1])[0]
+
+# if the input is a gdb table, convert to csv
+# with the ArcMap parameter form, the EXE will never be sent a GDB table
+if os.path.splitext(dmu_home)[1] == '.gdb':
+    out_dir = tempfile.mkdtemp()
+    csv_f = "{}.csv".format(dmu_name)
+    out_path = os.path.join(out_dir, csv_f)
+    arcpy.ConvertTableToCsvFile(dmu, out_path)
+    in_table = out_path
+else:
+    in_table = dmu
+  
+# collect and clean the extent of the DMU. 
+# can be single state or list of states, comma separated,
+# can be upper or lower case
+dmu_str = sys.argv[2]
+# dmu_str = dmu_str.strip("\'")
+# dmu_str = dmu_str.strip('\"')
+# dmu_str = dmu_str.replace(" ", "")
+ 
+# open the report after running?
+if len(sys.argv) == 4:
+    open_xl = bool(strtobool(sys.argv[3]))
+else:
+    open_xl = True
+
+# location of GeMS_GeolexCheck.exe
+# it is hard dealing with possible spaces in the path name
+# when sending this argument to the exe file so we'll just
+# cd to \Resources first and then call the exe by name alone
+this_py = os.path.realpath(__file__)
+this_dir = os.path.dirname(this_py)
+toolbox_dir = os.path.dirname(this_dir)
+os.chdir(os.path.join(toolbox_dir, 'Resources'))
+#geolex_exe = os.path.join(toolbox_dir, 'Resources', 'GeMS_GeolexCheck.exe')
+
+arcpy.AddMessage("Sending parameters to GeMS_GeolexCheck.exe")
+arcpy.AddMessage("A terminal window will open to display output messages.")
+arcpy.AddMessage("Be warned! ArcMap may crash from running this script!")
+
+arcpy.AddMessage('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
+
+os.system('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
