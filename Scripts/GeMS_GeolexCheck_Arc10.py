@@ -20,7 +20,7 @@ import arcpy
 import re
 from distutils.util import strtobool
 
-versionString = "GeMS_GeolexCheck_AGP2.py, 10/22/2020"
+versionString = "GeMS_GeolexCheck_AGP2.py, 10/26/2020"
 
  # START
 #------------------------------------------------------------------------
@@ -42,10 +42,11 @@ dmu_name = os.path.splitext(head_tail[1])[0]
 # if the input is a gdb table, convert to csv
 # with the ArcMap parameter form, the EXE will never be sent a GDB table
 if os.path.splitext(dmu_home)[1] == '.gdb':
-    out_dir = tempfile.mkdtemp()
+    #out_dir = tempfile.mkdtemp()
+    out_dir = os.path.dirname(dmu_home)
     csv_f = "{}.csv".format(dmu_name)
     out_path = os.path.join(out_dir, csv_f)
-    arcpy.ConvertTableToCsvFile(dmu, out_path)
+    arcpy.TableToTable_conversion(dmu, out_dir, csv_f)
     in_table = out_path
 else:
     in_table = dmu
