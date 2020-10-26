@@ -15,7 +15,6 @@ rather than requiring the user to install the equivalent Python 2.7 versions
 """
 
 import os, sys
-import tempfile
 import arcpy
 import re
 from distutils.util import strtobool
@@ -42,7 +41,6 @@ dmu_name = os.path.splitext(head_tail[1])[0]
 # if the input is a gdb table, convert to csv
 # with the ArcMap parameter form, the EXE will never be sent a GDB table
 if os.path.splitext(dmu_home)[1] == '.gdb':
-    #out_dir = tempfile.mkdtemp()
     out_dir = os.path.dirname(dmu_home)
     csv_f = "{}.csv".format(dmu_name)
     out_path = os.path.join(out_dir, csv_f)
@@ -55,10 +53,7 @@ else:
 # can be single state or list of states, comma separated,
 # can be upper or lower case
 dmu_str = sys.argv[2]
-# dmu_str = dmu_str.strip("\'")
-# dmu_str = dmu_str.strip('\"')
-# dmu_str = dmu_str.replace(" ", "")
- 
+
 # open the report after running?
 if len(sys.argv) == 4:
     open_xl = bool(strtobool(sys.argv[3]))
@@ -77,8 +72,5 @@ os.chdir(os.path.join(toolbox_dir, 'Resources'))
 
 arcpy.AddMessage("Sending parameters to GeMS_GeolexCheck.exe")
 arcpy.AddMessage("A terminal window will open to display output messages.")
-arcpy.AddMessage("Be warned! ArcMap may crash from running this script!")
-
-arcpy.AddMessage('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
 
 os.system('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
