@@ -1,4 +1,4 @@
-# GeMS Tools
+# GeMS Tools for ArcMap
 
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community)
 
