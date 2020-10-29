@@ -25,6 +25,7 @@ versionString = 'GeMS_Definition.py, version of 19 July 2020'
 # 19 July 2020: Added 'Age' to attribDict
 # 25 Sept 2020: Swapped Symbol and Label in ContactsAndFaults
 # 28 Sept 2020: Removed definitions of CSA feature classes, as this is handled in Create Database and in cross-section projection tools
+# 29 October 2020: Changed NoNulls to NullsOK for ObservedMapUnit in Stations per documentation - ET
 
 # to think about: Maybe change all NoNulls to NullsOK?
 
@@ -130,7 +131,7 @@ startDict = {
 					['Notes','String','Optional',defaultLength]],
 		   'Stations':         [['FieldID','String','NoNulls',IDLength],
                                         ['LocationConfidenceMeters','Single','NoNulls'],
-					['ObservedMapUnit','String','NullsOk',mapUnitLength],
+					['ObservedMapUnit','String','NullsOK',mapUnitLength],
 					['MapUnit','String','NoNulls',mapUnitLength],
 					['Symbol','String','NullsOK',defaultLength],
 					['Label','String','NullsOK',IDLength],
