@@ -17,12 +17,14 @@
 #   " "       Added MapUnitLines to list of feature classes that could be created (line 153)
 # 28 Sept 2020 Now defines coordinate system for CMU and cross section feature datasets (= map coordinate system)
 # 7 Oct 2020 Improved definition of cross section feature classes to match specification
+# 9 November 2020 added def rename_field to avoid use of AlterField which was throwing an error for some undeterminable reason - ET
 
 import arcpy, sys, os, os.path
 from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDConfidenceValues, IDLength
 from GeMS_utilityFunctions import *
+import copy
 
-versionString = 'GeMS_CreateDatabase_Arc10.py, version of 7 October 2020'
+versionString = 'GeMS_CreateDatabase_Arc10.py, version of 9 November 2020'
 
 debug = True
 
@@ -129,6 +131,18 @@ def cartoRepsExistAndLayer(fc):
             hasReps = True
             repLyr = os.path.join(crPath,repFc+'.lyr')
     return hasReps,repLyr
+    
+def rename_field(defs, start_name, end_name):
+    """renames a field in a list generated from tableDict for
+    special cases; CrossSections and OrientationPoints
+    instead of using AlterField after creation which was throwing errors"""
+    f_list = copy.deepcopy(defs)
+    list_item = [n for n in f_list if n[0] == start_name] #finds ['MapUnitPolys_ID', 'String', 'NoNulls', 50], for instance
+    i = f_list.index(list_item[0]) #finds the index of that item
+    f_list[i][0] = end_name #changes the name in the list
+    arcpy.AddMessage(f_list[i][0] +  ' becoming ' + end_name)
+    arcpy.AddMessage(f_list)
+    return f_list
 
 def main(thisDB,coordSystem,nCrossSections):
     # create feature dataset GeologicMap
@@ -212,18 +226,15 @@ def main(thisDB,coordSystem,nCrossSections):
         addMsgAndPrint('  Creating feature data set CrossSection'+xsLetter+'...')
         arcpy.CreateFeatureDataset_management(thisDB,xsName,coordSystem)
         
-        fieldDefs = tableDict['MapUnitPolys']
-        createFeatureClass(thisDB,xsName,xsN+'MapUnitPolys','POLYGON',fieldDefs)
-        arcpy.AlterField_management(xsN+'MapUnitPolys','MapUnitPolys_ID',xsN+'MapUnitPolys_ID')
+        muDefs = rename_field(tableDict['MapUnitPolys'], 'MapUnitPolys_ID', xsN+'MapUnitPolys_ID')
+        createFeatureClass(thisDB, xsName, xsN+'MapUnitPolys', 'POLYGON', muDefs)
         
-        fieldDefs = tableDict['ContactsAndFaults']
-        createFeatureClass(thisDB,xsName,xsN+'ContactsAndFaults','POLYLINE',fieldDefs)
-        arcpy.AlterField_management(xsN+'ContactsAndFaults','ContactsAndFaults_ID',xsN+'ContactsAndFaults_ID')
+        cfDefs = rename_field(tableDict['ContactsAndFaults'], 'ContactsAndFaults_ID', xsN+'ContactsAndFaults_ID')
+        createFeatureClass(thisDB, xsName, xsN+'ContactsAndFaults', 'POLYLINE', cfDefs)
 
         if 'OrientationPoints' in OptionalElements:
-            fieldDefs = tableDict['OrientationPoints']
-            createFeatureClass(thisDB,xsName,xsN+'OrientationPoints','POINT',fieldDefs)
-            arcpy.AlterField_management(xsN+'OrientationPoints','OrientationPoints_ID',xsN+'OrientationPoints_ID')
+            opDefs = rename_field(tableDict['OrientationPoints'], 'OrientationPoints_ID', xsN+'OrientationPoints_ID')
+            createFeatureClass(thisDB, xsName, xsN+'OrientationPoints', 'POINT', opDefs)
 
     # create tables
     tables = ['DescriptionOfMapUnits','DataSources','Glossary']
