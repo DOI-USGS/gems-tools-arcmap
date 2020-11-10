@@ -18,6 +18,7 @@ import arcpy, os, os.path, sys, time, glob
 import traceback
 from GeMS_utilityFunctions import *
 from GeMS_Definition import *
+import copy
 
 versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 14 October 2020'
 debug = False
@@ -509,7 +510,7 @@ def checkForLockFiles(inGdb):
     os.chdir(oldDir)
     return
 
-def checkFieldDefinitions(def_table, compare_table=''):
+def checkFieldDefinitions(def_table, compare_table=None):
     """Compares the fields in a compare_table to those in a controlled def_table
        There are two arguments, one optional, to catch the case where, for example
        we want to compare the fields in CSAMapUnitPolys with MapUnitPolys. 
@@ -518,12 +519,21 @@ def checkFieldDefinitions(def_table, compare_table=''):
        If the compare_table IS the name of a table in the GeMS definition; it doesn't need to be derived,
        it does not need to be supplied. 
     """
-    if not compare_table:
-        compare_table = def_table
+   
     # build dictionary of required fields 
     requiredFields = {}
     optionalFields = {}
-    requiredFieldDefs = tableDict[def_table]
+    requiredFieldDefs = copy.deepcopy(tableDict[def_table])
+    if compare_table:
+        # update the definition of the _ID field to include a 'CSX' prefix
+        prefix = compare_table[:3]
+        id_item = [n for n in requiredFieldDefs if n[0] == def_table + '_ID']
+        new_id = prefix + id_item[0][0]
+        i = requiredFieldDefs.index(id_item[0])
+        requiredFieldDefs[i][0] = new_id
+    else:
+        compare_table = def_table
+         
     for fieldDef in requiredFieldDefs:
         if fieldDef[2] <> 'Optional':
             requiredFields[fieldDef[0]] = fieldDef
