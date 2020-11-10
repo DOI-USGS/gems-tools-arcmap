@@ -13,6 +13,8 @@
 #    added switch to skip topology checks
 # 8 October 2020: Fixed (I hope) special character problems with function fixSpecialChars()
 # 14 October: addressing issue #50 at repo. def checkFieldDefinitions was failing when scanTable was evaluating 'CSBMapUnitPolys'. CSBMapUnitPolys is not a key in tableDict and MapUnitPolys is not a table in the current environment. Added optional argument to checkFieldDefinitions
+# 9 November: Issue 50 at GitHub repo: Fields like CSAMapUnitPolys_ID were not being looked for and identified as compliant. At the same time, the absence of fields like MapUnitPolys_ID in 
+#   cross section feature classes was throwing errors. Think I have this fixed - ET
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -20,7 +22,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 14 October 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 9 November 2020'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
