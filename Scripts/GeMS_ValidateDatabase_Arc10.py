@@ -15,6 +15,8 @@
 # 14 October: addressing issue #50 at repo. def checkFieldDefinitions was failing when scanTable was evaluating 'CSBMapUnitPolys'. CSBMapUnitPolys is not a key in tableDict and MapUnitPolys is not a table in the current environment. Added optional argument to checkFieldDefinitions
 # 9 November: Issue 50 at GitHub repo: Fields like CSAMapUnitPolys_ID were not being looked for and identified as compliant. At the same time, the absence of fields like MapUnitPolys_ID in 
 #   cross section feature classes was throwing errors. Think I have this fixed - ET
+# 30 November 2020: HierarchyKey included in SearchCursor in MAPUNITS MATCH because of bug for Linda Tedrow of IGS. I could not determine why
+# her database or configuration would require the field; it is not necessary AFAIK, but it doesn't hurt to include it. - ET
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -22,7 +24,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 9 November 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 30 November 2020'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
@@ -1134,7 +1136,8 @@ else:
     summary.write('</tr>\n')       
     # open search cursor on DMU sorted by HKey
     sql = (None, 'ORDER BY HierarchyKey')
-    with arcpy.da.SearchCursor('DescriptionOfMapUnits',('MapUnit'),None,None,False,sql) as cursor:
+    # see note in changelog in header
+    with arcpy.da.SearchCursor('DescriptionOfMapUnits',('MapUnit', 'HierarchyKey'),None,None,False,sql) as cursor:
         for row in cursor:
             mu = row[0]
             if notEmpty(mu):
