@@ -264,8 +264,8 @@ def checkTopology(workdir,inGdb,outGdb,fd,MUP,CAF,level=2):
     if not arcpy.Exists(outFd):
         arcpy.CreateFeatureDataset_management(outGdb, fd, inGdb+'/'+fd)
     # delete any existing topology, CAF, MUP and copy MUP and CAF to errors fd
-    outCaf = outFd+'/'+CAF
-    outMup = outFd+'/'+MUP
+    outCaf = outFd+'/'+CAF.replace('.', '_')
+    outMup = outFd+'/'+MUP('.', '_')
     outTop = outFd+'/'+fd+'_topology'
     for i in outTop,outMup,outCaf:
         testAndDelete(i)
