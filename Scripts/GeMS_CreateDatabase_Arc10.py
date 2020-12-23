@@ -18,13 +18,14 @@
 # 28 Sept 2020 Now defines coordinate system for CMU and cross section feature datasets (= map coordinate system)
 # 7 Oct 2020 Improved definition of cross section feature classes to match specification
 # 9 November 2020 added def rename_field to avoid use of AlterField which was throwing an error for some undeterminable reason - ET
+# 23 December 2020: Changed how MapUnitPoints feature class is created, so that it follows definition in GeMS_Definitions.py - RH
 
 import arcpy, sys, os, os.path
 from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDConfidenceValues, IDLength
 from GeMS_utilityFunctions import *
 import copy
 
-versionString = 'GeMS_CreateDatabase_Arc10.py, version of 9 November 2020'
+versionString = 'GeMS_CreateDatabase_Arc10.py, version of 23 December 2020'
 
 debug = True
 
@@ -182,7 +183,15 @@ def main(thisDB,coordSystem,nCrossSections):
         if fc in OptionalElements:
             featureClasses.append(fc)
     for featureClass in featureClasses:
-    
+        """
+The following block of code was bypassing the MapUnitPoints definition now in GeMS_Definitions.py and
+appending PTYPE to the resulting feature class, along with the PTTYPE field appended in the 
+next statement. I think we don't need it, but need to talk with Evan about this.
+If he concurs, will delete this block.
+
+Ralph Haugerud
+23 December 2020
+
         # the following if statement used to be here, but was removed at some point
         # putting it back to allow for creation of MapUnitPoints after discussion
         # with Luke Blair - Evan Thoms
@@ -195,7 +204,8 @@ def main(thisDB,coordSystem,nCrossSections):
             if addLTYPE and featureClass in ['OrientationPoints']:
                 fieldDefs.append(['PTTYPE','String','NullsOK',50])
         # end of re-inserted if statement   
-        
+        """
+        fieldDefs = tableDict[featureClass]
         if addLTYPE:
             fieldDefs.append(['PTTYPE','String','NullsOK',50])
         createFeatureClass(thisDB,'GeologicMap',featureClass,'POINT',fieldDefs)
