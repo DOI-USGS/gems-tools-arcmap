@@ -18,6 +18,7 @@
 # 30 November 2020: HierarchyKey included in SearchCursor in MAPUNITS MATCH because of bug for Linda Tedrow of IGS. I could not determine why
 # her database or configuration would require the field; it is not necessary AFAIK, but it doesn't hurt to include it. - ET
 # 22 December 2020: Edited output text to correctly identify XXX_Validation.gdb. Added option to delete unused rows in Glossary and DataSources - RH
+# 23 December 2020: Refreshing GeoMaterialDict now also  refreshes the domain associated with GeoMaterial field in DescriptionOfMapUnits - RH
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -25,7 +26,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 22 December 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 23 December 2020'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
@@ -880,7 +881,16 @@ else:
         gmd = inGdb+'/GeoMaterialDict'
         testAndDelete(gmd)
         arcpy.Copy_management(refgmd,gmd)
-        
+        addMsgAndPrint('Replacing GeoMaterial domain')
+        ## remove domain from field
+        arcpy.RemoveDomainFromField_management(inGdb+'/DescriptionOfMapUnits', 'GeoMaterial')
+        ## DeleteDomain
+        arcpy.DeleteDomain_management(inGdb, 'GeoMaterials')
+        ##   make GeoMaterials domain
+        arcpy.TableToDomain_management(inGdb+'/GeoMaterialDict','GeoMaterial','IndentedName',inGdb,'GeoMaterials')
+        ##   attach it to DMU field GeoMaterial
+        arcpy.AssignDomainToField_management(inGdb+'/DescriptionOfMapUnits','GeoMaterial','GeoMaterials')       
+             
     # open output files
     summaryName = os.path.basename(inGdb)+'-Validation.html'
     summary = open(workdir+'/'+summaryName,'w')
