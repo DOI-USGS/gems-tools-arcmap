@@ -17,6 +17,7 @@
 #   cross section feature classes was throwing errors. Think I have this fixed - ET
 # 30 November 2020: HierarchyKey included in SearchCursor in MAPUNITS MATCH because of bug for Linda Tedrow of IGS. I could not determine why
 # her database or configuration would require the field; it is not necessary AFAIK, but it doesn't hurt to include it. - ET
+# 22 December 2020: Edited output text to correctly identify XXX_Validation.gdb. Added option to delete unused rows in Glossary and DataSources - RH
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -24,7 +25,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 30 November 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 22 December 2020'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
@@ -96,7 +97,7 @@ topologyErrors = ['Feature datasets with bad basic topology']
 topologyErrorNote = """
 <i>Note that the map boundary commonly gives an unavoidable "Must Not Have Gaps" line error.
 Other errors should be fixed. Level 2 errors are also Level 3 errors. Errors are
-identified in feature classes within XXX-ComplianceErrors.gdb</i><br><br>
+identified in feature classes within XXX-Validation.gdb</i><br><br>
 """
 
 zeroLengthStrings = ['Zero-length, whitespace-only, or "&ltNull&gt" text values that probably should be &lt;Null&gt;']
@@ -327,6 +328,7 @@ def matchRefs(definedVals, allRefs):
     usedVals = []
     unused = []
     missing = []
+    plainUnused = []
     for i in used:
         ### problem here with values in Unicode. Not sure solution will be generally valid
         if not i[0] in definedVals and not i[0] in usedVals:
@@ -337,8 +339,9 @@ def matchRefs(definedVals, allRefs):
     for i in definedVals:
         if not i in usedVals:
             unused.append('<span class="value">'+i+'</span>')
+            plainUnused.append(i)
     unused.sort()
-    return unused, missing
+    return unused, missing, plainUnused
 
 def getDuplicateIDs(all_IDs):
     addMsgAndPrint('Getting duplicate _ID values')
@@ -832,6 +835,19 @@ def checkGeoMaterialDict(inGdb):
         addMsgAndPrint('Table '+gmd+' is missing.')
     return
 
+def deleteExtraRows(table,field,vals):
+    # deleteExtraRows('Glossary','Term',unused)
+    if len(vals) == 0:
+        return
+    addMsgAndPrint('    removing extra rows from '+table)
+    with arcpy.da.UpdateCursor(table, [field]) as cursor:
+        for row in cursor:
+            if row[0] in vals:
+                addMsgAndPrint('      '+row[0])
+                cursor.deleteRow()
+    return
+    
+
 ##############start main##################
 ##get inputs
 inGdb = sys.argv[1]
@@ -841,6 +857,7 @@ else:
     workdir = os.path.dirname(inGdb)
 refreshGeoMaterialDict = sys.argv[3]
 skipTopology = sys.argv[4]
+deleteExtraGlossaryDataSources = sys.argv[5]
 
 refgmd = os.path.dirname(sys.argv[0])+'/../Resources/GeMS_lib.gdb/GeoMaterialDict'
 
@@ -913,17 +930,17 @@ else:
         arcpy.env.workspace = inGdb
     
     addMsgAndPrint('  getting unused, missing, and duplicated key values')
-    unused, missing = matchRefs(dataSources_IDs, allDataSourcesRefs)
+    unused, missing, plainUnused = matchRefs(dataSources_IDs, allDataSourcesRefs)
     appendValues(missingSourceIDs, missing)
     for d in getDuplicates(dataSources_IDs):
         duplicatedSourceIDs.append('<span class="value">'+d+'</span>')
     
-    unused, missing = matchRefs(glossaryTerms, allGlossaryRefs)
+    unused, missing, plainUnused = matchRefs(glossaryTerms, allGlossaryRefs)
     appendValues(missingGlossaryTerms, missing)
     for d in getDuplicates(glossaryTerms):
         glossaryTermDuplicates.append('<span class="value">'+d+'</span>')
    
-    unused, missing = matchRefs(dmuMapUnits, allMapUnits)
+    unused, missing, plainUnused = matchRefs(dmuMapUnits, allMapUnits)
     appendValues(missingDmuMapUnits, missing)
     for d in getDuplicates(dmuMapUnits):
         dmuMapUnitsDuplicates.append('<span class="value">'+d+'</span>')
@@ -981,15 +998,21 @@ else:
     
     addMsgAndPrint('  getting unused, missing, and duplicated key values')
 
-    unused, missing = matchRefs(dataSources_IDs, allDataSourcesRefs)
-    appendValues(unusedSourceIDs, unused)
+    unused, missing, plainUnused = matchRefs(dataSources_IDs, allDataSourcesRefs)
+    if deleteExtraGlossaryDataSources == 'true':
+        deleteExtraRows('DataSources','DataSources_ID',plainUnused)
+    else:
+        appendValues(unusedSourceIDs, unused)
     appendValues(missingSourceIDs, missing)
 
-    unused, missing = matchRefs(glossaryTerms, allGlossaryRefs)
-    appendValues(unusedGlossaryTerms, unused)
+    unused, missing, plainUnused = matchRefs(glossaryTerms, allGlossaryRefs)
+    if deleteExtraGlossaryDataSources == 'true':
+        deleteExtraRows('Glossary','Term',plainUnused)
+    else:
+        appendValues(unusedGlossaryTerms, unused)
     appendValues(missingGlossaryTerms, missing)
     
-    unused, missing = matchRefs(dmuMapUnits, allMapUnits)
+    unused, missing, plainUnused = matchRefs(dmuMapUnits, allMapUnits)
     appendValues(unusedDmuMapUnits,unused)
     appendValues(missingDmuMapUnits, missing)
 
@@ -1001,7 +1024,7 @@ else:
 
     isLevel3, summary3, errors3 = writeOutputLevel3()
 
-### assemble output
+### assemble output                                                
     addMsgAndPrint( 'Writing output')
     addMsgAndPrint( '  writing summary header')
     
