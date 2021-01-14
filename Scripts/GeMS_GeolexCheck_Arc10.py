@@ -19,7 +19,7 @@ import arcpy
 import re
 from distutils.util import strtobool
 
-versionString = "GeMS_GeolexCheck_AGP2.py, 10/26/2020"
+versionString = "GeMS_GeolexCheck_AGP2.py, 1/12/2021"
 
  # START
 #------------------------------------------------------------------------
