@@ -44,6 +44,7 @@ if os.path.splitext(dmu_home)[1] == '.gdb':
     out_dir = os.path.dirname(dmu_home)
     csv_f = "{}.csv".format(dmu_name)
     out_path = os.path.join(out_dir, csv_f)
+    if arcpy.Exists(out_path): arcpy.Delete_management(out_path)
     arcpy.TableToTable_conversion(dmu, out_dir, csv_f)
     in_table = out_path
 else:
