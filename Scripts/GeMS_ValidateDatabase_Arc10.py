@@ -64,7 +64,7 @@ requiredTables = ['DataSources','DescriptionOfMapUnits','Glossary','GeoMaterialD
 requiredFeatureDataSets = ['GeologicMap']
 requiredGeologicMapFeatureClasses = ['ContactsAndFaults','MapUnitPolys']
 
-schemaExtensions = ['<i>Some of the extensions to the GeMS schema identified here may be necessary to capture geologic content and are entirely appropriate. Please document these extensions in metadata for the database, any accompanying README file, and (if applicable) any transmittal letter that accompanies the dataset. Other extensions may be intermediate datasets, fields, or files that should be deleted before distribution of the database.</i><br>']
+schemaExtensions = ['<i>Some of the extensions to the GeMS schema identified here may be necessary to capture geologic content and are entirely appropriate. <b>Please document these extensions in metadata for the database, any accompanying README file, and (if applicable) any transmittal letter that accompanies the dataset.</b> Other extensions may be intermediate datasets, fields, or files that should be deleted before distribution of the database.</i><br>']
 schemaErrorsMissingElements = ['Missing required elements']
 schemaErrorsMissingFields = ['Missing or mis-defined fields']
 
