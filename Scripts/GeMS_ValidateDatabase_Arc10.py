@@ -20,6 +20,9 @@
 # 22 December 2020: Edited output text to correctly identify XXX_Validation.gdb. Added option to delete unused rows in Glossary and DataSources - RH
 # 23 December 2020: Refreshing GeoMaterialDict now also refreshes the domain associated with GeoMaterial field in DescriptionOfMapUnits - RH
 # 28 December 2020: Added warning if active edit session on input GDB - RH
+# 15 January 2021: Added warning if SRF not in (NAD83, WGS84)
+#    Added reminder to document any schema extensions
+#    Added feature dataset SRF names to database inventory     - RH
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -27,7 +30,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 28 December 2020'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 13 January 2021'
 debug = False
 
 metadataSuffix = '-vFgdcMetadata.txt'
@@ -61,7 +64,7 @@ requiredTables = ['DataSources','DescriptionOfMapUnits','Glossary','GeoMaterialD
 requiredFeatureDataSets = ['GeologicMap']
 requiredGeologicMapFeatureClasses = ['ContactsAndFaults','MapUnitPolys']
 
-schemaExtensions = ['<i>Some of the extensions to the GeMS schema identified here may be necessary to capture geologic content, and are entirely appropriate. Others may be intermediate datasets, fields, or files that should be deleted before distribution of the database.</i><br>']
+schemaExtensions = ['<i>Some of the extensions to the GeMS schema identified here may be necessary to capture geologic content and are entirely appropriate. Please document these extensions in metadata for the database, any accompanying README file, and (if applicable) any transmittal letter that accompanies the dataset. Other extensions may be intermediate datasets, fields, or files that should be deleted before distribution of the database.</i><br>']
 schemaErrorsMissingElements = ['Missing required elements']
 schemaErrorsMissingFields = ['Missing or mis-defined fields']
 
@@ -924,7 +927,17 @@ else:
         gMapSRF = ''
         schemaErrorsMissingElements.append('Feature dataset <span class="table">GeologicMap</span>')
     else:
-        gMapSRF = arcpy.Describe('GeologicMap').spatialReference.name
+        srf = arcpy.Describe('GeologicMap').spatialReference
+        gMapSRF = srf.name
+
+        # check for NAD83 or WGS84
+        if srf.type == 'Geographic':
+            pcsd = srf.datumName
+        else: # is projected
+            pcsd = srf.PCSName
+        if pcsd.find('World_Geodetic_System_1984') < 0 and pcsd.find('NAD_1983') < 0:
+            SRFWarnings.append('Spatial reference framework is '+pcsd+'. Consider reprojecting this dataset to NAD83 or WGS84')
+        
         arcpy.env.workspace = 'GeologicMap'
         gMap_MapUnits = []
         for fc in requiredGeologicMapFeatureClasses:
@@ -1218,7 +1231,9 @@ else:
         summary.write(tb+', nonspatial table, '+str(numberOfRows(tb))+' rows<br>\n')
     fds.sort()
     for fd in fds:
-        summary.write(fd+', feature dataset <br>\n')
+        summary.write(fd+', feature dataset, ')
+        srfName = arcpy.Describe(fd).spatialReference.name
+        summary.write('<i>'+srfName+'</i><br>\n')
         arcpy.env.workspace = fd
         fcs = arcpy.ListFeatureClasses()
         fcs.sort()
