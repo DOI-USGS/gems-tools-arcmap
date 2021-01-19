@@ -6,11 +6,8 @@
 #  Ralph Haugerud, 19 August 2016 
 # 
 
-<<<<<<< HEAD
-versionString = 'GeMS_Definition.py, version of 1 December 2020'
-=======
-versionString = 'GeMS_Definition.py, version of 29 October 2020'
->>>>>>> names-check
+versionString = 'GeMS_Definition.py, version of 19 January 2021'
+
 # fixes errors in Station feature class definition
 # 16 Jan 2014: added ObservedMapUnit to Station feature class definition
 # 8 April 2016: Fixed ObservedMapUnit.  Put _ID field at end of each field list
@@ -30,10 +27,7 @@ versionString = 'GeMS_Definition.py, version of 29 October 2020'
 # 25 Sept 2020: Swapped Symbol and Label in ContactsAndFaults
 # 28 Sept 2020: Removed definitions of CSA feature classes, as this is handled in Create Database and in cross-section projection tools
 # 29 October 2020: Changed NoNulls to NullsOK for ObservedMapUnit in Stations per documentation - ET
-<<<<<<< HEAD
 # 1 December 2020: Added ErrorMeasure to GeochronPoints, to conform with documentation - RH
-=======
->>>>>>> names-check
 
 # to think about: Maybe change all NoNulls to NullsOK?
 
