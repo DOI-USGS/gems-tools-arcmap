@@ -10,7 +10,7 @@ GeMS Tools was written in Python 2.7 by Ralph Haugerud, Evan Thoms, and others. 
 
 ## Installation
 
-* Download the [latest version](https://github.com/usgs/gems-tools-arcmap/releases/latest).
+* Download the [latest release](https://github.com/usgs/gems-tools-arcmap/releases/latest).
 * Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`).
   *Automated version checking has not been implemented yet, but keeping the version number in the folder name will provide you with a quick way to compare your version with the latest at the repo.*
 
@@ -33,7 +33,7 @@ or
 
 * Each tool comes with documentation inside the parameter form.
 * Documentation for the toolbox and all tools and  is also available in **GeMS_Tools_Arc10.docx** and **GeMS_Tools_Arc10.pdf** found in the `Docs` sub-folder.
-* If, when using a tool, it fails to run and produces an error message, first check that you have the latest version of the tool. If that is not the source of the problem, start a new issue at this repository (see the [Issues](https://github.com/usgs/gems-tools-arcmap/issues) tab above). Provide a screenshot of the error message if you can.
+* If, when using a tool, it fails to run and produces an error message, first check that you have the latest release of the tool. If that is not the source of the problem, start a new issue at this repository (see the [Issues](https://github.com/usgs/gems-tools-arcmap/issues) tab above). Provide a screenshot of the error message if you can.
 * Check out the [wiki](https://github.com/usgs/gems-resources/wiki) for help on these tools and extensive advice on using these tools to create, edit, and validate GeMS-style databases.
 * If you have a question about how to build or attribute a GeMS-compliant database or the schema in general, please visit the [GeMS Gitter](https://gitter.im/gems-schema/community#) chat room. If you already have a GitHub account, you can sign in there with those credentials.
 
