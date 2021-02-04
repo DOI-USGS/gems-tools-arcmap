@@ -207,6 +207,7 @@ def buildHKeyDict(DMU):
 
 def youngestMapUnit(mapUnits,hKeyDict):
     # returns youngest map unit in list mapUnits
+    arcpy.AddMessage(mapUnits)
     ymu = mapUnits[0]
     for mu in mapUnits[1:]:
         if hKeyDict[mu] < hKeyDict[ymu]:
@@ -514,8 +515,9 @@ def unplanarize(cafp,caf,connectFIDs):
     addMsgAndPrint(str(numberOfRows(caf))+' arcs in '+os.path.basename(caf))
     addMsgAndPrint(str(numberOfRows(cafp))+' arcs in '+os.path.basename(cafp))
     addMsgAndPrint(str(numberOfRows(cafu))+' arcs in '+os.path.basename(cafu))
-
-    outTxt = open('connectedFIDs.txt','w')
+    
+    txtPath = os.path.join(outWksp, 'connectedFIDs.txt')
+    outTxt = open(txtPath,'w')
     connectFIDs.sort()
     for aline in connectFIDs:
         outTxt.write(str(aline)+'  '+str(newLineIDs[aline[0]])+' '+str(newLineIDs[aline[1]])+'\n')
