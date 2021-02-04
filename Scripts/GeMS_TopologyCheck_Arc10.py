@@ -43,7 +43,7 @@ Significant assumptions:
 # 2/3/21 - ET
 #   Had to create full path for connectedFIDs.txt in order to write to it
 
-versionString = 'GeMS_TopologyCheck_Arc10.py, version of 3 February 2021'
+versionString = 'GeMS_TopologyCheck_Arc10.py, version of 4 February 2021'
 # see gems-tools version<=1.3 to get earlier TopologyCheck tool
 
 import arcpy, os, sys, math, os.path, operator, time
@@ -209,7 +209,6 @@ def buildHKeyDict(DMU):
 
 def youngestMapUnit(mapUnits,hKeyDict):
     # returns youngest map unit in list mapUnits
-    arcpy.AddMessage(mapUnits)
     ymu = mapUnits[0]
     for mu in mapUnits[1:]:
         if hKeyDict[mu] < hKeyDict[ymu]:
