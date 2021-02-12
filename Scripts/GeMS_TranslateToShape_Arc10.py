@@ -30,6 +30,8 @@ from numbers import Number
 import io
 
 versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.5.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False
 

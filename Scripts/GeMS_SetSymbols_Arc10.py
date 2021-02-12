@@ -6,6 +6,8 @@ from GeMS_utilityFunctions import *
 # 5 October 2017: fixed crash when symbolizing CMU feature dataset
 
 versionString = 'GeMS_SetSymbols_Arc10.py, version of 5 October 2017'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetSymbols_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 EightfoldLineDict = {}
 TwofoldOrientPointDict = {}

@@ -1,5 +1,7 @@
 # purges metadata of geoprocessing history
 versionString = 'GeMS_PurgeMetadata.py version of 2 September 2017'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_PurgeMetadata.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 import arcpy, os.path, sys
 import egis

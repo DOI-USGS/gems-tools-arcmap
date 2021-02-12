@@ -6,6 +6,9 @@ from GeMS_Definition import tableDict
 
 # 5 January 2018: Modified error message for topology that contains polys
 versionString = 'GeMS_MakePolys3_Arc10.py, version of 5 January 2018'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_MakePolys3_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+
 debug = False
 
 def checkMultiPts(multiPts,badPointList,badPolyList):

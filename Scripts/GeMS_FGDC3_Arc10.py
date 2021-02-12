@@ -1,4 +1,6 @@
 versionString = 'GeMS_FGDC3_Arc10.py version of 6 August 2020'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC3_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 import arcpy, os, sys, glob
 from GeMS_utilityFunctions import *

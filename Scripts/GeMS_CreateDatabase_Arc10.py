@@ -26,6 +26,8 @@ from GeMS_utilityFunctions import *
 import copy
 
 versionString = 'GeMS_CreateDatabase_Arc10.py, version of 23 December 2020'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_CreateDatabase_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = True
 

@@ -7,6 +7,9 @@ from xml.dom.minidom import *
 debug = False
 
 versionString = 'GeMS_FGDC1_Arc10.py, version of 20 July 2020'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC1_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+
 addMsgAndPrint('  '+ versionString)
 if debug:
     addMsgAndPrint(os.sys.path)

@@ -30,6 +30,8 @@ from GeMS_Definition import tableDict
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 2 September 2017'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectCrossSectionData_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 ##inputs
 #  gdb          geodatabase with GeologicMap feature dataset to be projected
