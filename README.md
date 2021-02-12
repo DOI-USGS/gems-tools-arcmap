@@ -1,4 +1,4 @@
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/usgs/gems-tools-arcmap)](https://github.com/usgs/gems-tools-arcmap/releases/latest) [![resources](https://img.shields.io/badge/gems-resources-orange)](https://github.com/usgs/gems-resources) [![Wiki](https://img.shields.io/badge/gems-wiki-orange)](https://github.com/usgs/gems-resources/wiki) [![pro](https://img.shields.io/badge/gems--tools-pro-orange)](https://github.com/usgs/gems-tools-pro) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community) [![gems on USGS](https://img.shields.io/badge/gems-%40%20USGS-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/) 
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/usgs/gems-tools-arcmap)](https://github.com/usgs/gems-tools-arcmap/releases/latest) [![resources](https://img.shields.io/badge/gems-resources-orange)](https://github.com/usgs/gems-resources) [![Wiki](https://img.shields.io/badge/gems-wiki-orange)](https://github.com/usgs/gems-resources/wiki) [![pro](https://img.shields.io/badge/gems--tools-pro-orange)](https://github.com/usgs/gems-tools-pro) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community) [![gems on USGS](https://img.shields.io/badge/gems-%40%20USGS-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/)
 
 <img width="250" align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/USGS_logo_green.svg/500px-USGS_logo_green.svg.png"/>
 
@@ -12,7 +12,6 @@ If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro]
 
 * Download the [latest release](https://github.com/usgs/gems-tools-arcmap/releases/latest).
 * Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`).
-  *Automated version checking has not been implemented yet, but keeping the version number in the folder name will provide you with a quick way to compare your version with the latest at the repository.*
 
 * Start ArcCatalog or ArcMap
   * open the Arc Toolbox window
