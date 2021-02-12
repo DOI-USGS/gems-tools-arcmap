@@ -214,16 +214,16 @@ def editSessionActive(gdb):
     
 def checkVersion(vString, rawurl, toolbox):
     # compares versionString of tool script to the current script at the repo
-    #try:
-    page = requests.get(rawurl)
-    raw = page.text
-    if vString in raw:
-        pass
-    else:
-        repourl = 'https://github.com/usgs/{}/releases'.format(toolbox)
-        arcpy.AddWarning('You are using an obsolete version of this tool!\n' +
-                         'Please download the latest version from {}'.format(repourl))
-    #except:
-        #arcpy.AddWarning('Could not connect to Github to determine if this version of the tool is the most recent.\n')
+    try:
+        page = requests.get(rawurl)
+        raw = page.text
+        if vString in raw:
+            pass
+        else:
+            repourl = 'https://github.com/usgs/{}/releases'.format(toolbox)
+            arcpy.AddWarning('You are using an obsolete version of this tool!\n' +
+                             'Please download the latest version from {}'.format(repourl))
+    except:
+        arcpy.AddWarning('Could not connect to Github to determine if this version of the tool is the most recent.\n')
 
 
