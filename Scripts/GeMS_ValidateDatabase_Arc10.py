@@ -1192,7 +1192,7 @@ else:
         for row in cursor:
             mu = row[0]
             if notEmpty(mu):
-                summary.write('<tr><td>'+mu+'</td><td>X</td>')   #  2nd cell: value is, by definition, in DMU               
+                summary.write('<tr><td>'+fixSpecialChars(mu)+'</td><td>X</td>')   #  2nd cell: value is, by definition, in DMU               
                 for f in fds_MapUnits:
                     if mu in f[1]:
                         summary.write('<td>X</td>')
