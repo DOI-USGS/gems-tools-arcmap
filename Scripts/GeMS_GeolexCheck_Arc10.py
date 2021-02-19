@@ -18,6 +18,7 @@ import os, sys
 import arcpy
 import re
 from distutils.util import strtobool
+from GeMS_utilityFunctions import *
 
 versionString = "GeMS_GeolexCheck_Arc10.py, 1/12/2021"
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_GeolexCheck_Arc10.py'
