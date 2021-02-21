@@ -7,10 +7,13 @@
 #
 # Ralph Haugerud, U.S. Geological Survey
 #   rhaugerud@usgs.gov
+#
+# 21 February 2021.  Import GeMS_utilityFunctions, drop local version of addMsgAndPrint
 
 import arcpy, sys, os, os.path
+from GeMS_utilityFunctions import *
 
-versionString = 'mapOutline_Arc10.py, version of 2 September 2017'
+versionString = 'mapOutline_Arc10.py, version of 21 February 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/mapOutline_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -34,24 +37,9 @@ scratch     # scratch folder, must be writable
 """
 
 c = ','
-degreeSymbol = '°'
+degreeSymbol = 'Â°'
 minuteSymbol = "'"
 secondSymbol = '"'
-
-def addMsgAndPrint(msg, severity=0): 
-	# prints msg to screen and adds msg to the geoprocessor (in case this is run as a tool) 
-	# print msg 
-	try: 
-	  for string in msg.split('\n'): 
-		# Add appropriate geoprocessing message 
-		if severity == 0: 
-			arcpy.AddMessage(string) 
-		elif severity == 1: 
-			arcpy.AddWarning(string) 
-		elif severity == 2: 
-			arcpy.AddError(string) 
-	except: 
-		pass 
 
 def dmsStringToDD(dmsString):
     dms = dmsString.split()
