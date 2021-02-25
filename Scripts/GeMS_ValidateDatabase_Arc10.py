@@ -30,7 +30,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 14 January 2021'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 25 January 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -863,6 +863,7 @@ if sys.argv[2] <> '#':
     workdir = sys.argv[2]
 else:
     workdir = os.path.dirname(inGdb)
+gdbName = os.path.basename(inGdb)                                 
 refreshGeoMaterialDict = sys.argv[3]
 skipTopology = sys.argv[4]
 deleteExtraGlossaryDataSources = sys.argv[5]
@@ -913,10 +914,12 @@ else:
     mdXmlFile = mdTxtFile[:-3]+'xml'
 
     # delete errors gdb if it exists and make a new one
-    outErrorsGdb = workdir+'/'+os.path.basename(inGdb)[:-4]+'_Validation.gdb'
+    #outErrorsGdb = workdir+'/'+os.path.basename(inGdb)[:-4]+'_Validation.gdb'
+    gdbVal = '{}_Validation.gdb'.format(gdbName[:-4])
+    outErrorsGdb = os.path.join(workdir, gdbVal)                                           
     if not arcpy.Exists(outErrorsGdb):
-        outFolder,outName = os.path.split(outErrorsGdb)
-        arcpy.CreateFileGDB_management(outFolder, outName)
+        #outFolder,outName = os.path.split(outErrorsGdb)
+        arcpy.CreateFileGDB_management(workdir, gdbVal)
 
     # level 2 compliance
     addMsgAndPrint('Looking at level 2 compliance')
