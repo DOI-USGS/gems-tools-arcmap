@@ -1,5 +1,6 @@
 # utility functions for scripts that work with GeMS geodatabase schema
 ## 28 December 2020: added function editSessionActive(gdb)   - RH
+## 26 February 2021: expanded typeTransDict() to include SmallInteger, Integer, Blob, GlobalID, and Guid
 
 import arcpy, os.path, time
 import requests
@@ -92,7 +93,12 @@ typeTransDict =     { 'String': 'TEXT',
 			'Double': 'DOUBLE',
 			'NoNulls':'NON_NULLABLE',
 			'NullsOK':'NULLABLE',
-			'Date'  : 'DATE'  }
+			'Date'  : 'DATE',
+		    	'SmallInteger' : 'SHORT',
+                        'Integer': 'LONG',
+                        'Blob' : 'BLOB',
+                        'GlobalID' : 'GUID',
+                        'Guid' : 'GUID'}
 
 # II. Functions that presume extensions to naming scheme
 
