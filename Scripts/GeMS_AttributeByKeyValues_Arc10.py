@@ -13,12 +13,12 @@ Usage: GeMS_AttributeByKeyValues.py <geodatabase> <file.txt>
      See Dig24K_KeyValues.txt for an example and format instructions.
      """
 
+import arcpy, sys
+from GeMS_utilityFunctions import *
+
 versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 2 September 2017'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_AttributeByKeyValues_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
-
-import arcpy, sys
-from GeMS_utilityFunctions import *
 
 separator = '|'
 
