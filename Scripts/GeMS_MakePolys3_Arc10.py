@@ -2,7 +2,7 @@
 
 # 5 January 2018: Modified error message for topology that contains polys
 # 26 February 2021: More robust checking of input elements
-# 7 March 2021: Delete label points where MapUnit = null (line 194
+# 7 March 2021: Delete label points where MapUnit = null (line 194)
 
 import arcpy, sys, os.path, os
 from GeMS_utilityFunctions import *
