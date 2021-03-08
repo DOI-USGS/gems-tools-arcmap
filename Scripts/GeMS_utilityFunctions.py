@@ -1,6 +1,6 @@
 # utility functions for scripts that work with GeMS geodatabase schema
 ## 28 December 2020: added function editSessionActive(gdb)   - RH
-## 26 February 2021: expanded typeTransDict() to include SmallInteger, Integer, Blob, GlobalID, and Guid
+## 7 March 2021: Extended list of keywords for isPlanar()
 
 import arcpy, os.path, time
 import requests
@@ -94,7 +94,7 @@ typeTransDict =     { 'String': 'TEXT',
 			'NoNulls':'NON_NULLABLE',
 			'NullsOK':'NULLABLE',
 			'Date'  : 'DATE',
-		    	'SmallInteger' : 'SHORT',
+                        'SmallInteger' : 'SHORT',
                         'Integer': 'LONG',
                         'Blob' : 'BLOB',
                         'GlobalID' : 'GUID',
@@ -179,7 +179,7 @@ def isQuestionable(confidenceValue):
 
 # returns True if orientationType is a planar (not linear) feature
 def isPlanar(orientationType):
-    planarTypes = ['joint','bedding','cleavage','foliation','parting']
+    planarTypes = ['joint','bedding','cleavage','foliation','parting','layering','dike','fault','plane']
     isPlanarType = False
     for pT in planarTypes:
         if pT in orientationType.lower():
