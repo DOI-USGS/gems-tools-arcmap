@@ -1,11 +1,14 @@
 ##New, improved make polys
 
+# 5 January 2018: Modified error message for topology that contains polys
+# 26 February 2021: More robust checking of input elements
+# 7 March 2021: Delete label points where MapUnit = null (line 194
+
 import arcpy, sys, os.path, os
 from GeMS_utilityFunctions import *
 from GeMS_Definition import tableDict
 
-# 5 January 2018: Modified error message for topology that contains polys
-versionString = 'GeMS_MakePolys3_Arc10.py, version of 5 January 2018'
+versionString = 'GeMS_MakePolys3_Arc10.py, version of 7 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_MakePolys3_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -74,12 +77,16 @@ labelPoints = sys.argv[4]
 if arcpy.Exists(labelPoints):
     lpFields = fieldNameList(labelPoints)
     if not 'MapUnit' in lpFields:
+        addMsgAndPrint(' ***')
         addMsgAndPrint('Feature class '+labelPoints+' should have a MapUnit attribute and it does not.')
+        addMsgAndPrint(' ***')
         forceExit()
   
 # check for existence of fds
 if not arcpy.Exists(fds):
+    addMsgAndPrint(' ***')
     addMsgAndPrint('Feature dataset '+fds+ 'does not seem to exist.')
+    addMsgAndPrint(' ***')
     forceExit()
 ## check for schema lock
 #if not arcpy.TestSchemaLock(fds):
@@ -90,6 +97,11 @@ if not arcpy.Exists(fds):
 caf = getCaf(fds)
 shortCaf = os.path.basename(caf)
 mup = getMup(fds)
+if not arcpy.Exists(mup):
+    addMsgAndPrint(' ***')
+    addMsgAndPrint('Feature class '+fds+'/MapUnitPolys does not exist.')
+    addMsgAndPrint(' ***')
+    forceExit()
 shortMup = os.path.basename(mup)
 nameToken = getNameToken(fds)
 
@@ -175,15 +187,17 @@ arcpy.DeleteField_management(centerPoints,'ORIG_FID')
 #identity center points with inpolys
 testAndDelete(centerPoints2)
 arcpy.Identity_analysis(centerPoints, inPolys, centerPoints2, 'NO_FID')
-# delete points with MapUnit = ''
+# delete points with MapUnit = '' or null
 ## first, make layer view
 addMsgAndPrint("    Deleting centerPoints2 MapUnit = '' ")
-sqlQuery = arcpy.AddFieldDelimiters(fds,'MapUnit') + "= '' "
+## next line is changed, 7 March 2021
+sqlQuery = arcpy.AddFieldDelimiters(fds,'MapUnit') + "= '' OR "+arcpy.AddFieldDelimiters(fds,'MapUnit')+" IS NULL"
 testAndDelete('cP2Layer')
 arcpy.MakeFeatureLayer_management(centerPoints2,'cP2Layer',sqlQuery)
 ## then delete features
 if numberOfRows('cP2Layer') > 0:
     arcpy.DeleteFeatures_management('cP2Layer')
+
 
 #adjust center point fields (delete extra, add any missing. Use NCGMP09_Definition as guide)
 ## get list of fields in centerPoints2
@@ -209,10 +223,12 @@ if arcpy.Exists(labelPoints):
     lpFields = arcpy.ListFields(labelPoints)
     for lpF in lpFields:
         if not lpF.name in cp2Fields:
-            if lpF.type in ('Text','STRING'):
+            addMsgAndPrint(lpF.type)
+            if lpF.type in ('Text','STRING','String'):
                 arcpy.AddField_management(centerPoints2,lpF.name,'TEXT','#','#',lpF.length)
             else:
-                arcpy.AddField_management(centerPoints2,lpF.name,typeTransDict[lpF.type])
+                if lpF.type in typeTransDict:
+                    arcpy.AddField_management(centerPoints2,lpF.name,typeTransDict[lpF.type])
 # append labelPoints to centerPoints2
 if arcpy.Exists(labelPoints):
     arcpy.Append_management(labelPoints,centerPoints2,'NO_TEST')
