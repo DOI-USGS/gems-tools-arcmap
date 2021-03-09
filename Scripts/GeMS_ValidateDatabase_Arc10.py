@@ -23,6 +23,7 @@
 # 15 January 2021: Added warning if SRF not in (NAD83, WGS84)
 #    Added reminder to document any schema extensions
 #    Added feature dataset SRF names to database inventory     - RH
+# 8 March 2021:  Added D_North_American_1983 to list of datums that don't generate a warning
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -30,7 +31,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 25 January 2021'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 8 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -941,7 +942,7 @@ else:
             pcsd = srf.datumName
         else: # is projected
             pcsd = srf.PCSName
-        if pcsd.find('World_Geodetic_System_1984') < 0 and pcsd.find('NAD_1983') < 0:
+        if pcsd.find('World_Geodetic_System_1984') < 0 and pcsd.find('NAD_1983') < 0 and pcsd.find('D_North_American_1983') < 0:
             SRFWarnings.append('Spatial reference framework is '+pcsd+'. Consider reprojecting this dataset to NAD83 or WGS84')
         
         arcpy.env.workspace = 'GeologicMap'
