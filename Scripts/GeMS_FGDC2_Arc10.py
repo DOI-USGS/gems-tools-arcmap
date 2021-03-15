@@ -8,7 +8,7 @@ from xml.dom.minidom import *
 
 debug = False
 
-versionString = 'GeMS_FGDC2_Arc10.py, version of 30 July 2020'
+versionString = 'GeMS_FGDC2_Arc10.py, version of 15 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -172,17 +172,14 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
         #if this is a defined Enumerated Value Domain field
         elif fld in enumeratedValueDomainFieldList:
             if debug: addMsgAndPrint('this is a recognized enumeratedValueDomainField')
-            valList = []
+
             #create a search cursor on the field
-            rows = arcpy.SearchCursor(fc,'','', fld)
-            row = rows.next()           
-            #collect all values/terms in that field
-            while row:
-                if not row.getValue(fld) is None:
-                    valList.append(row.getValue(fld))
-                row = rows.next()            
+            rows = arcpy.da.SearchCursor(fc, fld)
+            # and get a list of all values 
+            valList = [row[0] for row in rows if not row[0] is None]
             #uniquify the list by converting it to a set object
             valList = set(valList)
+            
             #create an empty dictionary object to hold the matches between the unique terms
             #and their definitions (grabbed from the glossary)
             defs = {}
@@ -442,7 +439,8 @@ def fixObjXML(objName,objType,objLoc,domMR, fdDataSourceValues=[]):
     # add spdoinfo and spref from arcXML
     dom = replaceSpatialStuff(dom, arcXML)
     # redo title and supplinfo
-    dom = replaceTitleSupplinf('Non-spatial table',objName,gdb,dom)
+    #dom = replaceTitleSupplinf('Non-spatial table',objName,gdb,dom)
+    dom = replaceTitleSupplinf(objType,objName,gdb,dom)
     domName = gdb[:-4]+'_'+objName+'-metadata.xml'
     writeDomToFile(wksp,dom,domName)
     if not debug:
