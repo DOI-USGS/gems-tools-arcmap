@@ -14,9 +14,10 @@ Usage: GeMS_AttributeByKeyValues.py <geodatabase> <file.txt>
      """
 
 import arcpy, sys
+import io
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 7 March 2021'
+versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 15 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_AttributeByKeyValues_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -36,7 +37,9 @@ if len(sys.argv) <> 4:
     sys.exit()
 
 gdb = sys.argv[1]
-keylines1 = open(sys.argv[2],'r').readlines()
+# added encoding to catch cases of UTF8-BOM from Excel exporting to CSV
+# issue 61 at ArcMap repo
+keylines1 = io.open(sys.argv[2], 'r', encoding='utf-8-sig').readlines()
 if sys.argv[3] == 'true':
     addMsgAndPrint("Forcing the overwriting of existing fields")
     forceCalc = True
