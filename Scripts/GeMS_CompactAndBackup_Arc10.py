@@ -12,8 +12,6 @@ import arcpy, sys, os.path
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_CompactAndBackup_Arc10.py, version of 4 March 2018'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_CompactAndBackup_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 def backupName(inDb):
     # returns name for a backup copy of a geodatabase where
@@ -35,20 +33,26 @@ def backupName(inDb):
             return ''
     return newName
 
-inDb = sys.argv[1]
+def main(parameters):
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_CompactAndBackup_Arc10.py'
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+    inDb = parameters[0]
 
-if len(sys.argv[2]) > 1:
-    writeLogfile(inDb,sys.argv[2])
+    if len(parameters[1]) > 1:
+        writeLogfile(inDb, parameters[1])
 
-addMsgAndPrint( '  Compacting '+os.path.basename(inDb) )
-arcpy.Compact_management(inDb)
+    addMsgAndPrint( '  Compacting '+os.path.basename(inDb) )
+    arcpy.Compact_management(inDb)
 
-addMsgAndPrint(  '  Getting name of backup copy' )
-copyName = backupName(inDb)
+    addMsgAndPrint(  '  Getting name of backup copy' )
+    copyName = backupName(inDb)
 
-if len(copyName) > 4:
-    addMsgAndPrint(  '  Copying '+os.path.basename(inDb) +' to '+os.path.basename(copyName) )
-    arcpy.Copy_management(inDb,copyName)
-else:
-    addMsgAndPrint( '  Cannot get a valid name for a backup copy. Forcing an exit.' )
-    forceExit()
+    if len(copyName) > 4:
+        addMsgAndPrint(  '  Copying '+os.path.basename(inDb) +' to '+os.path.basename(copyName) )
+        arcpy.Copy_management(inDb,copyName)
+    else:
+        addMsgAndPrint( '  Cannot get a valid name for a backup copy. Forcing an exit.' )
+        forceExit()
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

@@ -22,60 +22,61 @@ from GeMS_utilityFunctions import *
 
 versionString = "GeMS_GeolexCheck_Arc10.py, 1/12/2021"
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_GeolexCheck_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
+def main(parameters):
+    if not len(parameters) >= 2:
+        print(__doc__)
+        quit()
 
- # START
-#------------------------------------------------------------------------
-if len(sys.argv) == 1:
-    print(__doc__)
-    quit()
+    arcpy.AddMessage(versionString)
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+    
+    # collect the path to the DMU table
+    dmu = parameters[0]
+    arcpy.AddMessage("Evaluating {}".format(dmu))
+           
+    # get parent directory
+    head_tail = os.path.split(dmu)
+    dmu_home = head_tail[0]
+    dmu_name = os.path.splitext(head_tail[1])[0]
 
-arcpy.AddMessage(versionString)
+    # if the input is a gdb table, convert to csv
+    # with the ArcMap parameter form, the EXE will never be sent a GDB table
+    if os.path.splitext(dmu_home)[1] == '.gdb':
+        out_dir = os.path.dirname(dmu_home)
+        csv_f = "{}.csv".format(dmu_name)
+        out_path = os.path.join(out_dir, csv_f)
+        if arcpy.Exists(out_path): arcpy.Delete_management(out_path)
+        arcpy.TableToTable_conversion(dmu, out_dir, csv_f)
+        in_table = out_path
+    else:
+        in_table = dmu
+      
+    # collect and clean the extent of the DMU. 
+    # can be single state or list of states, comma separated,
+    # can be upper or lower case
+    dmu_str = parameters[1]
 
-# collect the path to the DMU table
-dmu = sys.argv[1]
-arcpy.AddMessage("Evaluating {}".format(dmu))
-       
-# get parent directory
-head_tail = os.path.split(dmu)
-dmu_home = head_tail[0]
-dmu_name = os.path.splitext(head_tail[1])[0]
+    # open the report after running?
+    if len(parameters) == 3:
+        open_xl = bool(strtobool(parameters[2]))
+    else:
+        open_xl = True
 
-# if the input is a gdb table, convert to csv
-# with the ArcMap parameter form, the EXE will never be sent a GDB table
-if os.path.splitext(dmu_home)[1] == '.gdb':
-    out_dir = os.path.dirname(dmu_home)
-    csv_f = "{}.csv".format(dmu_name)
-    out_path = os.path.join(out_dir, csv_f)
-    if arcpy.Exists(out_path): arcpy.Delete_management(out_path)
-    arcpy.TableToTable_conversion(dmu, out_dir, csv_f)
-    in_table = out_path
-else:
-    in_table = dmu
-  
-# collect and clean the extent of the DMU. 
-# can be single state or list of states, comma separated,
-# can be upper or lower case
-dmu_str = sys.argv[2]
+    # location of GeMS_GeolexCheck.exe
+    # it is hard dealing with possible spaces in the path name
+    # when sending this argument to the exe file so we'll just
+    # cd to \Resources first and then call the exe by name alone
+    this_py = os.path.realpath(__file__)
+    this_dir = os.path.dirname(this_py)
+    toolbox_dir = os.path.dirname(this_dir)
+    os.chdir(os.path.join(toolbox_dir, 'Resources'))
+    #geolex_exe = os.path.join(toolbox_dir, 'Resources', 'GeMS_GeolexCheck.exe')
 
-# open the report after running?
-if len(sys.argv) == 4:
-    open_xl = bool(strtobool(sys.argv[3]))
-else:
-    open_xl = True
+    arcpy.AddMessage("Sending parameters to GeMS_GeolexCheck.exe")
+    arcpy.AddMessage("A terminal window will open to display output messages.")
 
-# location of GeMS_GeolexCheck.exe
-# it is hard dealing with possible spaces in the path name
-# when sending this argument to the exe file so we'll just
-# cd to \Resources first and then call the exe by name alone
-this_py = os.path.realpath(__file__)
-this_dir = os.path.dirname(this_py)
-toolbox_dir = os.path.dirname(this_dir)
-os.chdir(os.path.join(toolbox_dir, 'Resources'))
-#geolex_exe = os.path.join(toolbox_dir, 'Resources', 'GeMS_GeolexCheck.exe')
+    os.system('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
 
-arcpy.AddMessage("Sending parameters to GeMS_GeolexCheck.exe")
-arcpy.AddMessage("A terminal window will open to display output messages.")
-
-os.system('GeMS_GeolexCheck.exe "{}" "{}" {} & pause'.format(in_table, dmu_str, open_xl))
+if __name__ == '__main__':
+    main(sys.argv[1:])

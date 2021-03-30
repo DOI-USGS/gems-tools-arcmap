@@ -55,12 +55,10 @@ dissolve oldCAF on fields type, isConcealed, ExConf, IdConf, LCM, DataSourceID, 
 drop field mergeNumber and add any unconserved fields (Notes, Label, Symbol, ...)
 """
 
-import arcpy, os.path, sys
+import arcpy, os, sys
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_Deplanarize_Arc10.4.py, version of 2 September 2017'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_Deplanarize_Arc10.4.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 # globals
 debug1 = False
@@ -68,7 +66,6 @@ mergeNumber2ArcsDict = {}  # key is mergeNumber, value is list of arcFIDs with t
 arc2MergeNumberDict = {}   # key is arcFID, value is mergeNumber
 nodeName2ArcsDict = {}     # key is nodeName, value is list [ [arcFID,rMapUnit,lMapUnit],[arcFID,rMapUnit,lMapUnit],...]
 hKeyDict = {}              # key is MapUnit, value is HierarchyKey
-
 
 compareFields = ['Type','IsConcealed','ExistenceConfidence','IdentityConfidence',
                  'LocationConfidenceMeters','DataSourceID','Label','Notes']
@@ -169,10 +166,10 @@ def makeNodeList(caf, fields1, arcDirs=False):
     # returns list of arcs at each node, keyed to nodename
     #    i.e., list of [nodename, [[arc1 fields], [arc2 fields],...] ]
     #  and, if arcDirs == True, includes initial direction for each arc
-    tempCaf =  os.path.dirname(caf)+'/xxxtempCaf'
-    fv1 = os.path.dirname(caf)+'/xxxfv1'
-    fv1a = os.path.dirname(caf)+'/xxxfv1a'
-    fv2 = os.path.dirname(caf)+'/xxxfv12'
+    tempCaf =  os.path.join(os.path.dirname(caf), 'xxxtempCaf')
+    fv1 = os.path.join(os.path.dirname(caf), 'xxxfv1')
+    fv1a = os.path.join(os.path.dirname(caf), 'xxxfv1a')
+    fv2 = os.path.join(os.path.dirname(caf), 'xxxfv12')
 
     fields = list(fields1)  # make a copy of fields1, so that we don't modify it
     lenFields = len(fields)
@@ -185,10 +182,10 @@ def makeNodeList(caf, fields1, arcDirs=False):
         testAndDelete(tempCaf)
         arcpy.Copy_management(caf,tempCaf)
         xCaf = tempCaf
-        arcpy.AddField_management(tempCaf,'LineDir','FLOAT')
-        arcpy.AddField_management(tempCaf,'EndDir','FLOAT')
-        dirFields = ['SHAPE@','LineDir','EndDir']
-        with arcpy.da.UpdateCursor(tempCaf,dirFields) as cursor:
+        arcpy.AddField_management(tempCaf, 'LineDir', 'FLOAT')
+        arcpy.AddField_management(tempCaf, 'EndDir', 'FLOAT')
+        dirFields = ['SHAPE@', 'LineDir', 'EndDir']
+        with arcpy.da.UpdateCursor(tempCaf, dirFields) as cursor:
             for row in cursor:
                 lineSeg = row[0].getPart(0)
                 row[1] = startGeogDirection(lineSeg)
@@ -200,14 +197,14 @@ def makeNodeList(caf, fields1, arcDirs=False):
     testAndDelete(fv1)
     testAndDelete(fv1a)
     arcpy.FeatureVerticesToPoints_management(xCaf,fv1, 'START')
-    arcpy.FeatureVerticesToPoints_management(xCaf,fv1a,'END')
+    arcpy.FeatureVerticesToPoints_management(xCaf,fv1a, 'END')
     if arcDirs:
-        arcpy.CalculateField_management(fv1a,'LineDir','!EndDir!','PYTHON')
+        arcpy.CalculateField_management(fv1a, 'LineDir', '!EndDir!', 'PYTHON')
     arcpy.Append_management(fv1a,fv1)
     addMsgAndPrint('  adding XY values and sorting by XY')
     arcpy.AddXY_management(fv1)
     testAndDelete(fv2)
-    arcpy.Sort_management(fv1,fv2,[["POINT_X","ASCENDING"],["POINT_Y","ASCENDING"]])
+    arcpy.Sort_management(fv1,fv2,[["POINT_X", "ASCENDING"],["POINT_Y", "ASCENDING"]])
 
     ##fix fields statement and following field references
     fields.append('SHAPE@XY')
@@ -232,14 +229,14 @@ def makeNodeList(caf, fields1, arcDirs=False):
             if abs(x-lastX) < searchRadius and abs(y-lastY) < searchRadius:
                 arcs.append([origFID,arcFields])
             else:
-                nodeList.append([nodeName(lastX,lastY),arcs])
+                nodeList.append([nodeName(lastX, lastY), arcs])
                 arcs = [[origFID,arcFields]]
                 lastX = x; lastY = y
-        nodeList.append([nodeName(lastX,lastY),arcs])
+        nodeList.append([nodeName(lastX, lastY), arcs])
 
     addMsgAndPrint('  '+ str(len(nodeList))+' distinct nodes' )
     addMsgAndPrint('  cleaning up')
-    for fc in tempCaf,fv1,fv1a,fv2:
+    for fc in tempCaf, fv1, fv1a, fv2:
         testAndDelete(fc)
     return nodeList
 
@@ -266,7 +263,7 @@ def threeArcsMeet(nodeName,arcs):
         return [], arcs
     ay = []
     for arc in arcPolyList:
-        ay.append([smallerOf(hKeyDict[arc[1]],hKeyDict[arc[2]]),arc[0]])
+        ay.append([smallerOf(hKeyDict[arc[1]], hKeyDict[arc[2]]), arc[0]])
     ay.sort()
 
     pairArcs = []
@@ -346,165 +343,170 @@ def setMatchingMergeNumbers(arcs):
         addMsgAndPrint('  setMatchingMergeNumbers, arcs = None' )
     return
 
+def main(parameters):
 #################################
-inGdb = sys.argv[1]
-inFds = inGdb+'/GeologicMap'
-inCaf = inFds+'/ContactsAndFaults'
-tempCaf = inFds+'/xxxTempCaf'
-inMup = inFds+'/MapUnitPolys'
-inDMU = os.path.dirname(inFds)+'/DescriptionOfMapUnits'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_Deplanarize_Arc10.4.py'
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
-addMsgAndPrint(versionString)
+    inGdb = parameters[0]
+    inFds = os.path.join(inGdb, 'GeologicMap')
+    inCaf = os.path.join(inFds, 'ContactsAndFaults')
+    tempCaf = os.path.join(inFds, 'xxxTempCaf')
+    inMup = os.path.join(inFds, 'MapUnitPolys')
+    inDMU = os.path.join(os.path.dirname(inFds), 'DescriptionOfMapUnits')
 
-# build hKeyDict[mapUnit] = hKey
-addMsgAndPrint('Building hKeyDict')
-fields = ['MapUnit','HierarchyKey']
-with arcpy.da.SearchCursor(inDMU, fields) as cursor:
-    for row in cursor:
-        if row[0] <> None:
-            if not row[0].isspace():
-                hKeyDict[row[0]] = row[1]
-# and, for arcs that adjoin nothing (map boundaries!)
-hKeyDict[''] = '0'  
+    addMsgAndPrint(versionString)
 
-copyCaf = inFds+'/xxxCopyCAF'
-copy2Caf = inFds+'/xxxCopy2CAF'
-#copy CAF to copyCAF
-addMsgAndPrint('Copying ContactsAndFaults to '+copyCaf)
-addMsgAndPrint('  and deleting concealed arcs')
-testAndDelete(copyCaf)
-arcpy.Copy_management(inCaf,copyCaf)
+    # build hKeyDict[mapUnit] = hKey
+    addMsgAndPrint('Building hKeyDict')
+    fields = ['MapUnit', 'HierarchyKey']
+    with arcpy.da.SearchCursor(inDMU, fields) as cursor:
+        for row in cursor:
+            if row[0] <> None:
+                if not row[0].isspace():
+                    hKeyDict[row[0]] = row[1]
+    # and, for arcs that adjoin nothing (map boundaries!)
+    hKeyDict[''] = '0'  
 
-# delete all concealed arcs in copyCAF
-isCon = arcpy.AddFieldDelimiters(copyCaf,"IsConcealed")
-testAndDelete('notConcealedCaf')
-arcpy.MakeFeatureLayer_management(copyCaf,'notConcealedCaf',isCon+" = 'N' ")
+    copyCaf = os.path.join(inFds, 'xxxCopyCAF')
+    copy2Caf = os.path.join(inFds, 'xxxCopy2CAF')
+    #copy CAF to copyCAF
+    addMsgAndPrint('Copying ContactsAndFaults to '+copyCaf)
+    addMsgAndPrint('  and deleting concealed arcs')
+    testAndDelete(copyCaf)
+    arcpy.Copy_management(inCaf,copyCaf)
 
-# IDENTITY notConcealedCAF with MapUnitPolys to get copy2CAF
-addMsgAndPrint('Copying ContactsAndFaults to '+copy2Caf)
-addMsgAndPrint('  and IDENTITYing with MapUnitPolys')
-testAndDelete(copy2Caf)
-arcpy.Identity_analysis('notConcealedCaf',inMup,copy2Caf,'ALL','','KEEP_RELATIONSHIPS')
-# make dictionary Dict[nodeName] = [[arcFID,lMapUnit,rMapUnit],[arcFID,lMapUnit,rMapUnit],...] of arcs at each node
-addMsgAndPrint('Building nodeName2ArcsDict')
-nodeName2ArcsDict = makeNodeName2ArcsDict(copy2Caf, ['FID_'+os.path.basename(copyCaf),'LEFT_MapUnit','RIGHT_MapUnit'])
+    # delete all concealed arcs in copyCAF
+    isCon = arcpy.AddFieldDelimiters(copyCaf,"IsConcealed")
+    testAndDelete('notConcealedCaf')
+    arcpy.MakeFeatureLayer_management(copyCaf,'notConcealedCaf',isCon+" = 'N' ")
 
-addMsgAndPrint('Building allNodeList')
+    # IDENTITY notConcealedCAF with MapUnitPolys to get copy2CAF
+    addMsgAndPrint('Copying ContactsAndFaults to '+copy2Caf)
+    addMsgAndPrint('  and IDENTITYing with MapUnitPolys')
+    testAndDelete(copy2Caf)
+    arcpy.Identity_analysis('notConcealedCaf', inMup, copy2Caf, 'ALL', '', 'KEEP_RELATIONSHIPS')
+    # make dictionary Dict[nodeName] = [[arcFID,lMapUnit,rMapUnit],[arcFID,lMapUnit,rMapUnit],...] of arcs at each node
+    addMsgAndPrint('Building nodeName2ArcsDict')
+    nodeName2ArcsDict = makeNodeName2ArcsDict(copy2Caf, ['FID_'+os.path.basename(copyCaf),'LEFT_MapUnit','RIGHT_MapUnit'])
 
-allNodeList = makeNodeList(inCaf,compareFields)
+    addMsgAndPrint('Building allNodeList')
 
-addMsgAndPrint('Iterating through nodes to find arcs to be unsplit')
-for node in allNodeList:
-    nodeName = node[0]
-    arcs = node[1]
-    oddArcs = []
-    mergeArcs = []
-    # remove concealed arcs
-    ## note that removing all concealed arcs leaves the possibility of fragmented concealed arcs
-    ## that should be merged and are not.
-    ## need better code!
-    newArcs = []
-    if len(arcs) > 4:
-        for arc in arcs:
-            oddArcs.append(arc)
-    elif len(arcs) == 4:  # should be one and onlye one arc that is concealed
-        if debug1: addMsgAndPrint('got 4 arcs, removing those that are concealed')
-        if debug1: addMsgAndPrint('  '+str(arcs))
-        for arc in arcs:
-            if arc[1][compareFieldsIsConcealedIndex] == 'Y':
-                oddArcs.append(arc)
-            else:
-                newArcs.append(arc)
-        arcs = newArcs
-        if debug1: addMsgAndPrint('  '+str(arcs))
-    if len(arcs) == 1:
-        oddArcs = arcs
-    elif len(arcs) == 2:
-        if arcAttribsSame(arcs):  # We assume all faults have correct directions,
-            # and if two faults of same type meet and shouldn't be merged (change in UP direction), one has a different NOTE value
-            mergeArcs = arcs
-        else:
-            oddArcs = arcs
-    elif len(arcs) == 3:
-        j = compareFieldsTypeIndex
-        arcTypes = set([arcs[0][1][j],arcs[1][1][j],arcs[2][1][j]]) # Note that we assume Type is first of fields
-        j = compareFieldsIsConcealedIndex
-        concealedStatus = arcs[0][1][j]+arcs[1][1][j]+arcs[2][1][j]
-         # all arcs are contacts
-        if len(arcTypes) == 1 and 'contact' in arcTypes and concealedStatus == 'NNN':
-            if debug1: addMsgAndPrint('3 arcs, all are contacts')
-            mergeArcs, newOddArcs = threeArcsMeet(nodeName,arcs)
-            for arc in newOddArcs:
-                oddArcs.append(arc)       
-        # if only two arcs have same type (contact, normal fault, map boundary, waterline, ...)
-        elif len(arcTypes) == 2:
-            if debug1: addMsgAndPrint('3 arcs, 2 of same type')
-            # need to find two that are same
-            if arcAttribsSame([arcs[0],arcs[1]]):
-                mergeArcs = [arcs[0],arcs[1]]
-                oddArcs.append(arcs[2])
-            elif arcAttribsSame([arcs[0],arcs[2]]):
-                mergeArcs = [arcs[0],arcs[2]]
-                oddArcs.append(arcs[1])
-            elif arcAttribsSame([arcs[2],arcs[1]]):
-                mergeArcs = [arcs[2],arcs[1]]
-                oddArcs.append(arcs[0])
-            else: # no arcs have same attributes
-                for arc in arcs:
-                    oddArcs.append(arc)
+    allNodeList = makeNodeList(inCaf,compareFields)
 
-        else: # in particular, if three faults of same kind meet, need to have a human involved
-            # do nothing, append all arcs to oddArcs
-            if debug1: addMsgAndPrint('3 arcs, hit the else clause')
+    addMsgAndPrint('Iterating through nodes to find arcs to be unsplit')
+    for node in allNodeList:
+        nodeName = node[0]
+        arcs = node[1]
+        oddArcs = []
+        mergeArcs = []
+        # remove concealed arcs
+        ## note that removing all concealed arcs leaves the possibility of fragmented concealed arcs
+        ## that should be merged and are not.
+        ## need better code!
+        newArcs = []
+        if len(arcs) > 4:
             for arc in arcs:
                 oddArcs.append(arc)
-        if debug1: addMsgAndPrint('  '+str( arcTypes))
+        elif len(arcs) == 4:  # should be one and onlye one arc that is concealed
+            if debug1: addMsgAndPrint('got 4 arcs, removing those that are concealed')
+            if debug1: addMsgAndPrint('  '+str(arcs))
+            for arc in arcs:
+                if arc[1][compareFieldsIsConcealedIndex] == 'Y':
+                    oddArcs.append(arc)
+                else:
+                    newArcs.append(arc)
+            arcs = newArcs
+            if debug1: addMsgAndPrint('  '+str(arcs))
+        if len(arcs) == 1:
+            oddArcs = arcs
+        elif len(arcs) == 2:
+            if arcAttribsSame(arcs):  # We assume all faults have correct directions,
+                # and if two faults of same type meet and shouldn't be merged (change in UP direction), one has a different NOTE value
+                mergeArcs = arcs
+            else:
+                oddArcs = arcs
+        elif len(arcs) == 3:
+            j = compareFieldsTypeIndex
+            arcTypes = set([arcs[0][1][j],arcs[1][1][j],arcs[2][1][j]]) # Note that we assume Type is first of fields
+            j = compareFieldsIsConcealedIndex
+            concealedStatus = arcs[0][1][j]+arcs[1][1][j]+arcs[2][1][j]
+             # all arcs are contacts
+            if len(arcTypes) == 1 and 'contact' in arcTypes and concealedStatus == 'NNN':
+                if debug1: addMsgAndPrint('3 arcs, all are contacts')
+                mergeArcs, newOddArcs = threeArcsMeet(nodeName,arcs)
+                for arc in newOddArcs:
+                    oddArcs.append(arc)       
+            # if only two arcs have same type (contact, normal fault, map boundary, waterline, ...)
+            elif len(arcTypes) == 2:
+                if debug1: addMsgAndPrint('3 arcs, 2 of same type')
+                # need to find two that are same
+                if arcAttribsSame([arcs[0],arcs[1]]):
+                    mergeArcs = [arcs[0],arcs[1]]
+                    oddArcs.append(arcs[2])
+                elif arcAttribsSame([arcs[0],arcs[2]]):
+                    mergeArcs = [arcs[0],arcs[2]]
+                    oddArcs.append(arcs[1])
+                elif arcAttribsSame([arcs[2],arcs[1]]):
+                    mergeArcs = [arcs[2],arcs[1]]
+                    oddArcs.append(arcs[0])
+                else: # no arcs have same attributes
+                    for arc in arcs:
+                        oddArcs.append(arc)
 
-        
-    if oddArcs <> None:
-        if len(oddArcs) > 0:
-            setUniqueMergeNumbers(oddArcs)
-    if mergeArcs <> None:
-        if len(mergeArcs) > 0:
-            setMatchingMergeNumbers(mergeArcs)
+            else: # in particular, if three faults of same kind meet, need to have a human involved
+                # do nothing, append all arcs to oddArcs
+                if debug1: addMsgAndPrint('3 arcs, hit the else clause')
+                for arc in arcs:
+                    oddArcs.append(arc)
+            if debug1: addMsgAndPrint('  '+str( arcTypes))
 
-# copy CAF to savedCaf
-savedCaf = getSaveName(inCaf)
-addMsgAndPrint('Copying ContactsAndFaults to '+savedCaf)
-arcpy.Copy_management(inCaf,savedCaf)
-# copy CAF to tempCaf
-addMsgAndPrint('Copying ContactsAndFaults to '+tempCaf)
-testAndDelete(tempCaf)
-arcpy.Copy_management(inCaf,tempCaf)
-# delete CAF
-testAndDelete(inCaf)
-## now, need to add mergeNumber field
-addMsgAndPrint('Updating arcs with MergeNumber values')
-arcpy.AddField_management(tempCaf, 'MergeNumber','LONG')
-# open update cursor
-with arcpy.da.UpdateCursor(tempCaf, ['OBJECTID','MergeNumber']) as cursor:
-    for row in cursor:
-        if row[0] in arc2MergeNumberDict.keys():
-            row[1] = arc2MergeNumberDict[row[0]]
-        else:
-            mergeNumber += 1
-            row[1] = mergeNumber
-            addMsgAndPrint('  OBJECTID = '+str(row[0])+' not in arc2MergeNumberDict')
-        cursor.updateRow(row)
-## merge tempCaf to CAF (and keep other fields!)
-addMsgAndPrint('Unsplitting '+tempCaf+' to ContactsAndFaults')
-arcpy.UnsplitLine_management(tempCaf,inCaf,compareFields,statFields)
-## drop mergeNumber field
-arcpy.DeleteField_management(inCaf,'MergeNumber')
+            
+        if oddArcs <> None:
+            if len(oddArcs) > 0:
+                setUniqueMergeNumbers(oddArcs)
+        if mergeArcs <> None:
+            if len(mergeArcs) > 0:
+                setMatchingMergeNumbers(mergeArcs)
 
-addMsgAndPrint(str(numberOfRows(tempCaf))+' rows in old CAF, '+str(numberOfRows(inCaf))+' rows in new CAF')
+    # copy CAF to savedCaf
+    savedCaf = getSaveName(inCaf)
+    addMsgAndPrint('Copying ContactsAndFaults to '+savedCaf)
+    arcpy.Copy_management(inCaf,savedCaf)
+    # copy CAF to tempCaf
+    addMsgAndPrint('Copying ContactsAndFaults to '+tempCaf)
+    testAndDelete(tempCaf)
+    arcpy.Copy_management(inCaf,tempCaf)
+    # delete CAF
+    testAndDelete(inCaf)
+    ## now, need to add mergeNumber field
+    addMsgAndPrint('Updating arcs with MergeNumber values')
+    arcpy.AddField_management(tempCaf, 'MergeNumber','LONG')
+    # open update cursor
+    with arcpy.da.UpdateCursor(tempCaf, ['OBJECTID','MergeNumber']) as cursor:
+        for row in cursor:
+            if row[0] in arc2MergeNumberDict.keys():
+                row[1] = arc2MergeNumberDict[row[0]]
+            else:
+                mergeNumber += 1
+                row[1] = mergeNumber
+                addMsgAndPrint('  OBJECTID = '+str(row[0])+' not in arc2MergeNumberDict')
+            cursor.updateRow(row)
+    ## merge tempCaf to CAF (and keep other fields!)
+    addMsgAndPrint('Unsplitting '+tempCaf+' to ContactsAndFaults')
+    arcpy.UnsplitLine_management(tempCaf, inCaf, compareFields, statFields)
+    ## drop mergeNumber field
+    arcpy.DeleteField_management(inCaf,'MergeNumber')
 
-addMsgAndPrint('Cleaning up')
-addMsgAndPrint('  but not deleting tempCaf = '+tempCaf)
-for fc in copyCaf,copy2Caf:   #,tempCaf:
-    testAndDelete(fc)
+    addMsgAndPrint(str(numberOfRows(tempCaf))+' rows in old CAF, '+str(numberOfRows(inCaf))+' rows in new CAF')
 
+    addMsgAndPrint('Cleaning up')
+    addMsgAndPrint('  but not deleting tempCaf = '+tempCaf)
+    for fc in copyCaf, copy2Caf:   #,tempCaf:
+        testAndDelete(fc)
 
+if __name__ == '__main__':
+    main(sys.argv[1:])
 
 """
 Possibilities:

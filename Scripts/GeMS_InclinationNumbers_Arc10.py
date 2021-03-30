@@ -2,8 +2,6 @@ import arcpy, os.path, sys, math, shutil
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_InclinationNumbers_Arc10.py, version of 30 October 2017'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_InclinationNumbers_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug1 = False
 OPLName = 'OrientationPointLabels'
@@ -135,23 +133,27 @@ def dipNumbers(gdb,mapScaleDenominator):
     except:
         addMsgAndPrint('  Unable to insert OrientationPointLabels.lyr.')
 
+def main(parameters):
+    addMsgAndPrint('  '+versionString)
+
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_InclinationNumbers_Arc10.py'
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
-#####################################################
-addMsgAndPrint('  '+versionString)
+    # get inputs
+    inFds = parameters[0]
+    mapScale = float(parameters[1])
+     
+    caf = getCaf(inFds)
+    orp = caf.replace('ContactsAndFaults', 'OrientationPoints')
+    fields = ['Type', 'IsConcealed', 'LocationConfidenceMeters', 'ExistenceConfidence', 'IdentityConfidence','Symbol']
 
-# get inputs
-inFds = sys.argv[1]
-mapScale = float(sys.argv[2])
- 
-caf = getCaf(inFds)
-orp = caf.replace('ContactsAndFaults','OrientationPoints')
-fields = ['Type','IsConcealed','LocationConfidenceMeters','ExistenceConfidence','IdentityConfidence','Symbol']
+    #addMsgAndPrint('  Feature dataset '+inFds+': isLocked = '+str(arcpy.TestSchemaLock(inFds)))
 
-#addMsgAndPrint('  Feature dataset '+inFds+': isLocked = '+str(arcpy.TestSchemaLock(inFds)))
+    if os.path.basename(inFds) == 'GeologicMap':
+        dipNumbers(os.path.dirname(inFds), mapScale)
+    else:
+        addMsgAndPrint('Not GeologicMap feature class, OrientationPointLabels not (re)created.')
 
-if os.path.basename(inFds) == 'GeologicMap':
-    dipNumbers(os.path.dirname(inFds),mapScale)
-else:
-    addMsgAndPrint('Not GeologicMap feature class, OrientationPointLabels not (re)created.')
-    
+if __name__ == '__main__':
+    main(sys.argv[1:])
 

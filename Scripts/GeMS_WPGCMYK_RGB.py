@@ -1,7 +1,8 @@
 import colortrans, sys, arcpy
 from GeMS_utilityFunctions import *
 
-gdb = sys.argv[1]
+def main(parameters):
+gdb = parameters[0]
 
 dmu = gdb+'/DescriptionOfMapUnits'
 
@@ -23,4 +24,7 @@ with arcpy.da.UpdateCursor(dmu, fields) as cursor:
                 addMsgAndPrint('Symbol = '+str(row[0])+': failed to assign RGB value')
         else:
             addMsgAndPrint('No Symbol value')
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
 

@@ -26,8 +26,6 @@ from GeMS_utilityFunctions import *
 import copy
 
 versionString = 'GeMS_CreateDatabase_Arc10.py, version of 23 December 2020'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_CreateDatabase_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = True
 
@@ -126,7 +124,10 @@ def addTracking(tfc):
 
 
 def cartoRepsExistAndLayer(fc):
-    crPath = os.path.join(os.path.dirname(sys.argv[0]),'../Resources/CartoRepsAZGS')
+    this_dir = os.path.dirname(__file__)
+    toolbox_dir = os.path.dirname(this_dir)
+    crPath = os.path.join(toolbox_dir, 'Resources', 'CartoRepsAZGS')
+    
     hasReps = False
     repLyr = ''
     for repFc in 'ContactsAndFaults','GeologicLines','OrientationPoints':
@@ -147,7 +148,7 @@ def rename_field(defs, start_name, end_name):
     arcpy.AddMessage(f_list)
     return f_list
 
-def main(thisDB,coordSystem,nCrossSections):
+def create_gdb(thisDB, coordSystem, nCrossSections, OptionalElements, trackEdits, cartoReps, addLTYPE, addConfs):
     # create feature dataset GeologicMap
     addMsgAndPrint('  Creating feature dataset GeologicMap...')
     try:
@@ -273,11 +274,17 @@ Ralph Haugerud
     ### GeoMaterials
     addMsgAndPrint('  Setting up GeoMaterialDict table and domains...')
     #  Copy GeoMaterials table
-    arcpy.Copy_management(os.path.dirname(sys.argv[0])+'/../Resources/GeMS_lib.gdb/GeoMaterialDict', thisDB+'/GeoMaterialDict')
+    this_dir = os.path.dirname(__file__)
+    toolbox_dir = os.path.dirname(this_dir)
+    geo_mat_table = os.path.join(toolbox_dir, 'Resources', 'GeMS_lib.gdb', 'GeoMaterialDict')
+    arcpy.Copy_management(geo_mat_table, os.path.join(thisDB,'GeoMaterialDict'))
+    
     #   make GeoMaterials domain
     arcpy.TableToDomain_management(thisDB+'/GeoMaterialDict','GeoMaterial','IndentedName',thisDB,'GeoMaterials')
+    
     #   attach it to DMU field GeoMaterial
-    arcpy.AssignDomainToField_management(thisDB+'/DescriptionOfMapUnits','GeoMaterial','GeoMaterials')       
+    arcpy.AssignDomainToField_management(thisDB+'/DescriptionOfMapUnits','GeoMaterial','GeoMaterials')     
+    
     #  Make GeoMaterialConfs domain, attach it to DMU field GeoMaterialConf
     arcpy.CreateDomain_management(thisDB,'GeoMaterialConfidenceValues','','TEXT','CODED')
     for val in GeoMaterialConfidenceValues:
@@ -380,80 +387,93 @@ def createDatabase(outputDir,thisDB):
         return False
 
 #########################################
+def main(parameters):
+    addMsgAndPrint(versionString)
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_CreateDatabase_Arc10.py'
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
-addMsgAndPrint(versionString)
-
-if len(sys.argv) >= 6:
-    addMsgAndPrint('Starting script')
-
-    outputDir = sys.argv[1]
-    if outputDir == '#':
-        outputDir = os.getcwd()
-    outputDir = outputDir.replace('\\','/')
-
-    thisDB = sys.argv[2]
-    # test for extension; if not given, default to file geodatabase
-    if not thisDB[-4:].lower() in ('.gdb','.mdb'):
-        thisDB = thisDB+'.gdb'
-
-    coordSystem = sys.argv[3]
-
-    if sys.argv[4] == '#':
-        OptionalElements = []
-    else:
-        OptionalElements = sys.argv[4].split(';')
-    if debug:
-        addMsgAndPrint('Optional elements = '+str(OptionalElements))
-    
-    nCrossSections = int(sys.argv[5])
-
-    try:
-        if sys.argv[6] == 'true':
-            trackEdits = True
-        else:
-            trackEdits = False
-    except:
-        trackEdits = False
+    if len(parameters) >= 6:
+        outputDir = os.path.abspath(parameters[0])
+        thisDB = parameters[1]
+        coordSystem = parameters[2]
+        OptionalElements = parameters[3]
+        nCrossSections = int(parameters[4])
+        trackEdits = parameters[5]
+        cartoReps = parameters[6]
+        addLTYPE = parameters[7]
+        addConfs = parameters[8]
         
-    if arcpy.GetInstallInfo()['Version'] < '10.1':
-        trackEdits = False
+        addMsgAndPrint('Starting script')
         
-    try:
-        if sys.argv[7] == 'true':
-            cartoReps = True
-        else:
-            cartoReps = False
-    except:
-        cartoReps = False
+        # test for outputDir
+        if outputDir == '#':
+            outputDir = os.getcwd()
 
-    try:
-        if sys.argv[8] == 'true':
-            addLTYPE = True
-        else:
-            addLTYPE = False
-    except:
-        addLTYPE = False
+        # test for extension; if not given, default to file geodatabase
+        if not thisDB[-4:].lower() in ('.gdb','.mdb'):
+            thisDB = thisDB+'.gdb'
         
-    try:
-        if sys.argv[9] == 'true':
-            addConfs = True
+        # test for OptionalElements
+        if OptionalElements in ('#', None):
+            OptionalElements = []
         else:
-            addConfs = False
-    except:
-        addConfs = False
+            OptionalElements = parameters[3].split(';')
+        if debug:
+            addMsgAndPrint('Optional elements = '+str(OptionalElements))
         
-    # create personal gdb in output directory and run main routine
-    if createDatabase(outputDir,thisDB):
-        thisDB = outputDir+'/'+thisDB
-        arcpy.RefreshCatalog(thisDB)
-        main(thisDB,coordSystem,nCrossSections)
-
-    # try to write a readme within the .gdb
-    if thisDB[-4:] == '.gdb':
+        # test for trackEdits
         try:
-            writeLogfile(thisDB,'Geodatabase created by '+versionString)
+            if trackEdits in ['true', 'True', 'yes', 'Yes']:
+                trackEdits = True
+            else:
+                trackEdits = False
         except:
-            addMsgAndPrint('Failed to write to'+thisDB+'/00log.txt')
+            trackEdits = False   
+        if arcpy.GetInstallInfo()['Version'] < '10.1':
+            trackEdits = False
+        
+        # test for cartoReps
+        try:
+            if cartoReps in ['true', 'True', 'yes', 'Yes']:
+                cartoReps = True
+            else:
+                cartoReps = False
+        except:
+            cartoReps = False
 
-else:
-    addMsgAndPrint(usage)
+        # test for addLTYPE
+        try:
+            if addLTYPE in ['true', 'True', 'yes', 'Yes']:
+                addLTYPE = True
+            else:
+                addLTYPE = False
+        except:
+            addLTYPE = False
+        
+        # test for addConfs
+        try:
+            if addConfs in ['true', 'True', 'yes', 'Yes']:
+               addConfs = True
+            else:
+                addConfs = False
+        except:
+            addConfs = False
+            
+        # create personal gdb in output directory and run main routine
+        if createDatabase(outputDir, thisDB):
+            thisDB = os.path.join(outputDir, thisDB)
+            arcpy.RefreshCatalog(thisDB)
+            create_gdb(thisDB, coordSystem, nCrossSections, OptionalElements, trackEdits, cartoReps, addLTYPE, addConfs)
+
+        # try to write a readme within the .gdb
+        if thisDB[-4:] == '.gdb':
+            try:
+                writeLogfile(thisDB,'Geodatabase created by '+versionString)
+            except:
+                addMsgAndPrint('Failed to write to'+thisDB+'/00log.txt')
+
+    else:
+        addMsgAndPrint(usage)
+  
+if __name__ == '__main__':
+    main(sys.argv[1:])

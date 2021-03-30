@@ -16,7 +16,7 @@ checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 #   with thanks to freewheelCarto!
 # 10 February 2020: Added MapUnitPolys to idRootDict and changed abbreviation for MapUnitPoints from 
 #   MUP to MPT! With this table missing, a user reported that MUP_IDs were being written with the 
-#   prefix 'X3X'. I think it's absence is the reason for line "if tableName == 'MapUnitPoints'" 
+#   prefix 'X3X'. I think its absence is the reason for line "if tableName == 'MapUnitPoints'" 
 #   around line 208.  - Evan Thoms
 
 idRootDict = {
@@ -57,7 +57,6 @@ idDict = {}
 fctbs = []  # feature class and table inventory
 exemptedPrefixes = ('errors_','ed_')  # prefixes that flag a feature class as not permanent data
 
-
 def usage():
     print """
     Usage:  prompt> ncgmp09_reID.py <inGeodatabaseName> <outGeodatabaseName>
@@ -77,14 +76,12 @@ def usage():
         integers.
 """
 
-
 def doReID(fc):
     doReID = True
     for exPfx in exemptedPrefixes:
         if fc.find(exPfx) == 0:
             doReID = False
     return doReID
-
 
 def elapsedTime(lastTime):
     thisTime = time.time()
@@ -203,40 +200,40 @@ def main(lastTime, dbf, useGUIDs, noSources):
     addMsgAndPrint('Cycling through inventory')
     addMsgAndPrint(str(fctbs))
     for fctb in fctbs:
-            addMsgAndPrint(fctb)
-            arcpy.env.workspace = fctb[0]+fctb[1]
-            tabName = tableName = fctb[2]
-            pKey,fKeys = getPFKeys(tableName) #Why does this have to be called again (already in inventorDatadase)
-            #TODO figure out the intention behind the next two line more - creates an error for me
-            # if tableName == 'MapUnitPoints':
-            #     pKey = 'MapUnitPolys_ID'
-            fields = arcpy.ListFields(tableName)
-            fieldNames = [x.name for x in fields]
-            if "OBJECTID" in fieldNames:
-                case = "UPPER"
-            elif "objectid" in fieldNames:
-                case = "LOWER"
-            if tableName == 'Glossary': sortKey = 'Term A'
-            elif tableName == 'DescriptionOfMapUnits': sortKey = 'HierarchyKey A'
-            elif tableName == 'StandardLithology': sortKey = 'MapUnit A'
-            elif case == "UPPER": sortKey = 'OBJECTID A'
-            elif case == "LOWER": sortKey = 'objectid A'
+        addMsgAndPrint(fctb)
+        arcpy.env.workspace = fctb[0]+fctb[1]
+        tabName = tableName = fctb[2]
+        pKey,fKeys = getPFKeys(tableName) #Why does this have to be called again (already in inventorDatadase)
+        #TODO figure out the intention behind the next two line more - creates an error for me
+        # if tableName == 'MapUnitPoints':
+        #     pKey = 'MapUnitPolys_ID'
+        fields = arcpy.ListFields(tableName)
+        fieldNames = [x.name for x in fields]
+        if "OBJECTID" in fieldNames:
+            case = "UPPER"
+        elif "objectid" in fieldNames:
+            case = "LOWER"
+        if tableName == 'Glossary': sortKey = 'Term A'
+        elif tableName == 'DescriptionOfMapUnits': sortKey = 'HierarchyKey A'
+        elif tableName == 'StandardLithology': sortKey = 'MapUnit A'
+        elif case == "UPPER": sortKey = 'OBJECTID A'
+        elif case == "LOWER": sortKey = 'objectid A'
+        else:
+            addMsgAndPrint("Warning: OBJECTID field not present")
+        # deal with naming of CrossSection tables as CSxxTableName
+        if fctb[1].find('CrossSection') == 0:
+                csSuffix = fctb[1][12:]
+                tabName = tableName[2+len(csSuffix):]
+        idRt,rootCounter = idRoot(tabName,rootCounter)
+        if tabName <> tableName:
+                prefix = 'CS'+csSuffix+idRt
+        else:
+                prefix = idRt
+        if pKey <> '':
+            if sortKey[:-2] in fieldNameList(tableName):
+                lastTime = buildIdDict(tableName,sortKey,prefix,pKey,lastTime,useGUIDs)
             else:
-                addMsgAndPrint("Warning: OBJECTID field not present")
-            # deal with naming of CrossSection tables as CSxxTableName
-            if fctb[1].find('CrossSection') == 0:
-                    csSuffix = fctb[1][12:]
-                    tabName = tableName[2+len(csSuffix):]
-            idRt,rootCounter = idRoot(tabName,rootCounter)
-            if tabName <> tableName:
-                    prefix = 'CS'+csSuffix+idRt
-            else:
-                    prefix = idRt
-            if pKey <> '':
-                if sortKey[:-2] in fieldNameList(tableName):
-                    lastTime = buildIdDict(tableName,sortKey,prefix,pKey,lastTime,useGUIDs)
-                else:
-                    addMsgAndPrint('Skipping '+tableName+', no field '+sortKey[:-2])
+                addMsgAndPrint('Skipping '+tableName+', no field '+sortKey[:-2])
 
     # purge IdDict of quasi-null keys
     addMsgAndPrint('Purging idDict of quasi-null keys')
@@ -258,7 +255,7 @@ def main(lastTime, dbf, useGUIDs, noSources):
     outfile.close()
     return lastTime
 
-### START HERE ###
+def main(parameters):
 
 startTime = time.time()
 lastTime = time.time()

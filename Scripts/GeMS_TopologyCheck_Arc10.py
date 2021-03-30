@@ -48,8 +48,6 @@ import arcpy, os, sys, math, os.path, operator, time
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_TopologyCheck_Arc10.py, version of 8 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TopologyCheck_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 # see gems-tools version<=1.3 to get earlier TopologyCheck tool
 
 htmlStart = """<html>\n
@@ -731,149 +729,153 @@ def esriTopology(outFds,caf,mup):
         if numberOfRows(fc) == 0: testAndDelete(fc)
     return topoStuff
 
-################################
 
-addMsgAndPrint(versionString)
-#### get inputs
-inFds = sys.argv[1]
-hKeyTestValue = sys.argv[2]
+def main(parameters):
+    addMsgAndPrint(versionString)
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+    
+    #### get inputs
+    inFds = parameters[0]
+    hKeyTestValue = parameters[1]
 
-inGdb = os.path.dirname(inFds)
+    inGdb = os.path.dirname(inFds)
 
-outWksp = inGdb[:-4]+'_Topology'
-if not os.path.exists(outWksp):
-    addMsgAndPrint('Making directory '+outWksp)
-    os.mkdir(outWksp)
-else:
-    if not os.path.isdir(outWksp):
-        addMsgAndPrint('Oops, '+md+' exists but is a file')
-        forceExit()
-
-inCaf = getCaf(inFds)
-fdsToken = os.path.basename(inCaf).replace('ContactsAndFaults','')
-inMup = inCaf.replace('ContactsAndFaults','MapUnitPolys')
-zeroValue = 2 * arcpy.Describe(inCaf).spatialReference.XYTolerance
-hKeyTestValue = '2'
-DMU = inGdb+'/DescriptionOfMapUnits'
-outGdbName = os.path.basename(inGdb)[:-4]+'_TopologyCheck.gdb'
-outGdb = os.path.join(outWksp,outGdbName)
-outFdsName = os.path.basename(inFds)
-outFds = os.path.join(outGdb,outFdsName)
-addMsgAndPrint(' ')
-addMsgAndPrint('Writing to '+outGdb+'. Note that nodes within '+str(zeroValue)+' map units of each other are considered identical.')
-addMsgAndPrint(' ')
-
-outHtml = open(os.path.join(outWksp,outFdsName+'.html'),'w')
-hKeyDict, sortedUnits = buildHKeyDict(DMU)
-
-### copy inputs to new gdb/feature dataset
-if not arcpy.Exists(outWksp):
-    os.mkdir(outWksp)
-if not arcpy.Exists(outGdb):
-    arcpy.CreateFileGDB_management(outWksp,outGdbName)
-if not arcpy.Exists(outFds):
-    arcpy.CreateFeatureDataset_management(outGdb,outFdsName,inFds)
-
-arcpy.env.workspace = outFds
-topologies = arcpy.ListDatasets('','Topology')
-for t in topologies:
-    testAndDelete(t)
-               
-for infc in (inCaf,inMup):
-    outfc = os.path.join(outFds,os.path.basename(infc))
-    testAndDelete(outfc)
-    arcpy.Copy_management(infc,outfc)
-    if infc == inCaf:
-        caf = outfc
+    outWksp = inGdb[:-4]+'_Topology'
+    if not os.path.exists(outWksp):
+        addMsgAndPrint('Making directory '+outWksp)
+        os.mkdir(outWksp)
     else:
-        mup = outfc
+        if not os.path.isdir(outWksp):
+            addMsgAndPrint('Oops, '+md+' exists but is a file')
+            forceExit()
 
-### TOPOLOGY (no mup gaps or overlaps;
-#    no line overlaps, self-overlaps, or self-intersections; mup boundaries covered by CAF lines
-topoStuff = esriTopology(outFds,caf,mup)
+    inCaf = getCaf(inFds)
+    fdsToken = os.path.basename(inCaf).replace('ContactsAndFaults','')
+    inMup = inCaf.replace('ContactsAndFaults','MapUnitPolys')
+    zeroValue = 2 * arcpy.Describe(inCaf).spatialReference.XYTolerance
+    hKeyTestValue = '2'
+    DMU = inGdb+'/DescriptionOfMapUnits'
+    outGdbName = os.path.basename(inGdb)[:-4]+'_TopologyCheck.gdb'
+    outGdb = os.path.join(outWksp,outGdbName)
+    outFdsName = os.path.basename(inFds)
+    outFds = os.path.join(outGdb,outFdsName)
+    addMsgAndPrint(' ')
+    addMsgAndPrint('Writing to '+outGdb+'. Note that nodes within '+str(zeroValue)+' map units of each other are considered identical.')
+    addMsgAndPrint(' ')
 
-### NODES
-planarizedCAF, arcEndPoints = planarizeAndGetArcEndPoints(outFds,caf,mup,fdsToken)
+    outHtml = open(os.path.join(outWksp,outFdsName+'.html'),'w')
+    hKeyDict, sortedUnits = buildHKeyDict(DMU)
 
-# sort arcEndPoints into list of nodes
-nodeList = getNodes(arcEndPoints)
-# assign nodes to various groups
-badNodes,faultFlipNodes,missingConcealedArcNodes,connectFIDs = processNodes(nodeList,hKeyDict)
-addMsgAndPrint('Bad nodes: '+str(len(badNodes)))
-addMsgAndPrint('Fault-flip nodes: '+str(len(faultFlipNodes)))
-addMsgAndPrint('Missing concealed-arc nodes: '+str(len(missingConcealedArcNodes)))
-addMsgAndPrint('ConnectFIDs: '+str(len(connectFIDs)))
-testAndDelete(arcEndPoints)
+    ### copy inputs to new gdb/feature dataset
+    if not arcpy.Exists(outWksp):
+        os.mkdir(outWksp)
+    if not arcpy.Exists(outGdb):
+        arcpy.CreateFileGDB_management(outWksp,outGdbName)
+    if not arcpy.Exists(outFds):
+        arcpy.CreateFeatureDataset_management(outGdb,outFdsName,inFds)
 
-### MAKE OUTPUT FEATURE CLASSES
-badNodesFC = makeNodeFC(outFds,'errors_'+fdsToken+'_BadNodes')
-insertNodes(badNodesFC,badNodes)
+    arcpy.env.workspace = outFds
+    topologies = arcpy.ListDatasets('','Topology')
+    for t in topologies:
+        testAndDelete(t)
+                   
+    for infc in (inCaf,inMup):
+        outfc = os.path.join(outFds,os.path.basename(infc))
+        testAndDelete(outfc)
+        arcpy.Copy_management(infc,outfc)
+        if infc == inCaf:
+            caf = outfc
+        else:
+            mup = outfc
 
-missingConcealedFC = makeNodeFCXY(outFds,fdsToken+'MissingConcealedCAF_nodes')
-insertNodesXY(missingConcealedFC,missingConcealedArcNodes)
-faultFlipFC = makeNodeFCXY(outFds,'errors_'+fdsToken+'_FaultFlipNodes') 
-insertNodesXY(faultFlipFC,faultFlipNodes)
+    ### TOPOLOGY (no mup gaps or overlaps;
+    #    no line overlaps, self-overlaps, or self-intersections; mup boundaries covered by CAF lines
+    topoStuff = esriTopology(outFds,caf,mup)
 
-### UNPLANARIZE
-unplanarizedCAF = unplanarize(planarizedCAF,inCaf,connectFIDs)
+    ### NODES
+    planarizedCAF, arcEndPoints = planarizeAndGetArcEndPoints(outFds,caf,mup,fdsToken)
 
-### ARC ADJACENCY
-badConcealed,internalContacts,concealedLinesDict,contactLinesDict,faultLinesDict = adjacencyTables(planarizedCAF,sortedUnits,outHtml)
+    # sort arcEndPoints into list of nodes
+    nodeList = getNodes(arcEndPoints)
+    # assign nodes to various groups
+    badNodes,faultFlipNodes,missingConcealedArcNodes,connectFIDs = processNodes(nodeList,hKeyDict)
+    addMsgAndPrint('Bad nodes: '+str(len(badNodes)))
+    addMsgAndPrint('Fault-flip nodes: '+str(len(faultFlipNodes)))
+    addMsgAndPrint('Missing concealed-arc nodes: '+str(len(missingConcealedArcNodes)))
+    addMsgAndPrint('ConnectFIDs: '+str(len(connectFIDs)))
+    testAndDelete(arcEndPoints)
 
-### DUPLICATE POINTS
-dupPoints = findDupPts(inFds,outFds)
+    ### MAKE OUTPUT FEATURE CLASSES
+    badNodesFC = makeNodeFC(outFds,'errors_'+fdsToken+'_BadNodes')
+    insertNodes(badNodesFC,badNodes)
 
-### WRITE OUTPUT
-addMsgAndPrint('Writing output')
-outHtml.write(htmlStart)
-outHtml.write('<h2>Topology Check</h2>\n')
-outHtml.write('<h2>'+os.path.basename(inGdb)+', <i>feature dataset</i> '+outFdsName+'</h2>\n')
-outHtml.write('File written by '+versionString+ ' at '+str(time.ctime())+ '<br>\n')
-outHtml.write('Input database: <b>'+inGdb+'</b><br>\n')
-outHtml.write('Output database: <b>'+outGdbName+'</b> within folder <b>'+outWksp+'</b>.<br>\n')
-outHtml.write('<blockquote><i>'+ValidateTopologyNote+'</blockquote></i>\n')
+    missingConcealedFC = makeNodeFCXY(outFds,fdsToken+'MissingConcealedCAF_nodes')
+    insertNodesXY(missingConcealedFC,missingConcealedArcNodes)
+    faultFlipFC = makeNodeFCXY(outFds,'errors_'+fdsToken+'_FaultFlipNodes') 
+    insertNodesXY(faultFlipFC,faultFlipNodes)
 
-outHtml.write('<h3>ESRI Line-Polygon Topology</h3>\n')
-for a in topoStuff:
-    outHtml.write(a+'<br>\n')
+    ### UNPLANARIZE
+    unplanarizedCAF = unplanarize(planarizedCAF,inCaf,connectFIDs)
 
-outHtml.write('<h3>Node Topology</h3>\n')
-outHtml.write(str(len(badNodes))+' nodes that may have bad geometry<br>\n')
-outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(badNodesFC))+'</b><br>\n')
-outHtml.write(str(len(faultFlipNodes))+' nodes where fault direction changes. These are likely to be errors<br>\n')
-outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(faultFlipFC))+'</b><br>\n')
-outHtml.write(str(len(missingConcealedArcNodes))+' nodes where a concealed contact or fault continuation could be added<br>\n')
-outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(missingConcealedFC))+'</b><br>\n')
+    ### ARC ADJACENCY
+    badConcealed,internalContacts,concealedLinesDict,contactLinesDict,faultLinesDict = adjacencyTables(planarizedCAF,sortedUnits,outHtml)
 
-outHtml.write('<h3>MapUnits Adjacent to CAF Lines</h3>\n')
-outHtml.write('See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b> for ContactsAndFaults arcs attributed with adjacent polygon information.<br>\n')
-outHtml.write('<i>In tables below, upper cell value is number of arcs. Lower cell value is cumulative arc length in map units.</i><br><br>\n')
-writeLineAdjacencyTable('Concealed contacts and faults',outHtml,concealedLinesDict,sortedUnits,'badConcealed')
-outHtml.write('<br>\n')
-writeLineAdjacencyTable('Contacts (not concealed)',outHtml,contactLinesDict,sortedUnits,'internalContacts')
-outHtml.write('<br>\n')
-writeLineAdjacencyTable('Faults (not concealed)',outHtml,faultLinesDict,sortedUnits,'')
-outHtml.write('<br><b>Bad concealed contacts and faults</b><br>\n')
-if len(badConcealed) > 0:
-    outHtml.write(space4+'See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b><br>\n')
-    contactListWrite(badConcealed,outHtml,'badConcealed')
-else:
-    outHtml.write(space4+'No bad concealed contacts or faults')
-outHtml.write('<br><b>Internal Contacts</b><br>\n')
-if len(internalContacts) > 0:
-    outHtml.write(space4+'See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b><br>\n')
-    contactListWrite(internalContacts,outHtml,'internalContacts')
-else:
-    outHtml.write(space4+'No internal contacts')
+    ### DUPLICATE POINTS
+    dupPoints = findDupPts(inFds,outFds)
 
-outHtml.write('<h3>Duplicate Points</h3>\n')
-if len(dupPoints) == 0:
-    outHtml.write('No duplicate points found<br>\n')
-else:
-    for a in dupPoints:
+    ### WRITE OUTPUT
+    addMsgAndPrint('Writing output')
+    outHtml.write(htmlStart)
+    outHtml.write('<h2>Topology Check</h2>\n')
+    outHtml.write('<h2>'+os.path.basename(inGdb)+', <i>feature dataset</i> '+outFdsName+'</h2>\n')
+    outHtml.write('File written by '+versionString+ ' at '+str(time.ctime())+ '<br>\n')
+    outHtml.write('Input database: <b>'+inGdb+'</b><br>\n')
+    outHtml.write('Output database: <b>'+outGdbName+'</b> within folder <b>'+outWksp+'</b>.<br>\n')
+    outHtml.write('<blockquote><i>'+ValidateTopologyNote+'</blockquote></i>\n')
+
+    outHtml.write('<h3>ESRI Line-Polygon Topology</h3>\n')
+    for a in topoStuff:
         outHtml.write(a+'<br>\n')
 
-outHtml.write(htmlEnd)
-outHtml.close() 
-addMsgAndPrint('DONE!')
+    outHtml.write('<h3>Node Topology</h3>\n')
+    outHtml.write(str(len(badNodes))+' nodes that may have bad geometry<br>\n')
+    outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(badNodesFC))+'</b><br>\n')
+    outHtml.write(str(len(faultFlipNodes))+' nodes where fault direction changes. These are likely to be errors<br>\n')
+    outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(faultFlipFC))+'</b><br>\n')
+    outHtml.write(str(len(missingConcealedArcNodes))+' nodes where a concealed contact or fault continuation could be added<br>\n')
+    outHtml.write(space4+' See <b>'+os.path.join(outFdsName,os.path.basename(missingConcealedFC))+'</b><br>\n')
 
+    outHtml.write('<h3>MapUnits Adjacent to CAF Lines</h3>\n')
+    outHtml.write('See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b> for ContactsAndFaults arcs attributed with adjacent polygon information.<br>\n')
+    outHtml.write('<i>In tables below, upper cell value is number of arcs. Lower cell value is cumulative arc length in map units.</i><br><br>\n')
+    writeLineAdjacencyTable('Concealed contacts and faults',outHtml,concealedLinesDict,sortedUnits,'badConcealed')
+    outHtml.write('<br>\n')
+    writeLineAdjacencyTable('Contacts (not concealed)',outHtml,contactLinesDict,sortedUnits,'internalContacts')
+    outHtml.write('<br>\n')
+    writeLineAdjacencyTable('Faults (not concealed)',outHtml,faultLinesDict,sortedUnits,'')
+    outHtml.write('<br><b>Bad concealed contacts and faults</b><br>\n')
+    if len(badConcealed) > 0:
+        outHtml.write(space4+'See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b><br>\n')
+        contactListWrite(badConcealed,outHtml,'badConcealed')
+    else:
+        outHtml.write(space4+'No bad concealed contacts or faults')
+    outHtml.write('<br><b>Internal Contacts</b><br>\n')
+    if len(internalContacts) > 0:
+        outHtml.write(space4+'See feature class <b>'+os.path.join(outFdsName,os.path.basename(planarizedCAF))+'</b><br>\n')
+        contactListWrite(internalContacts,outHtml,'internalContacts')
+    else:
+        outHtml.write(space4+'No internal contacts')
+
+    outHtml.write('<h3>Duplicate Points</h3>\n')
+    if len(dupPoints) == 0:
+        outHtml.write('No duplicate points found<br>\n')
+    else:
+        for a in dupPoints:
+            outHtml.write(a+'<br>\n')
+
+    outHtml.write(htmlEnd)
+    outHtml.close() 
+    addMsgAndPrint('DONE!')
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

@@ -10,12 +10,6 @@ debug = False
 
 versionString = 'GeMS_FGDC2_Arc10.py, version of 15 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
-
-addMsgAndPrint('  '+ versionString)
-if debug:
-    addMsgAndPrint(os.sys.path)
-    addMsgAndPrint('Python version = '+str(sys.version))
 
 gems = 'GeMS'
 gemsFullRef = '"GeMS (Geologic Map Schema)--a standard format for the digital publication of geologic maps", available at http://ngmdb.usgs.gov/Info/standards/GeMS/'
@@ -458,71 +452,81 @@ def writeDomToFile(workDir,dom,fileName):
     outf.close()
 
 #####################################
+def main(parameters):
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
-inGdb = sys.argv[1]
-## mrXML is XML metadata record for inGdb as a whole, complete and passes mp
-mrXML = sys.argv[2]
-## Supplemental entity and field dictionaries beyond those in GeMS_Definition
-if sys.argv[3] <> '#':
-    if os.path.exists(sys.argv[2]):
-        myDefs = imp.load_source('module1',sys.argv[3])
-        myDefs.addDefs()
+    addMsgAndPrint('  '+ versionString)
+    if debug:
+        addMsgAndPrint(os.sys.path)
+        addMsgAndPrint('Python version = '+str(sys.version))
 
-inGdb = os.path.abspath(inGdb)
-wksp = os.path.dirname(inGdb)
-gdb = os.path.basename(inGdb)
+    inGdb = parameters[0]
+    ## mrXML is XML metadata record for inGdb as a whole, complete and passes mp
+    mrXML = parameters[1]
+    ## Supplemental entity and field dictionaries beyond those in GeMS_Definition
+    if parameters[2] <> '#':
+        if os.path.exists(parameters[1]):
+            myDefs = imp.load_source('module1',parameters[2])
+            myDefs.addDefs()
 
-gloss = os.path.join(inGdb, 'Glossary')
-dataSources = os.path.join(inGdb, 'DataSources')
-DMU = os.path.join(inGdb, 'DescriptionOfMapUnits')
-gmDict = os.path.join(inGdb, 'GeoMaterialDict')
-logFileName = inGdb+'-metadataLog.txt'
+    inGdb = os.path.abspath(inGdb)
+    wksp = os.path.dirname(inGdb)
+    gdb = os.path.basename(inGdb)
 
-# read mrXML into domMR
-addMsgAndPrint('  Parsing '+mrXML)
-try:
-    domMR = xml.dom.minidom.parse(mrXML)
-    addMsgAndPrint('  Master record parsed successfully')
-except:
-    addMsgAndPrint(arcpy.GetMessages())
-    addMsgAndPrint('Failed to parse '+mrXML)
-    raise arcpy.ExecuteError
-    sys.exit()
+    gloss = os.path.join(inGdb, 'Glossary')
+    dataSources = os.path.join(inGdb, 'DataSources')
+    DMU = os.path.join(inGdb, 'DescriptionOfMapUnits')
+    gmDict = os.path.join(inGdb, 'GeoMaterialDict')
+    logFileName = inGdb+'-metadataLog.txt'
 
-# inventory inGdb: tables, rasters, featureDatasets, featureClasses
-logFile = open(logFileName,'w')
-arcpy.env.workspace = inGdb
+    # read mrXML into domMR
+    addMsgAndPrint('  Parsing '+mrXML)
+    try:
+        domMR = xml.dom.minidom.parse(mrXML)
+        addMsgAndPrint('  Master record parsed successfully')
+    except:
+        addMsgAndPrint(arcpy.GetMessages())
+        addMsgAndPrint('Failed to parse '+mrXML)
+        raise arcpy.ExecuteError
+        sys.exit()
 
-tables = arcpy.ListTables()
-for aTable in tables:
-    objName = aTable
-    objType = 'Non-spatial table'
-    objLoc = inGdb+'/'+aTable
-    fixObjXML(objName,objType,objLoc,domMR)
-
-fcs = arcpy.ListFeatureClasses()
-for fc in fcs:
-    objName = fc
-    objType = 'Feature class'
-    objLoc = inGdb+'/'+fc
-    fixObjXML(objName,objType,objLoc,domMR)
-
-fds = arcpy.ListDatasets('','Feature')
-for fd in fds:
-    arcpy.env.workspace = inGdb+'/'+fd
-    fcs = arcpy.ListFeatureClasses()
+    # inventory inGdb: tables, rasters, featureDatasets, featureClasses
+    logFile = open(logFileName,'w')
     arcpy.env.workspace = inGdb
-    fdDS = []  # inventory of all DataSource_IDs used in feature dataset
+
+    tables = arcpy.ListTables()
+    for aTable in tables:
+        objName = aTable
+        objType = 'Non-spatial table'
+        objLoc = inGdb+'/'+aTable
+        fixObjXML(objName,objType,objLoc,domMR)
+
+    fcs = arcpy.ListFeatureClasses()
     for fc in fcs:
         objName = fc
         objType = 'Feature class'
-        objLoc = inGdb+'/'+fd+'/'+fc
-        localDS = fixObjXML(objName,objType,objLoc,domMR)
-        for ds in localDS:
-            fdDS.append(ds)
-    objName = fd
-    objType = 'Feature dataset'
-    objLoc = inGdb+'/'+fd
-    fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
+        objLoc = inGdb+'/'+fc
+        fixObjXML(objName,objType,objLoc,domMR)
 
-logFile.close()
+    fds = arcpy.ListDatasets('','Feature')
+    for fd in fds:
+        arcpy.env.workspace = inGdb+'/'+fd
+        fcs = arcpy.ListFeatureClasses()
+        arcpy.env.workspace = inGdb
+        fdDS = []  # inventory of all DataSource_IDs used in feature dataset
+        for fc in fcs:
+            objName = fc
+            objType = 'Feature class'
+            objLoc = inGdb+'/'+fd+'/'+fc
+            localDS = fixObjXML(objName,objType,objLoc,domMR)
+            for ds in localDS:
+                fdDS.append(ds)
+        objName = fd
+        objType = 'Feature dataset'
+        objLoc = inGdb+'/'+fd
+        fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
+
+    logFile.close()
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

@@ -8,7 +8,6 @@ from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_FixStrings_Arc10.py, version of 30 July 2020'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FixStrings_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 def fixTableStrings(fc):
     fields1 = arcpy.ListFields(fc,'','String')
@@ -42,28 +41,33 @@ def fixTableStrings(fc):
     del cursor, row
     
 #########################
+def main(parameters):
+    addMsgAndPrint(versionString)
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+    
+    db = parameters[1]
 
-db = sys.argv[1]
+    arcpy.env.workspace = db
 
-addMsgAndPrint(versionString)
-arcpy.env.workspace = db
-
-tables = arcpy.ListTables()
-for tb in tables:
-    addMsgAndPrint(' ')
-    addMsgAndPrint(os.path.basename(tb))
-    fixTableStrings(tb)
-
-datasets = arcpy.ListDatasets(feature_type='feature')
-datasets = [''] + datasets if datasets is not None else []
-for ds in datasets:
-    for fc in arcpy.ListFeatureClasses(feature_dataset=ds):
-        path = os.path.join(arcpy.env.workspace, ds, fc)
+    tables = arcpy.ListTables()
+    for tb in tables:
         addMsgAndPrint(' ')
-        addMsgAndPrint(os.path.basename(fc))
-        try:
-            fixTableStrings(path)
-        except:
-            addMsgAndPrint('  failed to fix strings')
+        addMsgAndPrint(os.path.basename(tb))
+        fixTableStrings(tb)
 
-addMsgAndPrint('DONE')
+    datasets = arcpy.ListDatasets(feature_type='feature')
+    datasets = [''] + datasets if datasets is not None else []
+    for ds in datasets:
+        for fc in arcpy.ListFeatureClasses(feature_dataset=ds):
+            path = os.path.join(arcpy.env.workspace, ds, fc)
+            addMsgAndPrint(' ')
+            addMsgAndPrint(os.path.basename(fc))
+            try:
+                fixTableStrings(path)
+            except:
+                addMsgAndPrint('  failed to fix strings')
+
+    addMsgAndPrint('DONE')
+    
+if __name__ == '__main__':
+    main(sys.argv[1:])

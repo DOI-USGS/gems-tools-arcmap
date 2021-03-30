@@ -30,8 +30,7 @@ from numbers import Number
 import io
 
 versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.5.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.py'
 
 debug = False
 
@@ -362,7 +361,7 @@ def linesAndPoints(fc, outputDir, logfile):
     arcpy.Delete_management(LIN)
     arcpy.Delete_management(LIN2)
     
-def main(gdbCopy, outWS, oldgdb):
+def continue_process(gdbCopy, outWS, oldgdb):
     #
     # Simple version
     #
@@ -441,29 +440,36 @@ def main(gdbCopy, outWS, oldgdb):
 
 
 ### START HERE ###
-if len(sys.argv) <> 3 or not os.path.exists(sys.argv[1]) or not os.path.exists(sys.argv[2]):
-    usage()
-else:
-    addMsgAndPrint('  '+versionString)
-    gdb = os.path.abspath(sys.argv[1])
-    gdb_name = os.path.basename(gdb)
-    ows = os.path.abspath(sys.argv[2])
+def main(parameters):
+    addMsgAndPrint(versionString)
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
-    arcpy.env.QualifiedFieldNames = False
-    arcpy.env.overwriteoutput = True
+    if len(parameters) <> 2 or not os.path.exists(parameters[0]) or not os.path.exists(parameters[1]):
+        usage()
+    else:
+        addMsgAndPrint('  '+versionString)
+        gdb = os.path.abspath(parameters[0])
+        gdb_name = os.path.basename(gdb)
+        ows = os.path.abspath(parameters[1])
+        
+        arcpy.env.QualifiedFieldNames = False
+        arcpy.env.overwriteoutput = True
 
-    # fix the new workspace name so it is guaranteed to be novel, no overwrite
-    newgdb = os.path.join(ows, 'xx{}'.format(gdb_name))
-    if arcpy.Exists(newgdb):
-        arcpy.Delete_management(newgdb)
-    addMsgAndPrint('  Copying {} to temporary geodatabase'.format(os.path.basename(gdb)))
-    arcpy.Copy_management(gdb, newgdb)
-    main(newgdb, ows, gdb)
-    
-    # cleanup
-    addMsgAndPrint('\n  Deleting temporary geodatabase')
-    try:
-        arcpy.Delete_management(newgdb)
-    except:
-        addMsgAndPrint('    As usual, failed to delete temporary geodatabase')
-        addMsgAndPrint('    Please delete '+newgdb+'\n')
+        # fix the new workspace name so it is guaranteed to be novel, no overwrite
+        newgdb = os.path.join(ows, 'xx{}'.format(gdb_name))
+        if arcpy.Exists(newgdb):
+            arcpy.Delete_management(newgdb)
+        addMsgAndPrint('  Copying {} to temporary geodatabase'.format(os.path.basename(gdb)))
+        arcpy.Copy_management(gdb, newgdb)
+        continue_process(newgdb, ows, gdb)
+        
+        # cleanup
+        addMsgAndPrint('\n  Deleting temporary geodatabase')
+        try:
+            arcpy.Delete_management(newgdb)
+        except:
+            addMsgAndPrint('    As usual, failed to delete temporary geodatabase')
+            addMsgAndPrint('    Please delete '+newgdb+'\n')
+        
+if __name__ == '__main__':
+    main(sys.argv[1:])

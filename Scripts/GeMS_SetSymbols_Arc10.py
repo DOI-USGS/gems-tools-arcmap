@@ -6,16 +6,15 @@ from GeMS_utilityFunctions import *
 # 5 October 2017: fixed crash when symbolizing CMU feature dataset
 
 versionString = 'GeMS_SetSymbols_Arc10.py, version of 5 October 2017'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetSymbols_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 EightfoldLineDict = {}
 TwofoldOrientPointDict = {}
 MySymbolDict = {}
 
 unrecognizedTypes = []
-
-dictionaryFile = os.path.dirname(sys.argv[0])+'/../Resources/Type-FgdcSymbol.txt'
+thisFolder = os.path.dirname(__file__)
+toolboxFolder = os.path.dirname(thisFolder)
+dictionaryFile = os.path.join(toolboxFolder, 'Resources', 'Type-FgdcSymbol.txt'
 
 debug1 = False
 
@@ -85,183 +84,194 @@ def buildRepRuleDict(repDomain):
         newDict[repDomain.codedValues[i]] = i
     return newDict
 
-#####################################################
-addMsgAndPrint('  '+versionString)
-addMsgAndPrint('  dictionary file: '+dictionaryFile)
 
-# get inputs
-inFds = sys.argv[1]
-mapScale = float(sys.argv[2])
-certain_Approxmm = float(sys.argv[3])
-if sys.argv[4] == 'true':
-    useInferred = True
-else:
-    useInferred = False
-if useInferred:
-    approx_Inferredmm = float(sys.argv[5])
-else:
-    approx_Inferredmm = 100
-if sys.argv[6] == 'true':
-    useApproxOrient = True
-else:
-    useApproxOrient = False
-orientThresholdDegrees = float(sys.argv[7])
-if sys.argv[8] == 'true':
-    setPolys = True
-else:
-    setPolys = False
+def main(parameters):
+    addMsgAndPrint('  '+versionString)
+    addMsgAndPrint('  dictionary file: '+dictionaryFile)
     
-# set thresholds
-approxThreshold = mapScale * certain_Approxmm / 1000.0
-inferredThreshold = mapScale * approx_Inferredmm / 1000.0
-#read dictionaryFile to build symbolDicts
-buildSymbolDicts(dictionaryFile)
-#set featureClasses  (ContactsAndFaults, OrientationPoints, GeologicLines)
-caf = getCaf(inFds)
-if inFds.find('CorrelationOfMapUnits') == -1:
-    gel = caf.replace('ContactsAndFaults','GeologicLines')
-    orp = caf.replace('ContactsAndFaults','OrientationPoints')
-    mup = caf.replace('ContactsAndFaults','MapUnitPolys')
-    fields = ['Type','IsConcealed','LocationConfidenceMeters','ExistenceConfidence','IdentityConfidence','Symbol']
-else:  # is CMU
-    caf = ''
-    mup = inFds+'/CMUMapUnitPolys'
-    gel = ''
-    orp = ''
-    fields = ['Type']
-dmu = os.path.dirname(inFds)+'/DescriptionOfMapUnits'
-    
-addMsgAndPrint('  Feature dataset '+inFds+', isLocked = '+str(arcpy.TestSchemaLock(inFds)))
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetSymbols_Arc10.py'
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
-for fc in caf,gel:
+    # get inputs
+    inFds = parameters[0]
+    mapScale = float(parameters[1])
+    certain_Approxmm = float(parameters[2])
+    if parameters[3] == 'true':
+        useInferred = True
+    else:
+        useInferred = False
+    if useInferred:
+        approx_Inferredmm = float(parameters[4])
+    else:
+        approx_Inferredmm = 100
+    if parameters[5] == 'true':
+        useApproxOrient = True
+    else:
+        useApproxOrient = False
+    orientThresholdDegrees = float(parameters[6])
+    if parameters[7] == 'true':
+        setPolys = True
+    else:
+        setPolys = False
+        
+    # set thresholds
+    approxThreshold = mapScale * certain_Approxmm / 1000.0
+    inferredThreshold = mapScale * approx_Inferredmm / 1000.0
+    
+    #read dictionaryFile to build symbolDicts
+    buildSymbolDicts(dictionaryFile)
+    
+    #set featureClasses  (ContactsAndFaults, OrientationPoints, GeologicLines)
+    caf = getCaf(inFds)
+    if inFds.find('CorrelationOfMapUnits') == -1:
+        gel = caf.replace('ContactsAndFaults','GeologicLines')
+        orp = caf.replace('ContactsAndFaults','OrientationPoints')
+        mup = caf.replace('ContactsAndFaults','MapUnitPolys')
+        fields = ['Type','IsConcealed','LocationConfidenceMeters','ExistenceConfidence','IdentityConfidence','Symbol']
+    else:  # is CMU
+        caf = ''
+        mup = inFds+'/CMUMapUnitPolys'
+        gel = ''
+        orp = ''
+        fields = ['Type']
+    
+    gdb = os.path.dirname(inFds)
+    dmu = os.path.join(gdb, 'DescriptionOfMapUnits')
+        
+    addMsgAndPrint('  Feature dataset '+inFds+', isLocked = '+str(arcpy.TestSchemaLock(inFds)))
+
+    for fc in caf,gel:
+        if arcpy.Exists(fc):
+          if numberOfRows(fc) > 0:
+            addMsgAndPrint('  processing '+os.path.basename(fc))
+            hasRep, repDomain = hasCartoRep(inFds,fc)
+            if hasRep:
+                fields.append('RuleID1')
+                repRuleDict = buildRepRuleDict(repDomain)
+            addMsgAndPrint('fields = '+str(fields))
+            with arcpy.da.UpdateCursor(fc, fields) as cursor:
+                for row in cursor:
+                    rowChanged = False
+                    typ = row[0]
+                    isCon = row[1]
+                    locConfM = row[2]
+                    exConf = row[3]
+                    idConf = row[4]
+                    if debug1:  addMsgAndPrint(typ)
+                    if typ in EightfoldLineDict.keys():
+                        if debug1: addMsgAndPrint(typ+' is in EightfoldLineDict')
+                        inc = 0                     
+                        if isQuestionable(exConf) or isQuestionable(idConf):
+                            inc = inc+1
+                        if isCon == 'N':
+                            if useInferred and locConfM > inferredThreshold:
+                                inc = inc+4
+                            elif locConfM > approxThreshold:
+                                inc = inc+2
+                        else: # isCon == 'Y'
+                            inc = inc+6
+                        row[5] = incrementSymbol(EightfoldLineDict[typ],inc)
+                        rowChanged = True
+                    elif typ in MySymbolDict.keys():
+                        row[5] = MySymbolDict[typ]
+                        rowChanged = True
+                    else:
+                        unrecognizedType(typ)
+                    if rowChanged:
+                        if hasRep:
+                            # turn GSC label into original FGDC labe: 06.03 to 6.3
+                            noZeros = trimLeftZeros(row[5])
+                            if repRuleDict.has_key(noZeros):
+                                row[6] = repRuleDict[noZeros]
+                        cursor.updateRow(row)     
+                        
+    fields = ['Type','OrientationConfidenceDegrees','Symbol']
+    fc = orp
     if arcpy.Exists(fc):
-      if numberOfRows(fc) > 0:
         addMsgAndPrint('  processing '+os.path.basename(fc))
-        hasRep, repDomain = hasCartoRep(inFds,fc)
+        hasRep, repDomain = hasCartoRep(inFds, fc)
         if hasRep:
             fields.append('RuleID1')
             repRuleDict = buildRepRuleDict(repDomain)
-        addMsgAndPrint('fields = '+str(fields))
-        with arcpy.da.UpdateCursor(fc, fields) as cursor:
-            for row in cursor:
-                rowChanged = False
-                typ = row[0]
-                isCon = row[1]
-                locConfM = row[2]
-                exConf = row[3]
-                idConf = row[4]
-                if debug1:  addMsgAndPrint(typ)
-                if typ in EightfoldLineDict.keys():
-                    if debug1: addMsgAndPrint(typ+' is in EightfoldLineDict')
-                    inc = 0                     
-                    if isQuestionable(exConf) or isQuestionable(idConf):
-                        inc = inc+1
-                    if isCon == 'N':
-                        if useInferred and locConfM > inferredThreshold:
-                            inc = inc+4
-                        elif locConfM > approxThreshold:
-                            inc = inc+2
-                    else: # isCon == 'Y'
-                        inc = inc+6
-                    row[5] = incrementSymbol(EightfoldLineDict[typ],inc)
-                    rowChanged = True
-                elif typ in MySymbolDict.keys():
-                    row[5] = MySymbolDict[typ]
-                    rowChanged = True
-                else:
-                    unrecognizedType(typ)
-                if rowChanged:
-                    if hasRep:
-                        # turn GSC label into original FGDC labe: 06.03 to 6.3
-                        noZeros = trimLeftZeros(row[5])
-                        if repRuleDict.has_key(noZeros):
-                            row[6] = repRuleDict[noZeros]
-                    cursor.updateRow(row)     
-                    
-fields = ['Type','OrientationConfidenceDegrees','Symbol']
-fc = orp
-if arcpy.Exists(fc):
-    addMsgAndPrint('  processing '+os.path.basename(fc))
-    hasRep, repDomain = hasCartoRep(inFds,fc)
-    if hasRep:
-        fields.append('RuleID1')
-        repRuleDict = buildRepRuleDict(repDomain)
 
-    with arcpy.da.Editor(os.path.dirname(inFds)) as edit:
-        if debug:
-            addMsgAndPrint('beginning edit session')
-            addMsgAndPrint('fields = '+str(fields)+',  fc = '+fc)
-        with arcpy.da.UpdateCursor(fc, fields) as cursor:
-            for row in cursor:
-                typ = row[0]
-                orConf = row[1]
-                rowChanged = False
-                if typ in TwofoldOrientPointDict.keys():
-                    rowChanged = True
-                    if orConf > orientThresholdDegrees and useApproxOrient:
-                        row[2] = TwofoldOrientPointDict[typ][1]
+        with arcpy.da.Editor(os.path.dirname(inFds)) as edit:
+            if debug:
+                addMsgAndPrint('beginning edit session')
+                addMsgAndPrint('fields = '+str(fields)+',  fc = '+fc)
+            with arcpy.da.UpdateCursor(fc, fields) as cursor:
+                for row in cursor:
+                    typ = row[0]
+                    orConf = row[1]
+                    rowChanged = False
+                    if typ in TwofoldOrientPointDict.keys():
+                        rowChanged = True
+                        if orConf > orientThresholdDegrees and useApproxOrient:
+                            row[2] = TwofoldOrientPointDict[typ][1]
+                        else:
+                            row[2] = TwofoldOrientPointDict[typ][0]
+                    elif typ in MySymbolDict.keys():
+                        #addMsgAndPrint('**'+typ+'**')
+                        rowChanged = True
+                        row[2] = MySymbolDict[typ]
                     else:
-                        row[2] = TwofoldOrientPointDict[typ][0]
-                elif typ in MySymbolDict.keys():
-                    #addMsgAndPrint('**'+typ+'**')
-                    rowChanged = True
-                    row[2] = MySymbolDict[typ]
-                else:
-                    #addMsgAndPrint('++'+typ+'++')
-                    unrecognizedType(typ)
-                if rowChanged:
-                    if hasRep:
-                        # turn GSC label into original FGDC label: 06.03 to 6.3
-                        noZeros = trimLeftZeros(row[2])
-                        if repRuleDict.has_key(noZeros):
-                            row[3] = repRuleDict[noZeros]
-                    cursor.updateRow(row)
+                        #addMsgAndPrint('++'+typ+'++')
+                        unrecognizedType(typ)
+                    if rowChanged:
+                        if hasRep:
+                            # turn GSC label into original FGDC label: 06.03 to 6.3
+                            noZeros = trimLeftZeros(row[2])
+                            if repRuleDict.has_key(noZeros):
+                                row[3] = repRuleDict[noZeros]
+                        cursor.updateRow(row)
 
-addMsgAndPrint('  \n  Unrecognized Type values: ')
-if len(unrecognizedTypes) == 0:
-    addMsgAndPrint('    none')
-else:
-    for t in unrecognizedTypes:
-        if t <> None:
-            addMsgAndPrint('    '+t)
-        else:
-            addMsgAndPrint('    missing type value')
-addMsgAndPrint('  ')
-
-if setPolys:
-    if arcpy.Exists(dmu) and arcpy.Exists(mup):
-        addMsgAndPrint('  setting Symbol and Label values in MapUnitPolys')
-        mupTable = 'mupTable'
-        testAndDelete(mupTable)
-        arcpy.MakeTableView_management(mup,mupTable)
-        # check to see if join already exists
-        joinAdded = True
-        fields = arcpy.ListFields(mupTable)
-        for f in fields:
-            if f.name.find('DescriptionOfMapUnits.Symbol') > -1:
-                joinAdded = False
-        # else add join
-        if joinAdded:
-            arcpy.AddJoin_management(mupTable,'MapUnit',dmu,'MapUnit')
-
-        # get field names for Symbol, Label
-        mupSymbol = os.path.basename(mup)+'.Symbol'
-        mupLabel = os.path.basename(mup)+'.Label'
-        # calculate Symbol
-        arcpy.CalculateField_management(mupTable,mupSymbol,'!DescriptionOfMapUnits.Symbol!','PYTHON')
-        # calculate Label
-        arcpy.CalculateField_management(mupTable,mupLabel,'!DescriptionOfMapUnits.Label!','PYTHON')
-        # calculate Label for IdentityConfidence <> 'certain'
-        if inFds.find('CorrelationOfMapUnits') == -1:
-            selectField = arcpy.AddFieldDelimiters(os.path.dirname(inFds),'IdentityConfidence')
-            arcpy.SelectLayerByAttribute_management(mupTable,'NEW_SELECTION',selectField+" <> 'certain'")
-            arcpy.CalculateField_management(mupTable,'MapUnitPolys.Label','!DescriptionOfMapUnits.Label! + "?"','PYTHON')
-        
-        # if joinAdded, remove join
-        if joinAdded:
-            arcpy.RemoveJoin_management(mupTable)
+    addMsgAndPrint('  \n  Unrecognized Type values: ')
+    if len(unrecognizedTypes) == 0:
+        addMsgAndPrint('    none')
     else:
-        addMsgAndPrint('Table '+dmu+' does not exist.')                           
-   
+        for t in unrecognizedTypes:
+            if t <> None:
+                addMsgAndPrint('    '+t)
+            else:
+                addMsgAndPrint('    missing type value')
+    addMsgAndPrint('  ')
+
+    if setPolys:
+        if arcpy.Exists(dmu) and arcpy.Exists(mup):
+            addMsgAndPrint('  setting Symbol and Label values in MapUnitPolys')
+            mupTable = 'mupTable'
+            testAndDelete(mupTable)
+            arcpy.MakeTableView_management(mup, mupTable)
+            # check to see if join already exists
+            joinAdded = True
+            fields = arcpy.ListFields(mupTable)
+            for f in fields:
+                if f.name.find('DescriptionOfMapUnits.Symbol') > -1:
+                    joinAdded = False
+            # else add join
+            if joinAdded:
+                arcpy.AddJoin_management(mupTable, 'MapUnit', dmu, 'MapUnit')
+
+            # get field names for Symbol, Label
+            mupSymbol = os.path.basename(mup)+'.Symbol'
+            mupLabel = os.path.basename(mup)+'.Label'
+            # calculate Symbol
+            arcpy.CalculateField_management(mupTable, mupSymbol,'!DescriptionOfMapUnits.Symbol!', 'PYTHON')
+            # calculate Label
+            arcpy.CalculateField_management(mupTable, mupLabel, '!DescriptionOfMapUnits.Label!', 'PYTHON')
+            # calculate Label for IdentityConfidence <> 'certain'
+            if inFds.find('CorrelationOfMapUnits') == -1:
+                selectField = arcpy.AddFieldDelimiters(os.path.dirname(inFds),'IdentityConfidence')
+                arcpy.SelectLayerByAttribute_management(mupTable, 'NEW_SELECTION', selectField+" <> 'certain'")
+                arcpy.CalculateField_management(mupTable,'MapUnitPolys.Label','!DescriptionOfMapUnits.Label! + "?"','PYTHON')
+            
+            # if joinAdded, remove join
+            if joinAdded:
+                arcpy.RemoveJoin_management(mupTable)
+        else:
+            addMsgAndPrint('Table '+dmu+' does not exist.')
+            
+if __name__ == '__main__':
+    main(sys.argv[1:])
+    
 #raise arcpy.ExecuteError
 
