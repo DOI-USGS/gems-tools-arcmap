@@ -16,7 +16,7 @@ Usage: GeMS_AttributeByKeyValues.py <geodatabase> <file.txt>
 import arcpy, sys
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 7 March 2021'
+versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 31 March 2021'
 
 separator = '|'
 

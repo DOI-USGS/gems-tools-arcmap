@@ -4,7 +4,7 @@ https://support.esri.com/en/technical-article/000011751
 """
 
 # purges metadata of geoprocessing history
-versionString = 'GeMS_PurgeMetadata.py version of 2 September 2017'
+versionString = 'GeMS_PurgeMetadata_Arc10.py, version of 31 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_PurgeMetadata_Arc10.py'
 
 import arcpy, os.path, sys

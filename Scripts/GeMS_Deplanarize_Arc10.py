@@ -58,7 +58,7 @@ drop field mergeNumber and add any unconserved fields (Notes, Label, Symbol, ...
 import arcpy, os, sys
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_Deplanarize_Arc10.4.py, version of 2 September 2017'
+versionString = 'GeMS_Deplanarize_Arc10.py, version of 31 March 2021'
 
 # globals
 debug1 = False

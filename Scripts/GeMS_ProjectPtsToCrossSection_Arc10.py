@@ -36,7 +36,7 @@ Attributes of output features are
 import arcpy, sys, os, os.path, math
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_ProjectPtsToCrossSection_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_ProjectPtsToCrossSection_Arc10.py, version of 31 March 2021'
 debug = False
 
 def xyTheta(x,y):

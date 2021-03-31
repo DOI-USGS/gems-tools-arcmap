@@ -1,7 +1,7 @@
 import arcpy, os.path, sys, math, shutil
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_InclinationNumbers_Arc10.py, version of 30 October 2017'
+versionString = 'GeMS_InclinationNumbers_Arc10.py, version of 31 March 2021'
 
 debug1 = False
 OPLName = 'OrientationPointLabels'

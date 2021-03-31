@@ -20,7 +20,7 @@ import re
 from distutils.util import strtobool
 from GeMS_utilityFunctions import *
 
-versionString = "GeMS_GeolexCheck_Arc10.py, 1/12/2021"
+versionString = 'GeMS_GeolexCheck_Arc10.py, version of 31 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_GeolexCheck_Arc10.py'
 
 def main(parameters):

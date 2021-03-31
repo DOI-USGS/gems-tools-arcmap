@@ -29,7 +29,7 @@ import arcpy, sys, os.path, math
 from GeMS_Definition import tableDict
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 31 March 2021'
 
 
 ##inputs

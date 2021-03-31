@@ -5,7 +5,7 @@ from GeMS_utilityFunctions import *
 # September 2017: now invokes arcpy.da.Editor in line 183
 # 5 October 2017: fixed crash when symbolizing CMU feature dataset
 
-versionString = 'GeMS_SetSymbols_Arc10.py, version of 5 October 2017'
+versionString = 'GeMS_SetSymbols_Arc10.py, version of 31 March 2021'
 
 EightfoldLineDict = {}
 TwofoldOrientPointDict = {}

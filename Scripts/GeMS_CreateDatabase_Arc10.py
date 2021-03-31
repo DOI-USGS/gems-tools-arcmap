@@ -25,7 +25,7 @@ from GeMS_Definition import tableDict, GeoMaterialConfidenceValues, DefaultExIDC
 from GeMS_utilityFunctions import *
 import copy
 
-versionString = 'GeMS_CreateDatabase_Arc10.py, version of 23 December 2020'
+versionString = 'GeMS_CreateDatabase_Arc10.py, version of 31 March 2021'
 
 debug = True
 

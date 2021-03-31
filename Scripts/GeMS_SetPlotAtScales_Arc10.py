@@ -2,7 +2,7 @@
 
 # September 2017: now invokes edit session before setting values (line 135)
 
-versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 31 March 2021'
 
 import arcpy, os.path, sys
 from GeMS_utilityFunctions import *

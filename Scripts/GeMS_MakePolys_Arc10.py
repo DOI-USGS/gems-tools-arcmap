@@ -8,7 +8,7 @@ import arcpy, sys, os.path, os
 from GeMS_utilityFunctions import *
 from GeMS_Definition import tableDict
 
-versionString = 'GeMS_MakePolys3_Arc10.py, version of 7 March 2021'
+versionString = 'GeMS_MakePolys_Arc10.py, version of 31 March 2021'
 
 debug = False
 

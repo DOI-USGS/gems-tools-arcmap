@@ -11,7 +11,7 @@
 import arcpy, sys, os.path
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_CompactAndBackup_Arc10.py, version of 4 March 2018'
+versionString = 'GeMS_CompactAndBackup_Arc10.py, version of 31 March 2021'
 
 def backupName(inDb):
     # returns name for a backup copy of a geodatabase where

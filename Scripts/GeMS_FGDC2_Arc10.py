@@ -8,7 +8,7 @@ from xml.dom.minidom import *
 
 debug = False
 
-versionString = 'GeMS_FGDC2_Arc10.py, version of 15 March 2021'
+versionString = 'GeMS_FGDC2_Arc10.py, version of 31 March 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
 
 gems = 'GeMS'

@@ -13,7 +13,7 @@
 import arcpy, sys, os, os.path
 from GeMS_utilityFunctions import *
 
-versionString = 'mapOutline_Arc10.py, version of 21 February 2021'
+versionString = 'mapOutline_Arc10.py, version of 31 March 2021'
 
 """
 INPUTS

@@ -47,7 +47,7 @@ Significant assumptions:
 import arcpy, os, sys, math, os.path, operator, time
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_TopologyCheck_Arc10.py, version of 8 March 2021'
+versionString = 'GeMS_TopologyCheck_Arc10.py, version of 31 March 2021'
 # see gems-tools version<=1.3 to get earlier TopologyCheck tool
 
 htmlStart = """<html>\n

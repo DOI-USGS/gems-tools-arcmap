@@ -69,7 +69,7 @@ set_XMLspace function is GPL'ed code from Zuza Software Foundation:
     # along with this program; if not, see <http://www.gnu.org/licenses/>.
 """
 
-versionString = 'docxModified.py, version of 2 September 2017'
+versionString = 'docxModified.py, version of 31 March 2021'
 
 import logging
 from lxml import etree

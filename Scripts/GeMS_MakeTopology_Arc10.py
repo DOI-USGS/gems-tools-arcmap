@@ -3,7 +3,7 @@ import arcpy, sys, os.path
 from GeMS_utilityFunctions import *
 
 # 5 January: added switch to optionally add/subtract polygon-based rules
-versionString = 'GeMS_MakeTopology_Arc10.py, version of 5 January 2018'
+versionString = 'GeMS_MakeTopology_Arc10.py, version of 31 March 2021'
 
 debug = False
 
