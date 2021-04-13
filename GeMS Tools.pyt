@@ -345,14 +345,14 @@ class MakePolys(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_MakePolys3_Arc10
-        reload(Scripts.GeMS_MakePolys3_Arc10)
+        import Scripts.GeMS_MakePolys_Arc10
+        reload(Scripts.GeMS_MakePolys_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_MakePolys3_Arc10.main(parameter_values) 
+        Scripts.GeMS_MakePolys_Arc10.main(parameter_values) 
 
 class MakeTopology(object):
     """\Scripts\GeMS_MakeTopology_Arc10.py"""

@@ -63,24 +63,32 @@ def main(parameters):
     rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_MakePolys3_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
+    # feature dataset
     fds = parameters[0]
+    
+    # save MUP 
     saveMUP = False
     if parameters[1] == 'true':
         saveMUP = True
-    if parameters[2] == '#':
+    
+    # if no layer file directory specified, set it to the parent folder of the gdb
+    if parameters[2] in ['#', None]:
         layerRepository = os.path.dirname(os.path.dirname(fds))
     else:
         layerRepository = parameters[2]
+    
+    # labelpoint feature class
     labelPoints = parameters[3]
 
     # check that labelPoints, if specified, has field MapUnit
-    if arcpy.Exists(labelPoints):
-        lpFields = fieldNameList(labelPoints)
-        if not 'MapUnit' in lpFields:
-            addMsgAndPrint(' ***')
-            addMsgAndPrint('Feature class '+labelPoints+' should have a MapUnit attribute and it does not.')
-            addMsgAndPrint(' ***')
-            forceExit()
+    if not labelPoints is None:
+        if arcpy.Exists(labelPoints):
+            lpFields = fieldNameList(labelPoints)
+            if not 'MapUnit' in lpFields:
+                addMsgAndPrint(' ***')
+                addMsgAndPrint('Feature class '+labelPoints+' should have a MapUnit attribute and it does not.')
+                addMsgAndPrint(' ***')
+                forceExit()
       
     # check for existence of fds
     if not arcpy.Exists(fds):
@@ -88,10 +96,6 @@ def main(parameters):
         addMsgAndPrint('Feature dataset '+fds+ 'does not seem to exist.')
         addMsgAndPrint(' ***')
         forceExit()
-    ## check for schema lock
-    #if not arcpy.TestSchemaLock(fds):
-    #    addMsgAndPrint('Feature dataset '+fds+' is locked!')
-    #    forceExit()
 
     # get caf, mup, nameToken
     caf = getCaf(fds)
@@ -99,7 +103,7 @@ def main(parameters):
     mup = getMup(fds)
     if not arcpy.Exists(mup):
         addMsgAndPrint(' ***')
-        addMsgAndPrint('Feature class '+fds+'/MapUnitPolys does not exist.')
+        addMsgAndPrint('Feature class {} does not exist.'.format(os.path.join(fds, 'MapUnitPolys'))) 
         addMsgAndPrint(' ***')
         forceExit()
     shortMup = os.path.basename(mup)
@@ -115,7 +119,8 @@ def main(parameters):
             addMsgAndPrint('Delete topology (or remove rules that involve '+shortMup+') before running this script.')
             addMsgAndPrint('  ***')
             forceExit()
-
+    
+    # some names
     badLabels = os.path.join(fds, 'errors_'+nameToken+'multilabels')
     badPolys = os.path.join(fds, 'errors_'+nameToken+'multilabelPolys')
     blankPolys = os.path.join(fds, 'errors_'+nameToken+'unlabeledPolys')
@@ -124,14 +129,14 @@ def main(parameters):
     centerPoints3 = centerPoints+'3'
     inPolys = mup
     temporaryPolys = 'xxxTempPolys'
-    oldPolys = os.path.join(fds,'xxxOldPolys')
+    oldPolys = os.path.join(fds, 'xxxOldPolys')
     changedPolys = os.path.join(fds, 'edit_'+nameToken+'ChangedPolys')
 
     # find and remove layers in active window that involve editLayers
     addMsgAndPrint('  Saving selected layers and removing them from current data frame')
     savedLayers = []
     sLayerN = 1
-
+    
     for aLyr in [mup, badLabels, badPolys, blankPolys, changedPolys]:
         addMsgAndPrint('    looking for '+aLyr)
         lyr = 1
@@ -143,6 +148,7 @@ def main(parameters):
                     lyr,df,refLyr,insertPos = findLyr(groupLyrName)
                 # WHY OH WHY do we let Windoze programmers build our tools?
                 lyrName = lyr.name.replace('\\','_')
+                arcpy.AddMessage("{}, {}, {}".format(layerRepository, lyrName, sLayerN))
                 lyrPath = os.path.join(layerRepository, lyrName + str(sLayerN) + '.lyr')
                 #save to a layer file on disk so that customizations can be retrieved layer
                 testAndDelete(lyrPath)
@@ -219,41 +225,44 @@ def main(parameters):
 
     # if labelPoints specified
     ## add any missing fields to centerPoints2
-    if arcpy.Exists(labelPoints):
-        lpFields = arcpy.ListFields(labelPoints)
-        for lpF in lpFields:
-            if not lpF.name in cp2Fields:
-                addMsgAndPrint(lpF.type)
-                if lpF.type in ('Text','STRING','String'):
-                    arcpy.AddField_management(centerPoints2,lpF.name,'TEXT','#','#',lpF.length)
-                else:
-                    if lpF.type in typeTransDict:
-                        arcpy.AddField_management(centerPoints2,lpF.name,typeTransDict[lpF.type])
-    # append labelPoints to centerPoints2
-    if arcpy.Exists(labelPoints):
-        arcpy.Append_management(labelPoints,centerPoints2,'NO_TEST')
+    if not labelPoints is None:
+        if arcpy.Exists(labelPoints):
+            lpFields = arcpy.ListFields(labelPoints)
+            for lpF in lpFields:
+                if not lpF.name in cp2Fields:
+                    addMsgAndPrint(lpF.type)
+                    if lpF.type.lower() in ('text','string'):
+                        arcpy.AddField_management(centerPoints2, lpF.name, 'TEXT', '#', '#', lpF.length)
+                    else:
+                        if lpF.type in typeTransDict:
+                            arcpy.AddField_management(centerPoints2, lpF.name, typeTransDict[lpF.type])
+        # append labelPoints to centerPoints2
+        #if arcpy.Exists(labelPoints):
+            arcpy.Append_management(labelPoints,centerPoints2, 'NO_TEST')
 
     #if inPolys are to be saved, copy inpolys to savedPolys
     if saveMUP:
         addMsgAndPrint('  Saving MapUnitPolys')
-        arcpy.Copy_management(inPolys,getSaveName(inPolys)) 
+        arcpy.Copy_management(inPolys, getSaveName(inPolys)) 
 
     # make oldPolys
     addMsgAndPrint('  Making oldPolys')
     testAndDelete(oldPolys)
     if debug:
         addMsgAndPrint(' oldPolys should be deleted!')
-    arcpy.Copy_management(inPolys,oldPolys)
+    arcpy.Copy_management(inPolys, oldPolys)
+    
     ## copy field MapUnit to new field OldMapUnit
-    arcpy.AddField_management(oldPolys,'OldMapUnit','TEXT','','',40)
-    arcpy.CalculateField_management(oldPolys,'OldMapUnit',"!MapUnit!","PYTHON_9.3")
+    arcpy.AddField_management(oldPolys, 'OldMapUnit', 'TEXT', '', '', 40)
+    arcpy.CalculateField_management(oldPolys, 'OldMapUnit', "!MapUnit!", "PYTHON_9.3")
+    
     ## get rid of excess fields in oldPolys
     fields = fieldNameList(oldPolys)
     if debug:
         addMsgAndPrint('oldPoly fields = ')
         addMsgAndPrint('  '+str(fields))
     for field in fields:
-        if not field in ('OldMapUnit','OBJECTID','Shape','Shape_Area','Shape_Length'):
+        if not field in ('OldMapUnit', 'OBJECTID', 'Shape', 'Shape_Area', 'Shape_Length'):
             if debug:
                 addMsgAndPrint('     deleting '+field)
             arcpy.DeleteField_management(oldPolys,field)
@@ -261,7 +270,7 @@ def main(parameters):
     #make new mup from layer view, with centerpoints2
     addMsgAndPrint('  Making new MapUnitPolys')
     testAndDelete(mup)
-    arcpy.FeatureToPolygon_management(cafLayer,mup,'','ATTRIBUTES',centerPoints2)
+    arcpy.FeatureToPolygon_management(cafLayer, mup, '', 'ATTRIBUTES', centerPoints2)
     testAndDelete(cafLayer)
 
     addMsgAndPrint('  Making changedPolys')
@@ -354,7 +363,7 @@ def main(parameters):
         if debug: addMsgAndPrint('      '+str(lyrPath)+' '+str(dataFrame)+' '+str(refLyr)+' '+str(insertPos))
         addLyr = arcpy.mapping.Layer(lyrPath)
         arcpy.mapping.AddLayer(dataFrame, addLyr)
-        # if refLyr is part of a layer group, substiture layer group 
+        # if refLyr is part of a layer group, substitute layer group 
         refLyrName = refLyr.longName
         if debug: addMsgAndPrint(refLyrName)
         while refLyrName.find('\\') > 0:
