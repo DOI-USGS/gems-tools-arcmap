@@ -14,10 +14,10 @@ checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False
 
-def checkMultiPts(multiPts,badPointList,badPolyList):
+def checkMultiPts(multiPts, badPointList, badPolyList):
     # checks list of label points, all in same poly. If MapUnits are not all same,
     # adds mapunitID to badPolyList, adds labelPointIDs to badPointList
-    # multiPts fields = [mupID,cp2ID,'MapUnit_1','MapUnit']
+    # multiPts fields = [mupID, cp2ID, 'MapUnit_1', 'MapUnit']
     if len(multiPts) > 1:
         # some tests, grow bad lists
         polyID = multiPts[0][0]
@@ -63,24 +63,26 @@ def findLyr(lname):
 
 addMsgAndPrint(versionString)
 
+# input parameters
 fds = sys.argv[1]
 saveMUP = False
 if sys.argv[2] == 'true':
     saveMUP = True
-if sys.argv[3] == '#':
+if sys.argv[3] in ['#', '', None]:
     layerRepository = os.path.dirname(os.path.dirname(fds))
 else:
     layerRepository = sys.argv[3]
 labelPoints = sys.argv[4]
 
 # check that labelPoints, if specified, has field MapUnit
-if arcpy.Exists(labelPoints):
-    lpFields = fieldNameList(labelPoints)
-    if not 'MapUnit' in lpFields:
-        addMsgAndPrint(' ***')
-        addMsgAndPrint('Feature class '+labelPoints+' should have a MapUnit attribute and it does not.')
-        addMsgAndPrint(' ***')
-        forceExit()
+if not labelPoints is None:                              
+    if arcpy.Exists(labelPoints):
+        lpFields = fieldNameList(labelPoints)
+        if not 'MapUnit' in lpFields:
+            addMsgAndPrint(' ***')
+            addMsgAndPrint('Feature class '+labelPoints+' should have a MapUnit attribute and it does not.')
+            addMsgAndPrint(' ***')
+            forceExit()
   
 # check for existence of fds
 if not arcpy.Exists(fds):
@@ -116,6 +118,7 @@ for topol in topologies:
         addMsgAndPrint('  ***')
         forceExit()
 
+# write paths to some feature classes that will be built later
 badLabels = os.path.join(fds,'errors_'+nameToken+'multilabels')
 badPolys = os.path.join(fds,'errors_'+nameToken+'multilabelPolys')
 blankPolys = os.path.join(fds,'errors_'+nameToken+'unlabeledPolys')
@@ -132,7 +135,7 @@ addMsgAndPrint('  Saving selected layers and removing them from current data fra
 savedLayers = []
 sLayerN = 1
 
-for aLyr in [mup,badLabels,badPolys,blankPolys,changedPolys]:
+for aLyr in [mup, badLabels, badPolys, blankPolys, changedPolys]:
     addMsgAndPrint('    looking for '+aLyr)
     lyr = 1
     while lyr <> -1:
@@ -219,19 +222,19 @@ for fDef in fieldDefs:
 
 # if labelPoints specified
 ## add any missing fields to centerPoints2
-if arcpy.Exists(labelPoints):
-    lpFields = arcpy.ListFields(labelPoints)
-    for lpF in lpFields:
-        if not lpF.name in cp2Fields:
-            addMsgAndPrint(lpF.type)
-            if lpF.type in ('Text','STRING','String'):
-                arcpy.AddField_management(centerPoints2,lpF.name,'TEXT','#','#',lpF.length)
-            else:
-                if lpF.type in typeTransDict:
-                    arcpy.AddField_management(centerPoints2,lpF.name,typeTransDict[lpF.type])
-# append labelPoints to centerPoints2
-if arcpy.Exists(labelPoints):
-    arcpy.Append_management(labelPoints,centerPoints2,'NO_TEST')
+if not labelPoints is None:                               
+    if arcpy.Exists(labelPoints):
+        lpFields = arcpy.ListFields(labelPoints)
+        for lpF in lpFields:
+            if not lpF.name in cp2Fields:
+                addMsgAndPrint(lpF.type)
+                if lpF.type in ('Text','STRING','String'):
+                    arcpy.AddField_management(centerPoints2,lpF.name,'TEXT','#','#',lpF.length)
+                else:
+                    if lpF.type in typeTransDict:
+                        arcpy.AddField_management(centerPoints2,lpF.name,typeTransDict[lpF.type])
+        # append labelPoints to centerPoints2
+        arcpy.Append_management(labelPoints,centerPoints2,'NO_TEST')
 
 #if inPolys are to be saved, copy inpolys to savedPolys
 if saveMUP:
