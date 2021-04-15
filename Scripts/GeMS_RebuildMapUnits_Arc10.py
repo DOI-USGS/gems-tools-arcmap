@@ -16,7 +16,9 @@ import sys
 import re
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_MakePolys_Arc10.py, version of 14 April 2021'
+versionString = 'GeMS_RebuildMapUnits_Arc10.py, version of 14 April 2021'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_RebuildMapUnits_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 def get_trailing_number(s):
     m = re.search(r'\d+$', s)
@@ -132,22 +134,17 @@ if saveMUP == 'true':
 
 pm("  deleting " + lyr.dataSource)
 arcpy.Delete_management(lyr.dataSource)
-#arcpy.RefreshCatalog(arcpy.env.workspace)
-#raise ValueError()
-# and rebuild the polygons
 pm("  recreating " + newPolys + " from new linework")
 
 # select all unconcealed lines
 where = '"IsConcealed"  NOT IN (\'Y\',\'y\')'
-#wherec = '"IsConcealed" = \'N\''
+
 arcpy.SelectLayerByAttribute_management(lineLayer, "NEW_SELECTION", where)
 arcpy.FeatureToPolygon_management(lineLayer, newPolys, '#', '#', labelPoints)
 arcpy.RefreshCatalog(arcpy.env.workspace)
 arcpy.SelectLayerByAttribute_management(lineLayer, "CLEAR_SELECTION")
-#arcpy.Delete_management(labelPoints)
 
 # add the layer file 
 pm("  adding " + lyrPath + " to the map")
 addLyr = arcpy.mapping.Layer(lyrPath)
 arcpy.mapping.InsertLayer(df, refLyr, addLyr, insertPos)
-#arcpy.Delete_management(lyrPath)
