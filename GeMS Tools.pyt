@@ -1421,66 +1421,12 @@ class DMUtoDocx(object):
         
 class RebuildMapUnits(object):
     """Scripts\GeMS_RebuildMapUnits_Arc10.py"""
-    class ToolValidator(object):
-        """Class for validating a tool's parameter values and controlling
-        the behavior of the tool's dialog."""
-
-        def __init__(self):
-            """Setup arcpy and the list of tool parameters."""
-            self.params = arcpy.GetParameterInfo()
-
-        def initializeParameters(self):
-            """Refine the properties of a tool's parameters.  This method is
-            called when the tool is opened."""
-            self.params[0].filter.list = ["Polyline"]
-            self.params[1].filter.list = ["Polygon"]
-            self.params[2].filter.list = ["Point"]
-
-            return
-
-        def updateParameters(self):
-            """Modify the values and properties of parameters before internal
-            validation is performed.  This method is called whenever a parameter
-            has been changed."""
-
-            return
-
-        def updateMessages(self):
-            """Modify the messages created by internal validation for each tool
-            parameter.  This method is called after internal validation."""
-            if self.params[1].value:
-                if self.CheckEditSession(self.params[1].value):
-                    self.params[1].setErrorMessage("Save edits and close edit session first!")
-
-            return
-        
-        def CheckEditSession(self, lyr):
-            """Check for an active edit session on an fc or table.
-            Return True of edit session active, else False"""
-            edit_session = True
-            row1 = None
-            try:
-                # attempt to open two cursors on the input
-                # this generates a RuntimeError if no edit session is active
-                OID = "OBJECTID" #arcpy.Describe(lyr).OIDFieldName
-                with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows:
-                    row = next(rows)
-                    with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows2:
-                        row2 = next(rows2)
-            except RuntimeError as e:
-                if e.message == "workspace already in transaction mode":
-                    # this error means that no edit session is active
-                    edit_session = False
-                else:
-                    # we have some other error going on, report it
-                    raise
-            return edit_session
-
     def __init__(self):
         self.label = u'Rebuild MapUnit Polygons'
         self.canRunInBackground = False
         self.description = u'Rebuilds MapUnit Polygons from edited ContactsAndFaults'
         self.category = u'Create and Edit'
+        #self.params = arcpy.GetParameterInfo()
         
     def getParameterInfo(self):
         # ContactsAndFaults
@@ -1525,10 +1471,33 @@ class RebuildMapUnits(object):
         # if validator:
              # return validator(parameters).updateParameters()
              
-    # def updateMessages(self, parameters):
-        # validator = getattr(self, 'ToolValidator', None)
-        # if validator:
-             # return validator(parameters).updateMessages()
+    def updateMessages(self, parameters):
+        if parameters[1].value:
+            #self.params[1].setErrorMessage(self.params[1].value.longName)
+            if self.CheckEditSession(parameters[1].value):
+                parameters[1].setErrorMessage("Save edits and close edit session first!")
+             
+    def CheckEditSession(self, lyr):
+        """Check for an active edit session on an fc or table.
+        Return True of edit session active, else False"""
+        edit_session = True
+        row1 = None
+        try:
+            # attempt to open two cursors on the input
+            # this generates a RuntimeError if no edit session is active
+            OID = "OBJECTID" 
+            with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows:
+                row = next(rows)
+                with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows2:
+                    row2 = next(rows2)
+        except RuntimeError as e:
+            if e.message == "workspace already in transaction mode":
+                # this error means that no edit session is active
+                edit_session = False
+            else:
+                # we have some other error going on, report it
+                raise
+        return edit_session
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
