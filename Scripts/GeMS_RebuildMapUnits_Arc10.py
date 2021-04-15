@@ -18,7 +18,6 @@ from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_RebuildMapUnits_Arc10.py, version of 14 April 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_RebuildMapUnits_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 def get_trailing_number(s):
     m = re.search(r'\d+$', s)
@@ -56,95 +55,101 @@ def pm(msg, severity=0):
 		pass
             
 #********************************************************************************************
-#Get the parameters
-lineLayer = arcpy.GetParameterAsText(0)
-polyLayer = arcpy.GetParameterAsText(1)
-labelPoints = arcpy.GetParameterAsText(2)
-saveMUP = arcpy.GetParameterAsText(3)
-
-#collect the findLyr properties
-lyrProps = findLyr(polyLayer)
-lyr = lyrProps[0]                               #the layer object
-df = lyrProps[1]                                #the data frame within which the layer resides
-refLyr = lyrProps[2]                            #a layer above or below which the layer resides
-insertPos = lyrProps[3]                         #index above or below the reference layer
-newPolys = lyr.dataSource                       #the path to the dataSource of the polygon layer
-discName = os.path.basename(lyr.dataSource)     #the name in the geodatabase of the datasource
-
-# save a temporary layer file for the polygons to save rendering and other settings
-# including joins to other tables
-# .lyr is saved to the folder of the geodatabase
-# lyr.workspacePath returnd the gdb, not a feature dataset
-lyrPath = os.path.join(os.path.dirname(lyr.workspacePath), lyr.name + '.lyr')
-if arcpy.Exists(lyrPath):
-    os.remove(lyrPath)
-		
-pm("  saving " + polyLayer + ' to ' + lyrPath)
-arcpy.SaveToLayerFile_management(lyr, lyrPath, "RELATIVE")
-
-#set the workspace variable to the workspace of the feature class
-#and get the name of the feature dataset
-dsPath = os.path.dirname(newPolys)
-arcpy.env.workspace = dsPath
-
-try:
-	#remove join if one is there
-	arcpy.RemoveJoin_management(lyr)
-except:
-	pass
-
-# make a labelPoints feature class if one was not provided
-if labelPoints in ['#', '', None]:
-    #create the labelPoints name
-    labelPoints = discName + '_tempLabels'
-    testAndDelete(labelPoints)
-
-    #check for an old copy of labelpoints
-    if arcpy.Exists(labelPoints):
-        arcpy.Delete_management(labelPoints)
+def main(parameters)
+    checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
-    #create points from the attributed polygons
-    arcpy.FeatureToPoint_management(lyr.dataSource, labelPoints, 'INSIDE')
+    #Get the parameters
+    lineLayer = parameters(0)
+    polyLayer = parameters(1)
+    labelPoints = parameters(2)
+    saveMUP = parameters(3)
 
-#and now remove the layer from the map
-arcpy.mapping.RemoveLayer(df, lyr)
+    #collect the findLyr properties
+    lyrProps = findLyr(polyLayer)
+    lyr = lyrProps[0]                               #the layer object
+    df = lyrProps[1]                                #the data frame within which the layer resides
+    refLyr = lyrProps[2]                            #a layer above or below which the layer resides
+    insertPos = lyrProps[3]                         #index above or below the reference layer
+    newPolys = lyr.dataSource                       #the path to the dataSource of the polygon layer
+    discName = os.path.basename(lyr.dataSource)     #the name in the geodatabase of the datasource
 
-#save a copy of the polygons fc or delete
-if saveMUP == 'true':
-    # get new name
-    pfcs = arcpy.ListFeatureClasses(discName + "*", "Polygon")
-    maxN = 0
-    for pfc in pfcs:
-        try:
-            n = int(get_trailing_number(pfc))
-            if n > maxN:
-                maxN = n
-        except:
-            pass
-    oldPolys = lyr.dataSource + str(maxN + 1)
-    pm("  saving " + polyLayer + ' to ' + oldPolys)
-   
+    # save a temporary layer file for the polygons to save rendering and other settings
+    # including joins to other tables
+    # .lyr is saved to the folder of the geodatabase
+    # lyr.workspacePath returnd the gdb, not a feature dataset
+    lyrPath = os.path.join(os.path.dirname(lyr.workspacePath), lyr.name + '.lyr')
+    if arcpy.Exists(lyrPath):
+        os.remove(lyrPath)
+            
+    pm("  saving " + polyLayer + ' to ' + lyrPath)
+    arcpy.SaveToLayerFile_management(lyr, lyrPath, "RELATIVE")
+
+    #set the workspace variable to the workspace of the feature class
+    #and get the name of the feature dataset
+    dsPath = os.path.dirname(newPolys)
+    arcpy.env.workspace = dsPath
+
     try:
-        oldPolysPath = os.path.join(dsPath, oldPolys)
-        arcpy.Copy_management(lyr.dataSource, oldPolysPath, "FeatureClass")
+        #remove join if one is there
+        arcpy.RemoveJoin_management(lyr)
     except:
-        pm("  arcpy.Copy_management(mup,oldPolys) failed. Maybe you need to close ArcMap?")
-        sys.exit()
+        pass
+
+    # make a labelPoints feature class if one was not provided
+    if labelPoints in ['#', '', None]:
+        #create the labelPoints name
+        labelPoints = discName + '_tempLabels'
+        testAndDelete(labelPoints)
+
+        #check for an old copy of labelpoints
+        if arcpy.Exists(labelPoints):
+            arcpy.Delete_management(labelPoints)
+        
+        #create points from the attributed polygons
+        arcpy.FeatureToPoint_management(lyr.dataSource, labelPoints, 'INSIDE')
+
+    #and now remove the layer from the map
+    arcpy.mapping.RemoveLayer(df, lyr)
+
+    #save a copy of the polygons fc or delete
+    if saveMUP == 'true':
+        # get new name
+        pfcs = arcpy.ListFeatureClasses(discName + "*", "Polygon")
+        maxN = 0
+        for pfc in pfcs:
+            try:
+                n = int(get_trailing_number(pfc))
+                if n > maxN:
+                    maxN = n
+            except:
+                pass
+        oldPolys = lyr.dataSource + str(maxN + 1)
+        pm("  saving " + polyLayer + ' to ' + oldPolys)
+       
+        try:
+            oldPolysPath = os.path.join(dsPath, oldPolys)
+            arcpy.Copy_management(lyr.dataSource, oldPolysPath, "FeatureClass")
+        except:
+            pm("  arcpy.Copy_management(mup,oldPolys) failed. Maybe you need to close ArcMap?")
+            sys.exit()
 
 
-pm("  deleting " + lyr.dataSource)
-arcpy.Delete_management(lyr.dataSource)
-pm("  recreating " + newPolys + " from new linework")
+    pm("  deleting " + lyr.dataSource)
+    arcpy.Delete_management(lyr.dataSource)
+    pm("  recreating " + newPolys + " from new linework")
 
-# select all unconcealed lines
-where = '"IsConcealed"  NOT IN (\'Y\',\'y\')'
+    # select all unconcealed lines
+    where = '"IsConcealed"  NOT IN (\'Y\',\'y\')'
 
-arcpy.SelectLayerByAttribute_management(lineLayer, "NEW_SELECTION", where)
-arcpy.FeatureToPolygon_management(lineLayer, newPolys, '#', '#', labelPoints)
-arcpy.RefreshCatalog(arcpy.env.workspace)
-arcpy.SelectLayerByAttribute_management(lineLayer, "CLEAR_SELECTION")
+    arcpy.SelectLayerByAttribute_management(lineLayer, "NEW_SELECTION", where)
+    arcpy.FeatureToPolygon_management(lineLayer, newPolys, '#', '#', labelPoints)
+    arcpy.RefreshCatalog(arcpy.env.workspace)
+    arcpy.SelectLayerByAttribute_management(lineLayer, "CLEAR_SELECTION")
 
-# add the layer file 
-pm("  adding " + lyrPath + " to the map")
-addLyr = arcpy.mapping.Layer(lyrPath)
-arcpy.mapping.InsertLayer(df, refLyr, addLyr, insertPos)
+    # add the layer file 
+    pm("  adding " + lyrPath + " to the map")
+    addLyr = arcpy.mapping.Layer(lyrPath)
+    arcpy.mapping.InsertLayer(df, refLyr, addLyr, insertPos)
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

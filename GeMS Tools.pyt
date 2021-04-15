@@ -43,7 +43,7 @@ class Toolbox(object):
         self.tools = [Deplanarize, CompactAndBackup, AttributeByKeyValues, CreateDatabase, 
                       DocxToDMU, MakePolys, MakeTopology, MapOutline, ProjectCrossSectionData, ProjectPointsToCrossSection, InclinationNumber, SetPlotAtScales, SetSymbols, SetIDvalues, FGDC_1, FGDC_2, FGDC_3, PurgeMetadata, RelationshipClasses,
                       FixStrings, TranslateToShape, SymbolToRGB, TopologyCheck, GeologicNamesCheck,
-                      ValidateDatabase, DMUtoDocx]
+                      ValidateDatabase, DMUtoDocx, RebuildMapUnits]
 
 
 class AttributeByKeyValues(object):
@@ -1418,3 +1418,96 @@ class DMUtoDocx(object):
         
         # the script tool has been imported as a module. Now call the main function
         Scripts.GeMS_DMUtoDocx_Arc10.main(parameter_values)
+        
+class RebuildMapUnits(object):
+    class ToolValidator(object):
+      """Class for validating a tool's parameter values and controlling
+      the behavior of the tool's dialog."""
+
+      def __init__(self):
+        """Setup arcpy and the list of tool parameters."""
+        self.params = arcpy.GetParameterInfo()
+
+      def initializeParameters(self):
+        """Refine the properties of a tool's parameters.  This method is
+        called when the tool is opened."""
+        self.params[0].filter.list = ["polyline"]
+        self.params[1].filter.list = ["polygon"]
+        self.params[2].filter.list = ["point"]
+
+        return
+
+      def updateParameters(self):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+
+        return
+
+      def updateMessages(self):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        if self.params[1].value:
+          if self.CheckEditSession(self.params[1].value):
+            self.params[1].setErrorMessage("Save edits and close edit session first!")
+
+        return
+        
+      def CheckEditSession(self, lyr):
+          """Check for an active edit session on an fc or table.
+          Return True of edit session active, else False"""
+          edit_session = True
+          row1 = None
+          try:
+              # attempt to open two cursors on the input
+              # this generates a RuntimeError if no edit session is active
+              OID = "OBJECTID" #arcpy.Describe(lyr).OIDFieldName
+              with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows:
+                  row = next(rows)
+                  with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows2:
+                      row2 = next(rows2)
+          except RuntimeError as e:
+              if e.message == "workspace already in transaction mode":
+                  # this error means that no edit session is active
+                  edit_session = False
+              else:
+                  # we have some other error going on, report it
+                  raise
+          return edit_session
+
+    def __init__(self):
+        self.label = u'Rebuild MapUnit Polygons'
+        self.canRunInBackground = False
+        self.description = u'Rebuilds MapUnit Polygons from edited ContactsAndFaults'
+        self.category = u'Create and Edit'
+        
+    def getParameterInfo(self):
+        # Input_feature_dataset
+        param_1 = arcpy.Parameter()
+        param_1.name = u'Input_feature_dataset'
+        param_1.displayName = u'Input feature dataset'
+        param_1.parameterType = 'Required'
+        param_1.direction = 'Input'
+        param_1.datatype = u'DEFeatureDataset'
+
+        # use_MUP_rules
+        param_2 = arcpy.Parameter()
+        param_2.name = u'use_MUP_rules'
+        param_2.displayName = u'use MUP rules'
+        param_2.parameterType = 'Required'
+        param_2.direction = 'Input'
+        param_2.datatype = u'GPBoolean'
+        param_2.value = u'true'
+
+        return [param_1, param_2]
+        
+    def execute(self, parameters, messages):
+        # import and reload the tool script to get the latest version; if making edits to the tool script
+        import Scripts.GeMS_MakeTopology_Arc10
+        reload(Scripts.GeMS_MakeTopology_Arc10)
+        
+        # construct a list of parameter.valueAsText strings to send to the tool
+        parameter_values = [parameter.valueAsText for parameter in parameters]
+        
+        # the script tool has been imported as a module. Now call the main function
+        Scripts.GeMS_MakeTopology_Arc10.main(parameter_values) 
