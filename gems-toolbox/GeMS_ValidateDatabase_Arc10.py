@@ -869,9 +869,8 @@ def main(parameters):
     skipTopology = parameters[3]
     deleteExtraGlossaryDataSources = parameters[4]
 
-    this_dir = os.path.dirname(__file__)
-    toolbox_dir = os.path.dirname(this_dir)
-    refgmd = os.path.join(toolbox_dir, 'Resources', 'GeMS_lib.gdb', 'GeoMaterialDict')
+    toolbox_dir = os.path.dirname(__file__)
+    refgmd = os.path.join(toolbox_dir, 'gems-resources', 'GeMS_lib.gdb', 'GeoMaterialDict')
     
     ##validate inputs
 

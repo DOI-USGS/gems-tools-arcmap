@@ -10,7 +10,7 @@
 # 19 Dec 2016: Added GeoMaterialDict table, domains
 # 8 March 2017: Added  ExistenceConfidence, IdentityConfidence, ScientificConfidence domains, definitions, and definitionsource
 # 17 March 2017  Added optional table MiscellaneousMapInformation
-# 30 Oct 2017  Moved CartoRepsAZGS and GeMS_lib.gdb to ../Resources
+# 30 Oct 2017  Moved CartoRepsAZGS and GeMS_lib.gdb to ../gems-resources
 # 4 March 2018  changed to use writeLogfile()
 # 8 June 2020 In transDict (line 31), changed 'NoNulls':'NON_NULLABLE' to 'NoNulls':'NULLABLE'
 #   " "       Fixed bug with addTracking(), where EnableEditorTracking_management apparently wants in_dataset to be a full pathname
@@ -124,9 +124,8 @@ def addTracking(tfc):
 
 
 def cartoRepsExistAndLayer(fc):
-    this_dir = os.path.dirname(__file__)
-    toolbox_dir = os.path.dirname(this_dir)
-    crPath = os.path.join(toolbox_dir, 'Resources', 'CartoRepsAZGS')
+    toolbox_dir = os.path.dirname(__file__)
+    crPath = os.path.join(toolbox_dir, 'gems-resources', 'CartoRepsAZGS')
     
     hasReps = False
     repLyr = ''
@@ -274,9 +273,8 @@ Ralph Haugerud
     ### GeoMaterials
     addMsgAndPrint('  Setting up GeoMaterialDict table and domains...')
     #  Copy GeoMaterials table
-    this_dir = os.path.dirname(__file__)
-    toolbox_dir = os.path.dirname(this_dir)
-    geo_mat_table = os.path.join(toolbox_dir, 'Resources', 'GeMS_lib.gdb', 'GeoMaterialDict')
+    toolbox_dir = os.path.dirname(__file__)
+    geo_mat_table = os.path.join(toolbox_dir, 'gems-resources', 'GeMS_lib.gdb', 'GeoMaterialDict')
     arcpy.Copy_management(geo_mat_table, os.path.join(thisDB,'GeoMaterialDict'))
     
     #   make GeoMaterials domain

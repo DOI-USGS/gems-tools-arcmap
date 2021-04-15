@@ -13,25 +13,23 @@ If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro]
 ## Installation
 
 * Download the [latest release](https://github.com/usgs/gems-tools-arcmap/releases/latest).
-* Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`).
+* Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`) with a folder called `gems-toolbox` inside that (this folder structure exists so that the second method outlined below will work).
 
-* Start ArcCatalog or ArcMap
-  * open the Arc Toolbox window
-  * right-click on empty space in the Arc Toolbox window, and select "Add Toolbox".
-  * navigate to the \Toolbox folder and select file **GeMS Tools.pyt**
-  * Right-click again on empty space in the Arc Toolbox window and select "Save settings" and then "Default" to have the GeMS toolbox available next time you open ArcCatalog or ArcMap.
+Once unzipped, you have three options for using the toolbox in ArcMap:
 
-or
+1. Browse to `gems-toolbox` in the ArcCatalog window under Folder Connections everytime you need it.
 
-**METHOD BELOW NOT POSSIBLE BECAUSE OF CURRENT FOLDER STRUCTURE**
-**WILL BE POSSIBLE IN A FUTURE RELEASE**
-
-* Place the **contents** of the master folder (all sub-folders and files) in
-
+2. Configure the ArcToolbox window so that it is listed there:
+    * Start ArcCatalog or ArcMap
+    * open the ArcToolbox window
+    * right-click on empty space in the ArcToolbox window, and select "Add Toolbox".
+    * navigate to the `gems-toolbox` folder and select file **GeMS Tools.pyt**
+    * Right-click again on empty space in the Arc Toolbox window and select "Save settings" and then "Default" to have the GeMS toolbox available next time you open ArcCatalog or ArcMap.
+3. Or, configure the My Toolboxes connection in the ArcCatalog window so that it is listed there:
+    * Place the **contents** of the `gems-toolbox` folder (all sub-folders and files) in
     `C:\Documents and Settings\<user>\AppData\Roaming\ESRI\Desktop10.5\ArcToolbox\My Toolboxes`
-
     This is the pathname for ArcGIS 10.5 on Windows 7 and Windows 10; it may differ with other operating systems and ArcGIS versions. Note that the AppData folder is hidden by default. To navigate to it in Windows Explorer, turn on Hidden items from the View tab. You can also open it by typing `%appdata%` in the run box, the search bar, or in the address bar of Windows Explorer
-  * In ArcCatalog, scroll to the bottom of the left-hand "Catalog Tree" pane, open Toolboxes/My Toolboxes, and the new toolboxes should be present. You may need to refresh the listing.
+    * In the ArcCatalog window, scroll to the bottom of the left-hand "Catalog Tree" pane, open Toolboxes/My Toolboxes, and the new toolboxes should be present. You may need to refresh the listing.
 
 ## Getting Help
 

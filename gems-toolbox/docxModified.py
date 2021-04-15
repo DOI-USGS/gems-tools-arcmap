@@ -90,7 +90,7 @@ log = logging.getLogger(__name__)
 # developer or 'site-packages/docx-template' if you have installed docx
 template_dir = join(os.path.dirname(__file__),'docx-template') # installed
 if not os.path.isdir(template_dir):
-    template_dir = join(os.path.dirname(__file__),'../Resources/MSWordDMUtemplate') # dev
+    template_dir = join(os.path.dirname(__file__), 'gems-resources' 'MSWordDMUtemplate') # dev
 
 # All Word prefixes / namespace matches used in document.xml & core.xml.
 # LXML doesn't actually use prefixes (just the real namespace) , but these

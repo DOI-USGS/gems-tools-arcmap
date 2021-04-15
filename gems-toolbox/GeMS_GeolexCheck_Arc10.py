@@ -10,7 +10,7 @@ Arguments:
     
 Enclose any arguments with spaces within double-quotes.
 
-Arguments are sent to \Resources\GeMS_GeolexCheck.exe which contains bundled Python 3 libraries used in the original development
+Arguments are sent to \gems-resources\GeMS_GeolexCheck.exe which contains bundled Python 3 libraries used in the original development
 rather than requiring the user to install the equivalent Python 2.7 versions
 """
 
@@ -66,12 +66,11 @@ def main(parameters):
     # location of GeMS_GeolexCheck.exe
     # it is hard dealing with possible spaces in the path name
     # when sending this argument to the exe file so we'll just
-    # cd to \Resources first and then call the exe by name alone
+    # cd to \gems-resources first and then call the exe by name alone
     this_py = os.path.realpath(__file__)
-    this_dir = os.path.dirname(this_py)
-    toolbox_dir = os.path.dirname(this_dir)
-    os.chdir(os.path.join(toolbox_dir, 'Resources'))
-    #geolex_exe = os.path.join(toolbox_dir, 'Resources', 'GeMS_GeolexCheck.exe')
+    toolbox_dir = os.path.dirname(this_py)
+    os.chdir(os.path.join(toolbox_dir, 'gems-resources'))
+    #geolex_exe = os.path.join(toolbox_dir, 'gems-resources', 'GeMS_GeolexCheck.exe')
 
     arcpy.AddMessage("Sending parameters to GeMS_GeolexCheck.exe")
     arcpy.AddMessage("A terminal window will open to display output messages.")

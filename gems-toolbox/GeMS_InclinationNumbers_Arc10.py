@@ -108,7 +108,8 @@ def dipNumbers(gdb,mapScaleDenominator):
 
     #make copy of .lyr file
     newLyr = os.path.dirname(gdb)+'/NewOrientationPointLabels.lyr'
-    shutil.copy(os.path.dirname(sys.argv[0])+'/../Resources/OrientationPointLabels.lyr',newLyr)
+    this_dir = os.path.dirname(__file__)
+    shutil.copy(os.path.join(this_dir, 'gems-resources', 'OrientationPointLabels.lyr'), newLyr)
     OPLyr = arcpy.mapping.Layer(newLyr)
     ## reset data source
     addMsgAndPrint('   gdb = '+gdb)

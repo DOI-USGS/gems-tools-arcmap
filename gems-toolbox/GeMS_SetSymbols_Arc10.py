@@ -12,9 +12,8 @@ TwofoldOrientPointDict = {}
 MySymbolDict = {}
 
 unrecognizedTypes = []
-thisFolder = os.path.dirname(__file__)
-toolboxFolder = os.path.dirname(thisFolder)
-dictionaryFile = os.path.join(toolboxFolder, 'Resources', 'Type-FgdcSymbol.txt'
+toolboxFolder = os.path.dirname(__file__)
+dictionaryFile = os.path.join(toolboxFolder, 'gems-resources', 'Type-FgdcSymbol.txt'
 
 debug1 = False
 
