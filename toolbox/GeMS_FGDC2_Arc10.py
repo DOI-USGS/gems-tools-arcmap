@@ -9,7 +9,7 @@ from xml.dom.minidom import *
 debug = False
 
 versionString = 'GeMS_FGDC2_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_FGDC2_Arc10.py'
 
 gems = 'GeMS'
 gemsFullRef = '"GeMS (Geologic Map Schema)--a standard format for the digital publication of geologic maps", available at http://ngmdb.usgs.gov/Info/standards/GeMS/'

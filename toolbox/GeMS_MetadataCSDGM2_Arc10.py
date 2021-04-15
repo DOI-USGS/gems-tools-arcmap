@@ -28,7 +28,7 @@ To use,
       database schema beyond the schema outlined in the GeMS documentation.
       ***Note that this script provides for a file that automates description of your
       extensions to the GeMS schema so that you need not edit metadata by hand--see
-      file my_GeMSDefinitions.py in the GeMS Scripts directory.*** 
+      file my_GeMSDefinitions.py in the GeMS toolbox directory.*** 
     Inspect metadata records in ArcCatalog (the Description tab) to see that they are
       complete.
     Open saved XML files in browser to see that they are appropriate. Scan for duplicate
@@ -55,7 +55,7 @@ from GeMS_utilityFunctions import *
 from xml.dom.minidom import *
 
 versionString = 'GeMS_MetadataCSDGM2_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_MetadataCSDGM2_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_MetadataCSDGM2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 translator = arcpy.GetInstallInfo("desktop")["InstallDir"]+'Metadata/Translator/ARCGIS2FGDC.xml'

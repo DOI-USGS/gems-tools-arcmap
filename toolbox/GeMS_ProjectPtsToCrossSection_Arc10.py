@@ -102,7 +102,7 @@ def delArcStuff(deleteSet):
    
 def main(parameters):
     addMsgAndPrint('  '+versionString)
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectPtsToCrossSection_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_ProjectPtsToCrossSection_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     # check that 3D Analyst license is available

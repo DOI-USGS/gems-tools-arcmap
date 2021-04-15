@@ -7,7 +7,7 @@ import arcpy, os, os.path, sys
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_FixStrings_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FixStrings_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_FixStrings_Arc10.py'
 
 def fixTableStrings(fc):
     fields1 = arcpy.ListFields(fc,'','String')

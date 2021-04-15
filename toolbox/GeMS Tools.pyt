@@ -1,15 +1,15 @@
 """ 
 GeMS Tools Python toolbox for ArcMap
 Evan Thoms
-March 17, 2021
+April 15, 2021
 
 Notes about python toolboxes:
-1. This toolbox describes parameter forms, but calls external tool scripts residing in the \Scripts folder
+1. This toolbox describes parameter forms, but calls external tool scripts residing in the \toolbox folder
 2. Each parameter form exists as a class in this script with a number of ESRI-defined functions
 3. The tool script itself is imported in the execute function within each parameter form class.
 4. Once imported, modules are cached and do not get imported again unless the reload() function is called,
    which makes things difficult when editing the tool script. I could not write an import_or_reload function 
-   that worked or even include an if conditional to check for a debug flag so just import and immediately reload. 
+   that worked or even include an if conditional to check for a debug flag so just import the module and then immediately reload. 
 5. The tool scripts should be callable both from this toolbox as well as from the command line. 
    In the case of the latter, the arguments will be strings. To make the script tool work with parameter 
    objects as well, we first construct a list of parameter.values and send that.
@@ -24,15 +24,12 @@ https://desktop.arcgis.com/en/arcmap/10.3/analyze/creating-tools/defining-parame
 The documentation at the page is good for ArcMap 10.3 and up, so we can't guarantee the tools will work with anything older than that.
 """
 
-import arcpy
-import sys, os, importlib 
+# Example of parameter validation (checking for an active edit session on a gdb) is in RebuildMapUnitPolys
 
-# thought was working before. doesn't seem to do it now
-# add the path to the \Scripts folder so tools can be imported as modules
-# But workaround is to import <toolfile> in each def execute
-local_path = os.path.abspath(os.path.dirname(__file__))
-scripts_path = os.path.join(local_path, 'Scripts')
-sys.path.append(scripts_path)
+import arcpy
+import sys
+import os
+import glob
 
 class Toolbox(object):
     def __init__(self):
@@ -43,7 +40,7 @@ class Toolbox(object):
         self.tools = [Deplanarize, CompactAndBackup, AttributeByKeyValues, CreateDatabase, 
                       DocxToDMU, MakePolys, MakeTopology, MapOutline, ProjectCrossSectionData, ProjectPointsToCrossSection, InclinationNumber, SetPlotAtScales, SetSymbols, SetIDvalues, FGDC_1, FGDC_2, FGDC_3, PurgeMetadata, RelationshipClasses,
                       FixStrings, TranslateToShape, SymbolToRGB, TopologyCheck, GeologicNamesCheck,
-                      ValidateDatabase, DMUtoDocx, RebuildMapUnits]
+                      ValidateDatabase, DMUtoDocx, RebuildMapUnitPolys]
 
 
 class AttributeByKeyValues(object):
@@ -1419,12 +1416,12 @@ class DMUtoDocx(object):
         # the script tool has been imported as a module. Now call the main function
         GeMS_DMUtoDocx_Arc10.main(parameter_values)
         
-class RebuildMapUnits(object):
+class RebuildMapUnitPolys(object):
     """GeMS_RebuildMapUnits_Arc10.py"""
     def __init__(self):
-        self.label = u'Rebuild MapUnit Polygons'
+        self.label = u'Rebuild MapUnitPolys'
         self.canRunInBackground = False
-        self.description = u'Rebuilds MapUnit Polygons from edited ContactsAndFaults'
+        self.description = u'Rebuilds MapUnitPolys from edited ContactsAndFaults'
         self.category = u'Create and Edit'
         #self.params = arcpy.GetParameterInfo()
         
@@ -1465,39 +1462,15 @@ class RebuildMapUnits(object):
         param_4.datatype = u'Boolean'
 
         return [param_1, param_2, param_3, param_4]
-        
-    # def updateParameters(self, parameters):
-        # validator = getattr(self, 'ToolValidator', None)
-        # if validator:
-             # return validator(parameters).updateParameters()
              
-    def updateMessages(self, parameters):
+    def updateMessages(self, parameters
+        # with selection of mapunitpolys, is there an editing lock on the gdb?
+        # won't be able to delete the feature class if there is is
         if parameters[1].value:
-            #self.params[1].setErrorMessage(self.params[1].value.longName)
-            if self.CheckEditSession(parameters[1].value):
+            ws_path = parameters[1].value.workspacePath
+            if glob.glob(os.path.join(ws_path, '*.ed.lock')):
                 parameters[1].setErrorMessage("Save edits and close edit session first!")
-             
-    def CheckEditSession(self, lyr):
-        """Check for an active edit session on an fc or table.
-        Return True of edit session active, else False"""
-        edit_session = True
-        row1 = None
-        try:
-            # attempt to open two cursors on the input
-            # this generates a RuntimeError if no edit session is active
-            OID = "OBJECTID" 
-            with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows:
-                row = next(rows)
-                with arcpy.da.UpdateCursor(lyr.dataSource, OID) as rows2:
-                    row2 = next(rows2)
-        except RuntimeError as e:
-            if e.message == "workspace already in transaction mode":
-                # this error means that no edit session is active
-                edit_session = False
-            else:
-                # we have some other error going on, report it
-                raise
-        return edit_session
+        
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script

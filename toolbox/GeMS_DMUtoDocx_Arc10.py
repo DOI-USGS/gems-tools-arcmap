@@ -17,7 +17,7 @@ from GeMS_utilityFunctions import *
 from docxModified import *
 
 versionString = 'GeMS_DMUtoDocx_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_DMUtoDocx_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_DMUtoDocx_Arc10.py'
 
 
 debug = False

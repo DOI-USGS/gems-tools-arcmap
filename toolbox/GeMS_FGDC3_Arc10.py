@@ -3,7 +3,7 @@ https://support.esri.com/en/technical-article/000011751
 """
 
 versionString = 'GeMS_FGDC3_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC3_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_FGDC3_Arc10.py'
 
 import arcpy, os, sys, glob
 from GeMS_utilityFunctions import *

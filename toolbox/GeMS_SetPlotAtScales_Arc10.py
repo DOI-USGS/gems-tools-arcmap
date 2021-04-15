@@ -49,7 +49,7 @@ def lessSignificantOP(fid1,fid2):
 def main(parameters):
     addMsgAndPrint(versionString)
     
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetPlotAtScales_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_SetPlotAtScales_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     ##############################
     # args
