@@ -4,7 +4,9 @@
 
 # GeMS Tools for ArcMap
 
-This repository contains an ArcGIS toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Note that some files previously distributed in the Resources folder have been moved to a separate repository called [gems-resources.](https://github.com/usgs/gems-resources)
+## This is a beta release! Download from the Code button, not the 'latest release' link.
+
+This repository contains an ArcGIS python toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Note that some files previously distributed in the Resources folder have been moved to a separate repository called [gems-resources.](https://github.com/usgs/gems-resources)
 
 If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro](https://github.com/usgs/gems-tools-pro) repository.
 
@@ -16,16 +18,19 @@ If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro]
 * Start ArcCatalog or ArcMap
   * open the Arc Toolbox window
   * right-click on empty space in the Arc Toolbox window, and select "Add Toolbox".
-  * navigate to the toolbox folder and select file **GeMSToolsArc105.tbx** (if you are running ArcGIS 10.5) or file **GeMSToolsArc10.tbx** (if you are running an older version of ArcGIS).
+  * navigate to the \Toolbox folder and select file **GeMS Tools.pyt**
   * Right-click again on empty space in the Arc Toolbox window and select "Save settings" and then "Default" to have the GeMS toolbox available next time you open ArcCatalog or ArcMap.
 
 or
 
-* Place the **contents** of the toolbox folder (all sub-folders and files) in
+**METHOD BELOW NOT POSSIBLE BECAUSE OF CURRENT FOLDER STRUCTURE**
+**WILL BE POSSIBLE IN A FUTURE RELEASE**
+
+* Place the **contents** of the master folder (all sub-folders and files) in
 
     `C:\Documents and Settings\<user>\AppData\Roaming\ESRI\Desktop10.5\ArcToolbox\My Toolboxes`
 
-    This is the pathname for ArcGIS 10.5 on Windows 7 and Windows 10; it may differ with other operating systems and ArcGIS versions. Delete the .tbx file that is not needed. Note that the AppData folder is hidden by default. To navigate to it in Windows Explorer, turn on Hidden items from the View tab. You can also open it by typing `%appdata%` in the run box, the search bar, or in the address bar of Windows Explorer
+    This is the pathname for ArcGIS 10.5 on Windows 7 and Windows 10; it may differ with other operating systems and ArcGIS versions. Note that the AppData folder is hidden by default. To navigate to it in Windows Explorer, turn on Hidden items from the View tab. You can also open it by typing `%appdata%` in the run box, the search bar, or in the address bar of Windows Explorer
   * In ArcCatalog, scroll to the bottom of the left-hand "Catalog Tree" pane, open Toolboxes/My Toolboxes, and the new toolboxes should be present. You may need to refresh the listing.
 
 ## Getting Help
