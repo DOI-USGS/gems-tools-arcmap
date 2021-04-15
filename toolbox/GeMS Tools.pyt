@@ -29,7 +29,7 @@ import sys, os, importlib
 
 # thought was working before. doesn't seem to do it now
 # add the path to the \Scripts folder so tools can be imported as modules
-# But workaround is to import Scripts.<toolfile> in each def execute
+# But workaround is to import <toolfile> in each def execute
 local_path = os.path.abspath(os.path.dirname(__file__))
 scripts_path = os.path.join(local_path, 'Scripts')
 sys.path.append(scripts_path)
@@ -47,7 +47,7 @@ class Toolbox(object):
 
 
 class AttributeByKeyValues(object):
-    """"\Scripts\GeMS_AttributeByKeyValues_Arc10.py"""
+    """"GeMS_AttributeByKeyValues_Arc10.py"""
     def __init__(self):
         self.label = u'Attribute By Key Values'
         self.description = u'Script to step through an identified subset of feature classes in GeologicMap feature dataset and, for specified values of one or more independent fields, calculate values of dependent fields.'
@@ -83,17 +83,17 @@ class AttributeByKeyValues(object):
     
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_AttributeByKeyValues_Arc10
-        reload(Scripts.GeMS_AttributeByKeyValues_Arc10)
+        import GeMS_AttributeByKeyValues_Arc10
+        reload(GeMS_AttributeByKeyValues_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_AttributeByKeyValues_Arc10.main(parameter_values)
+        GeMS_AttributeByKeyValues_Arc10.main(parameter_values)
 
 class CreateDatabase(object):
-    """"\Scripts\GeMS_CreateDatabase_Arc10.py"""
+    """"GeMS_CreateDatabase_Arc10.py"""
     def __init__(self):
         self.label = u'Create New Database'
         self.description = u'Creates an empty GeMS-style geodatabase'
@@ -184,17 +184,17 @@ class CreateDatabase(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_CreateDatabase_Arc10
-        reload(Scripts.GeMS_CreateDatabase_Arc10)
+        import GeMS_CreateDatabase_Arc10
+        reload(GeMS_CreateDatabase_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_CreateDatabase_Arc10.main(parameter_values)
+        GeMS_CreateDatabase_Arc10.main(parameter_values)
 
 class DocxToDMU(object):
-    """"C:\_AAA\gems\gitspace\arcmap-pyt\Scripts\GeMS_DMUtoDocx_Arc10.py"""
+    """"GeMS_DMUtoDocx_Arc10.py"""
     def __init__(self):
         self.label = u'DOCX to DMU'
         self.description = u'Translates formatted Microsoft Word (.docx) file to incomplete DescriptionOfMapUnits table'
@@ -222,17 +222,17 @@ class DocxToDMU(object):
         
     def execute(self, parameters, messages): 
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_DocxToDMU_Arc10
-        reload(Scripts.GeMS_DocxToDMU_Arc10)
+        import GeMS_DocxToDMU_Arc10
+        reload(GeMS_DocxToDMU_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_DocxToDMU_Arc10.main(parameter_values)
+        GeMS_DocxToDMU_Arc10.main(parameter_values)
 
 class CompactAndBackup(object):
-    """"\Scripts\GeMS_CompactAndBackup_Arc10.py"""
+    """"GeMS_CompactAndBackup_Arc10.py"""
     def __init__(self):
         self.label = u'Compact and Backup'
         self.description = u'Compacts database and copies to an archive version. Archive version is named with current date.'
@@ -260,17 +260,17 @@ class CompactAndBackup(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_CompactAndBackup_Arc10
-        reload(Scripts.GeMS_CompactAndBackup_Arc10)
+        import GeMS_CompactAndBackup_Arc10
+        reload(GeMS_CompactAndBackup_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_CompactAndBackup_Arc10.main(parameter_values)
+        GeMS_CompactAndBackup_Arc10.main(parameter_values)
 
 class Deplanarize(object):
-    """Scripts\GeMS_Deplanarize_Arc10.py"""
+    """GeMS_Deplanarize_Arc10.py"""
     def __init__(self):
         self.label = u'Deplanarize CAF'
         self.description = u'Deplanarizes (removes excess nodes) arcs in ContactsAndFaults feature class of the GeologicMaps feature dataset. '
@@ -290,17 +290,17 @@ class Deplanarize(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_Deplanarize_Arc10
-        reload(Scripts.GeMS_Deplanarize_Arc10)
+        import GeMS_Deplanarize_Arc10
+        reload(GeMS_Deplanarize_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_Deplanarize_Arc10.main(parameter_values)
+        GeMS_Deplanarize_Arc10.main(parameter_values)
 
 class MakePolys(object):
-    """\Scripts\GeMS_MakePolys_Arc10.py"""
+    """GeMS_MakePolys_Arc10.py"""
     def __init__(self):
         self.label = u'Make Polygons'
         self.description = u'Creates (recreates) feature class MapUnitPolys from lines in ContactsAndFaults'
@@ -345,17 +345,17 @@ class MakePolys(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_MakePolys_Arc10
-        reload(Scripts.GeMS_MakePolys_Arc10)
+        import GeMS_MakePolys_Arc10
+        reload(GeMS_MakePolys_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_MakePolys_Arc10.main(parameter_values) 
+        GeMS_MakePolys_Arc10.main(parameter_values) 
 
 class MakeTopology(object):
-    """\Scripts\GeMS_MakeTopology_Arc10.py"""
+    """GeMS_MakeTopology_Arc10.py"""
     def __init__(self):
         self.label = u'Make Topology'
         self.canRunInBackground = False
@@ -384,17 +384,17 @@ class MakeTopology(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_MakeTopology_Arc10
-        reload(Scripts.GeMS_MakeTopology_Arc10)
+        import GeMS_MakeTopology_Arc10
+        reload(GeMS_MakeTopology_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_MakeTopology_Arc10.main(parameter_values) 
+        GeMS_MakeTopology_Arc10.main(parameter_values) 
 
 class MapOutline(object):
-    """\Scripts\mapOutline_Arc10.py"""
+    """mapOutline_Arc10.py"""
     def __init__(self):
         self.label = u'MapOutline'
         self.description = u'Calculates lat-long outline and tics in NAD27 or NAD83 and projects to user-defined map projection'
@@ -482,17 +482,17 @@ class MapOutline(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.mapOutline_Arc10
-        reload(Scripts.mapOutline_Arc10)
+        import mapOutline_Arc10
+        reload(mapOutline_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.mapOutline_Arc10.main(parameter_values) 
+        mapOutline_Arc10.main(parameter_values) 
 
 class ProjectCrossSectionData(object):
-    """\Scripts\GeMS_ProjectCrossSectionData_Arc10.py"""
+    """GeMS_ProjectCrossSectionData_Arc10.py"""
     def __init__(self):
         self.label = u'Project Map Data to Cross Section'
         self.description = u'Generates backdrop feature coverages useful in constructing a geologic cross section. Inputs include the GeologicMap feature dateset of an NCGMP09-style geodatabase, a cross-section line, and a DEM.'
@@ -615,17 +615,17 @@ class ProjectCrossSectionData(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_ProjectCrossSectionData_Arc10
-        reload(Scripts.GeMS_ProjectCrossSectionData_Arc10)
+        import GeMS_ProjectCrossSectionData_Arc10
+        reload(GeMS_ProjectCrossSectionData_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_ProjectCrossSectionData_Arc10.main(parameter_values) 
+        GeMS_ProjectCrossSectionData_Arc10.main(parameter_values) 
 
 class ProjectPointsToCrossSection(object):
-    """\Scripts\GeMS_ProjectPtsToCrossSection_Arc10"""
+    """GeMS_ProjectPtsToCrossSection_Arc10"""
     def __init__(self):
         self.label = u'Project Points to Cross Section'
         self.description = u'Projects points within specified distance of cross-section line to plane of cross section. Section may be vertically exaggerated. For orientation data, calculates apparent dip'
@@ -718,17 +718,17 @@ class ProjectPointsToCrossSection(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_ProjectPtsToCrossSection_Arc10
-        reload(Scripts.GeMS_ProjectPtsToCrossSection_Arc10)
+        import GeMS_ProjectPtsToCrossSection_Arc10
+        reload(GeMS_ProjectPtsToCrossSection_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_ProjectPtsToCrossSection_Arc10.main(parameter_values)         
+        GeMS_ProjectPtsToCrossSection_Arc10.main(parameter_values)         
 
 class InclinationNumber(object):
-    """\Scripts\GeMS_InclinationNumbers_Arc10.py"""
+    """GeMS_InclinationNumbers_Arc10.py"""
     def __init__(self):
         self.label = u'Inclination Numbers'
         self.description = u'Creates annotation feature class OrientationPointLabels with dip and plunge numbers for appropriate features within OrientationPoints. Adds the new annotation feature class to your map composition. '
@@ -756,17 +756,17 @@ class InclinationNumber(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_InclinationNumbers_Arc10
-        reload(Scripts.GeMS_InclinationNumbers_Arc10)
+        import GeMS_InclinationNumbers_Arc10
+        reload(GeMS_InclinationNumbers_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_InclinationNumbers_Arc10.main(parameter_values)  
+        GeMS_InclinationNumbers_Arc10.main(parameter_values)  
 
 class SetPlotAtScales(object):
-    """\Scripts\GeMS_SetPlotAtScales_Arc10.py"""
+    """GeMS_SetPlotAtScales_Arc10.py"""
     def __init__(self):
         self.label = u'Set PlotAtScale values'
         self.description = u'Sets values of item PlotAtScale so that a definition query ( [PlotAtScale] >= map scale ) limits displayed features to those that can be shown without crowding at the specified map scale'
@@ -804,17 +804,17 @@ class SetPlotAtScales(object):
 
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_SetPlotAtScales_Arc10
-        reload(Scripts.GeMS_SetPlotAtScales_Arc10)
+        import GeMS_SetPlotAtScales_Arc10
+        reload(GeMS_SetPlotAtScales_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_SetPlotAtScales_Arc10.main(parameter_values) 
+        GeMS_SetPlotAtScales_Arc10.main(parameter_values) 
 
 class SetSymbols(object): 
-    """\Scripts\GeMS_SetSymbols_Arc10.py"""
+    """GeMS_SetSymbols_Arc10.py"""
     def __init__(self):
         self.label = u'Set Symbol Values'
         self.canRunInBackground = False
@@ -895,14 +895,14 @@ class SetSymbols(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_SetSymbols_Arc10
-        reload(Scripts.GeMS_SetSymbols_Arc10)
+        import GeMS_SetSymbols_Arc10
+        reload(GeMS_SetSymbols_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_SetSymbols_Arc10.main(parameter_values) 
+        GeMS_SetSymbols_Arc10.main(parameter_values) 
 
 class SetIDvalues(object): 
     """\Scripst\GeMS_reID_Arc10.py"""       
@@ -943,17 +943,17 @@ class SetIDvalues(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_reID_Arc10
-        reload(Scripts.GeMS_reID_Arc10)
+        import GeMS_reID_Arc10
+        reload(GeMS_reID_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_reID_Arc10.main(parameter_values) 
+        GeMS_reID_Arc10.main(parameter_values) 
 
 class FGDC_1(object):
-    """Scripts\GeMS_FGDC1_Arc10.py"""
+    """GeMS_FGDC1_Arc10.py"""
     def __init__(self):
         self.label = u'FGDC metadata, step 1'
         self.canRunInBackground = False
@@ -971,16 +971,16 @@ class FGDC_1(object):
         return [param_1]
 
     def execute(self, parameters, messages):
-        import Scripts.GeMS_FGDC1_Arc10
-        reload(Scripts.GeMS_FGDC1_Arc10)
+        import GeMS_FGDC1_Arc10
+        reload(GeMS_FGDC1_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_FGDC1_Arc10.main(parameter_values) 
+        GeMS_FGDC1_Arc10.main(parameter_values) 
 
 class FGDC_2(object):
-    """Scripts\GeMS_FGDC2_Arc10.py"""
+    """GeMS_FGDC2_Arc10.py"""
     def __init__(self):
         self.label = u'FGDC metadata, step 2'
         self.canRunInBackground = False
@@ -1014,16 +1014,16 @@ class FGDC_2(object):
         return [param_1, param_2, param_3]
 
     def execute(self, parameters, messages):
-        import Scripts.GeMS_FGDC2_Arc10
-        reload(Scripts.GeMS_FGDC2_Arc10)
+        import GeMS_FGDC2_Arc10
+        reload(GeMS_FGDC2_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_FGDC2_Arc10.main(parameter_values)
+        GeMS_FGDC2_Arc10.main(parameter_values)
 
 class FGDC_3(object):
-    """Scripts\GeMS_FGDC3_Arc10.py"""   
+    """GeMS_FGDC3_Arc10.py"""   
     def __init__(self):
         self.label = u'FGDC metadata, step 3'
         self.canRunInBackground = False
@@ -1049,16 +1049,16 @@ class FGDC_3(object):
         return [param_1, param_2]
 
     def execute(self, parameters, messages):
-        import Scripts.GeMS_FGDC3_Arc10
-        reload(Scripts.GeMS_FGDC3_Arc10)
+        import GeMS_FGDC3_Arc10
+        reload(GeMS_FGDC3_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_FGDC3_Arc10.main(parameter_values)
+        GeMS_FGDC3_Arc10.main(parameter_values)
         
 class PurgeMetadata(object):
-    """Scripts\GeMS_PurgeMetadata"""
+    """GeMS_PurgeMetadata"""
     def __init__(self):
         self.label = u'Purge Metadata'
         self.description = u'Purges metadata of geoprocessing history. (1) Exports existing metadata as FGDC CSDGM2 metadata, (2) clears metadata with USGS EGIS clear internal metadata tool, and (3) imports exported CSDGM2 metadata.\r\n\r\n'
@@ -1085,16 +1085,16 @@ class PurgeMetadata(object):
         return [param_1, param_2]
      
     def execute(self, parameters, messages):
-        import Scripts.GeMS_PurgeMetadata_Arc10
-        reload(Scripts.GeMS_PurgeMetadata_Arc10)
+        import GeMS_PurgeMetadata_Arc10
+        reload(GeMS_PurgeMetadata_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_PurgeMetadata_Arc10.main(parameter_values)
+        GeMS_PurgeMetadata_Arc10.main(parameter_values)
         
 class RelationshipClasses(object):
-    """Scripts\GeMS_RelationshipClasses1_Arc10.py"""
+    """GeMS_RelationshipClasses1_Arc10.py"""
 
     def __init__(self):
         self.label = u'Relationship Classes'
@@ -1114,16 +1114,16 @@ class RelationshipClasses(object):
         return [param_1]
         
     def execute(self, parameters, messages):
-        import Scripts.GeMS_RelationshipClasses1_Arc10
-        reload(Scripts.GeMS_RelationshipClasses1_Arc10)
+        import GeMS_RelationshipClasses1_Arc10
+        reload(GeMS_RelationshipClasses1_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_RelationshipClasses1_Arc10.main(parameter_values)
+        GeMS_RelationshipClasses1_Arc10.main(parameter_values)
         
 class FixStrings(object):
-    """Scripts\GeMS_FixStrings_Arc10"""
+    """GeMS_FixStrings_Arc10"""
     def __init__(self):
         self.label = u'Fix string values'
         self.description = u'Cleans up text strings in a GeMS database. Removes leading and trailing spaces and fixes bad <null> values.'
@@ -1142,16 +1142,16 @@ class FixStrings(object):
         return [param_1]
         
     def execute(self, parameters, messages):
-        import Scripts.FixStrings
-        reload(Scripts.FixStrings)
+        import FixStrings
+        reload(FixStrings)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.FixStrings.main(parameter_values)  
+        FixStrings.main(parameter_values)  
 
 class TranslateToShape(object):
-    """Scripts\GeMS_TranslateToShape_Arc10""" 
+    """GeMS_TranslateToShape_Arc10""" 
     def __init__(self):
         self.label = u'Translate To Shapefiles'
         self.description = u'Translates geodatabase to shapefiles and (for long fields) pipe-delimited text files. '
@@ -1178,16 +1178,16 @@ class TranslateToShape(object):
         return [param_1, param_2]
         
     def execute(self, parameters, messages):
-        import Scripts.GeMS_TranslateToShape_Arc10
-        reload(Scripts.GeMS_TranslateToShape_Arc10)
+        import GeMS_TranslateToShape_Arc10
+        reload(GeMS_TranslateToShape_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_TranslateToShape_Arc10.main(parameter_values) 
+        GeMS_TranslateToShape_Arc10.main(parameter_values) 
         
 class SymbolToRGB(object):
-    """Scripts\GeMS_WPGCMYK_RGB"""
+    """GeMS_WPGCMYK_RGB"""
     def __init__(self):
         self.label = u'Symbol to RGB'
         self.description = u'Calculates values of AreaFillRGB in table DescriptionOfMapUnits.  Symbol values must be present and are assumed to reference the WPGCYMK color set.'
@@ -1206,16 +1206,16 @@ class SymbolToRGB(object):
         return [param_1]
 
     def execute(self, parameters, messages):
-        import Scripts.GeMS_WPGCMYK_RGB
-        reload(Scripts.GeMS_WPGCMYK_RGB)
+        import GeMS_WPGCMYK_RGB
+        reload(GeMS_WPGCMYK_RGB)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_WPGCMYK_RGB.main(parameter_values)
+        GeMS_WPGCMYK_RGB.main(parameter_values)
         
 class TopologyCheck(object):
-    """Scripts\GeMS_TopologyCheck_Arc10"""
+    """GeMS_TopologyCheck_Arc10"""
     def __init__(self):
         self.label = u'Topology Check'
         self.canRunInBackground = False
@@ -1241,16 +1241,16 @@ class TopologyCheck(object):
         return [param_1, param_2]
 
     def execute(self, parameters, messages):
-        import Scripts.GeMS_TopologyCheck_Arc10
-        reload(Scripts.GeMS_TopologyCheck_Arc10)
+        import GeMS_TopologyCheck_Arc10
+        reload(GeMS_TopologyCheck_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_TopologyCheck_Arc10.main(parameter_values)
+        GeMS_TopologyCheck_Arc10.main(parameter_values)
         
 class GeologicNamesCheck(object):
-    """Scripts\GeMS_GeolexCheck_Arc10"""
+    """GeMS_GeolexCheck_Arc10"""
     def __init__(self):
         self.label = u'Geologic Names Check'
         self.description = u"This tool automates some of the steps in a geologic names review as required by USGS publication policy. It searches within a supplied list of map units for names and usages found in the U.S. Geologic Names Lexicon (Geolex) and provides a report template in spreadsheet form for the author and reviewer to use during the review process. The input is a GeMS-compliant DescriptionOfMapUnits (DMU) table and a list of U.S. state abbreviations within which the DMU is relevant. The tool reports the Geolex names found within the map unit name, the usages associated with those names, and whether or not the author's choice of geographic extent matches that found in Geolex. Comparisons of age and status (formal vs informal) are not at this time considered. "
@@ -1286,16 +1286,16 @@ class GeologicNamesCheck(object):
         return [param_1, param_2, param_3]
         
     def execute(self, parameters, messages):
-        import Scripts.GeMS_GeolexCheck_Arc10
-        reload(Scripts.GeMS_GeolexCheck_Arc10)
+        import GeMS_GeolexCheck_Arc10
+        reload(GeMS_GeolexCheck_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_GeolexCheck_Arc10.main(parameter_values)
+        GeMS_GeolexCheck_Arc10.main(parameter_values)
         
 class ValidateDatabase(object):
-    """Scripts\GeMS_ValidateDatabase_Arc10"""
+    """GeMS_ValidateDatabase_Arc10"""
     def __init__(self):
         self.label = u'Validate Database'
         self.description = u'Checks an NCGMP09-style database for validity. Are required elements present? Are fields properly defined? Are invalid nulls present? Are required Glossary entries present? Are internally referenced objects (data sources, ...) present?'
@@ -1349,16 +1349,16 @@ class ValidateDatabase(object):
         return [param_1, param_2, param_3, param_4, param_5]
         
     def execute(self, parameters, messages):
-        import Scripts.GeMS_ValidateDatabase_Arc10
-        reload(Scripts.GeMS_ValidateDatabase_Arc10)
+        import GeMS_ValidateDatabase_Arc10
+        reload(GeMS_ValidateDatabase_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_ValidateDatabase_Arc10.main(parameter_values)
+        GeMS_ValidateDatabase_Arc10.main(parameter_values)
         
 class DMUtoDocx(object):
-    """Scripts\GeMS_DMUtoDocx_Arc10"""
+    """GeMS_DMUtoDocx_Arc10"""
     def __init__(self):
         self.label = u'DMU to .docx'
         self.description = u'Reads table DescriptionOfMapUnits in an NCGMP09-style geodatabase and creates formatted Microsoft Word .docx file "Description of Map Units", using paragraph styles defined in USGS Pubs template MapManuscript_v1-0_04-11.dotx'
@@ -1411,16 +1411,16 @@ class DMUtoDocx(object):
         return [param_1, param_2, param_3, param_4, param_5]
         
     def execute(self, parameters, messages):
-        import Scripts.GeMS_DMUtoDocx_Arc10
-        reload(Scripts.GeMS_DMUtoDocx_Arc10)
+        import GeMS_DMUtoDocx_Arc10
+        reload(GeMS_DMUtoDocx_Arc10)
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_DMUtoDocx_Arc10.main(parameter_values)
+        GeMS_DMUtoDocx_Arc10.main(parameter_values)
         
 class RebuildMapUnits(object):
-    """Scripts\GeMS_RebuildMapUnits_Arc10.py"""
+    """GeMS_RebuildMapUnits_Arc10.py"""
     def __init__(self):
         self.label = u'Rebuild MapUnit Polygons'
         self.canRunInBackground = False
@@ -1501,11 +1501,11 @@ class RebuildMapUnits(object):
         
     def execute(self, parameters, messages):
         # import and reload the tool script to get the latest version; if making edits to the tool script
-        import Scripts.GeMS_RebuildMapUnits_Arc10
-        reload(Scripts.GeMS_RebuildMapUnits_Arc10)
+        import GeMS_RebuildMapUnits_Arc10
+        reload(GeMS_RebuildMapUnits_Arc10)
         
         # construct a list of parameter.valueAsText strings to send to the tool
         parameter_values = [parameter.valueAsText for parameter in parameters]
         
         # the script tool has been imported as a module. Now call the main function
-        Scripts.GeMS_RebuildMapUnits_Arc10.main(parameter_values) 
+        GeMS_RebuildMapUnits_Arc10.main(parameter_values) 
