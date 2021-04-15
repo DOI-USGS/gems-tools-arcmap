@@ -55,14 +55,14 @@ def pm(msg, severity=0):
 		pass
             
 #********************************************************************************************
-def main(parameters)
+def main(parameters):
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
     #Get the parameters
-    lineLayer = parameters(0)
-    polyLayer = parameters(1)
-    labelPoints = parameters(2)
-    saveMUP = parameters(3)
+    lineLayer = parameters[0]
+    polyLayer = parameters[1]
+    labelPoints = parameters[2]
+    saveMUP = parameters[3]
 
     #collect the findLyr properties
     lyrProps = findLyr(polyLayer)
