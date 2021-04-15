@@ -56,7 +56,7 @@ def buildCafMupTopology(inFds, um):
 def main(parameters):
     addMsgAndPrint(versionString)
     
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_MakeTopology_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_MakeTopology_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     addMsgAndPrint(parameters[0])

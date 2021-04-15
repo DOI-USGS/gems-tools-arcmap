@@ -55,7 +55,7 @@ from GeMS_utilityFunctions import *
 from xml.dom.minidom import *
 
 versionString = 'GeMS_MetadataCSDGM2_Arc10.py, version of 31 March 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_MetadataCSDGM2_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_MetadataCSDGM2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 translator = arcpy.GetInstallInfo("desktop")["InstallDir"]+'Metadata/Translator/ARCGIS2FGDC.xml'

@@ -66,7 +66,7 @@ def ddToDmsString(dd):
         
 def main(parameters):
     addMsgAndPrint(versionString)
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/mapOutline_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/mapOutline_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     ## MAP BOUNDARY

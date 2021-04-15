@@ -345,7 +345,7 @@ def setMatchingMergeNumbers(arcs):
 
 def main(parameters):
 #################################
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_Deplanarize_Arc10.4.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_Deplanarize_Arc10.4.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     inGdb = parameters[0]

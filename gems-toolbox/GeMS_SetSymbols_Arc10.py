@@ -88,7 +88,7 @@ def main(parameters):
     addMsgAndPrint('  '+versionString)
     addMsgAndPrint('  dictionary file: '+dictionaryFile)
     
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_SetSymbols_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_SetSymbols_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     # get inputs

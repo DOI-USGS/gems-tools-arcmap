@@ -183,7 +183,7 @@ def locateEventTable(gdb,inFC,pts,dem,sDistance,eventProperties,zType,isLines = 
 ###############################################################
 def main(parameters):
     addMsgAndPrint('\n  '+versionString)
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_ProjectCrossSectionData_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_ProjectCrossSectionData_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     gdb         = parameters[0]

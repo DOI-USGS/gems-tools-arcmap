@@ -109,7 +109,7 @@ def rankParaStylesAreEqual(style1,style2):
 def main(parameters):
     debug = False
     
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_DocxToDMU_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_DocxToDMU_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
     manuscriptFile = parameters[0]

@@ -137,7 +137,7 @@ def dipNumbers(gdb,mapScaleDenominator):
 def main(parameters):
     addMsgAndPrint('  '+versionString)
 
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_InclinationNumbers_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_InclinationNumbers_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
     # get inputs

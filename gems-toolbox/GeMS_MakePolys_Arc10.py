@@ -60,7 +60,7 @@ def findLyr(lname):
 ##################################
 def main(parameters):
     addMsgAndPrint(versionString)
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_MakePolys3_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_MakePolys3_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
     # feature dataset

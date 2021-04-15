@@ -34,7 +34,7 @@ def backupName(inDb):
     return newName
 
 def main(parameters):
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_CompactAndBackup_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_CompactAndBackup_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     inDb = parameters[0]
 

@@ -30,7 +30,7 @@ def makeFieldTypeDict(fds,fc):
     
 def main(parameters):
     addMsgAndPrint('  '+versionString)
-    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/toolbox/GeMS_AttributeByKeyValues_Arc10.py'
+    rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/gems-toolbox/GeMS_AttributeByKeyValues_Arc10.py'
     checkVersion(versionString, rawurl, 'gems-tools-arcmap')
     
     if len(parameters) <> 3:
