@@ -1463,7 +1463,7 @@ class RebuildMapUnitPolys(object):
 
         return [param_1, param_2, param_3, param_4]
              
-    def updateMessages(self, parameters
+    def updateMessages(self, parameters):
         # with selection of mapunitpolys, is there an editing lock on the gdb?
         # won't be able to delete the feature class if there is is
         if parameters[1].value:
