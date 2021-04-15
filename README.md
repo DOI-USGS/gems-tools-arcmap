@@ -2,9 +2,10 @@
 
 <img width="250" align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/USGS_logo_green.svg/500px-USGS_logo_green.svg.png"/>
 
-# GeMS Tools for ArcMap
+#GeMS Tools for ArcMap
 
-## This is a beta release! Download from the Code button, not the 'latest release' link.
+##This is a beta release! Download from the Code button, not the 'latest release' link.
+##Until posted as main release, all tools will report that they are not the most recent version.
 
 This repository contains an ArcGIS python toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Note that some files previously distributed in the Resources folder have been moved to a separate repository called [gems-resources.](https://github.com/usgs/gems-resources)
 
@@ -13,12 +14,11 @@ If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro]
 ## Installation
 
 * Download the [latest release](https://github.com/usgs/gems-tools-arcmap/releases/latest).
-* Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`) with a folder called `gems-toolbox` inside that (this folder structure exists so that the second method outlined below will work).
+* Unzip the file to a folder of your choice. This will extract a single folder named `gems-tools-arcmap-` followed by the version number (e.g., `gems-tools-arcmap-1.2.2`) with a folder called `gems-toolbox` inside that (this folder structure exists so that the third method outlined below will work).
 
 Once unzipped, you have three options for using the toolbox in ArcMap:
 
 1. Browse to `gems-toolbox` in the ArcCatalog window under Folder Connections everytime you need it.
-
 2. Configure the ArcToolbox window so that it is listed there:
     * Start ArcCatalog or ArcMap
     * open the ArcToolbox window
