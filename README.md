@@ -18,7 +18,7 @@ If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro]
 
 Once unzipped, you have three options for using the toolbox in ArcMap:
 
-1. Browse to `gems-toolbox` in the ArcCatalog window under Folder Connections everytime you need it.
+1. Browse to `gems-toolbox` in the ArcCatalog window under Folder Connections every time you need it.
 2. Configure the ArcToolbox window so that it is listed there:
     * Start ArcCatalog or ArcMap
     * open the ArcToolbox window
