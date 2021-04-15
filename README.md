@@ -2,10 +2,10 @@
 
 <img width="250" align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/USGS_logo_green.svg/500px-USGS_logo_green.svg.png"/>
 
-#GeMS Tools for ArcMap
+# GeMS Tools for ArcMap
 
-##This is a beta release! Download from the Code button, not the 'latest release' link.
-##Until posted as main release, all tools will report that they are not the most recent version.
+## This is a beta release! Download from the Code button, not the 'latest release' link.
+## Until posted as main release, all tools will report that they are not the most recent version.
 
 This repository contains an ArcGIS python toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Note that some files previously distributed in the Resources folder have been moved to a separate repository called [gems-resources.](https://github.com/usgs/gems-resources)
 
