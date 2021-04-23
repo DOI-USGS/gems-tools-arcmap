@@ -231,6 +231,6 @@ def checkVersion(vString, rawurl, toolbox):
                              'Please download the latest version from {}'.format(repourl))
     except:
         arcpy.AddWarning('Could not connect to GitHub to determine if this version of the tool is the most recent.\n')
-        arcpy.AddWarning('The latest release is at {}'..format(repourl))
+        arcpy.AddWarning('The latest release is at {}'.format(repourl))
 
 
