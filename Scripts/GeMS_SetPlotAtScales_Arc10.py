@@ -1,13 +1,12 @@
 # sets PlotAtScale values for a feature class
 
 # September 2017: now invokes edit session before setting values (line 135)
-
-versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 2 September 2017'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetPlotAtScales_Arc10.py'
-checkVersion(versionString, rawurl, 'gems-tools-arcmap')
-
 import arcpy, os.path, sys
 from GeMS_utilityFunctions import *
+
+versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 28 April 2021'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_SetPlotAtScales_Arc10.py'
+checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 # global dictionaries
 OPTypeDict = {}
