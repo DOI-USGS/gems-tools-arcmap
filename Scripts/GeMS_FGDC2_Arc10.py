@@ -5,6 +5,7 @@ import sys, os, os.path, arcpy, copy, imp
 from GeMS_utilityFunctions import *
 from GeMS_Definition import enumeratedValueDomainFieldList, rangeDomainDict, unrepresentableDomainDict, attribDict, entityDict, GeoMatConfDict
 from xml.dom.minidom import *
+import codecs
 
 debug = False
 
@@ -453,9 +454,10 @@ def writeDomToFile(workDir,dom,fileName):
         addMsgAndPrint(arcpy.env.workspace)
         addMsgAndPrint('fileName='+fileName)
     addMsgAndPrint('    Writing XML to '+fileName)
-    outf = open(os.path.join(workDir,fileName),'w')
-    dom.writexml(outf)
-    outf.close()
+    
+    outxml = os.path.join(workDir, fileName)
+    with codecs.open(outxml, "w", "utf-8") as out:
+        dom.writexml(out)
 
 #####################################
 
