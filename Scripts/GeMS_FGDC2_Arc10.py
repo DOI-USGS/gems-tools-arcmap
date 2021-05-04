@@ -456,8 +456,8 @@ def writeDomToFile(workDir,dom,fileName):
     addMsgAndPrint('    Writing XML to '+fileName)
     
     outxml = os.path.join(workDir, fileName)
-    with codecs.open(outxml, "w", "utf-8") as out:
-        dom.writexml(out)
+    with codecs.open(outxml, "w", encoding="utf-8", errors="xmlcharrefreplace") as out:
+        dom.writexml(out, encoding="utf-8")
 
 #####################################
 
