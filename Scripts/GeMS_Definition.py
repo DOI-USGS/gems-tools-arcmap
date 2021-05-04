@@ -6,7 +6,7 @@
 #  Ralph Haugerud, 19 August 2016 
 # 
 
-versionString = 'GeMS_Definition.py, version of 19 January 2021'
+versionString = 'GeMS_Definition.py, version of 4 May 2021'
 
 # fixes errors in Station feature class definition
 # 16 Jan 2014: added ObservedMapUnit to Station feature class definition
@@ -28,6 +28,7 @@ versionString = 'GeMS_Definition.py, version of 19 January 2021'
 # 28 Sept 2020: Removed definitions of CSA feature classes, as this is handled in Create Database and in cross-section projection tools
 # 29 October 2020: Changed NoNulls to NullsOK for ObservedMapUnit in Stations per documentation - ET
 # 1 December 2020: Added ErrorMeasure to GeochronPoints, to conform with documentation - RH
+# 4 May 2021: changed MapUnit in GenericPoints to NullsOk because standard says "Values of MapUnit should not be null, except for points that lie outside the extent of the MapUnitPolys feature class." and Chris Halstead was getting validate errors with that situation; points outside of polygons in map and cross section views. Left MapUnit as NoNulls for other point feature classes because they are more likely to be tied to a map unit and within the map area.
 
 # to think about: Maybe change all NoNulls to NullsOK?
 
@@ -83,7 +84,7 @@ startDict = {
 					['LocationConfidenceMeters','Single','NoNulls'],
 					['PlotAtScale','Single','NoNulls'],
 					['StationID','String','NullsOK',IDLength],
-					['MapUnit','String','NoNulls',mapUnitLength],
+					['MapUnit','String','NullsOK',mapUnitLength],
 					['LocationSourceID','String','NoNulls',IDLength],
 					['DataSourceID','String','NoNulls',IDLength],
 					['Notes','String','Optional',defaultLength]],
