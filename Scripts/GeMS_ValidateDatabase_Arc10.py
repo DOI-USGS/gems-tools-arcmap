@@ -222,7 +222,7 @@ def getHKeyErrors(HKs):
     if len(HKs) == 0:
         hKeyErrs.append('No HierarchyKey values?!')
         return hKeyErrs
-    fragmentLength = len(HKs[0].split('-')[0])
+    fragmentLength = len(str(HKs[0]).split('-')[0])
     lastHK = ''
     HKs.sort()
     for hk in HKs:
