@@ -1,10 +1,10 @@
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/usgs/gems-tools-arcmap)](https://github.com/usgs/gems-tools-arcmap/releases/latest) [![resources](https://img.shields.io/badge/gems-resources-orange)](https://github.com/usgs/gems-resources) [![Wiki](https://img.shields.io/badge/gems-wiki-orange)](https://github.com/usgs/gems-resources/wiki) [![pro](https://img.shields.io/badge/gems--tools-pro-orange)](https://github.com/usgs/gems-tools-pro) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community) [![gems on USGS](https://img.shields.io/badge/gems-%40%20USGS-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/usgs/gems-tools-arcmap)](https://github.com/usgs/gems-tools-arcmap/releases/latest) [![HTMLdoc](https://img.shields.io/badge/gems-online_documentation-orange)](https://scgeology.github.io/GeMS/index.html) [![Wiki](https://img.shields.io/badge/gems-wiki-orange)](https://github.com/usgs/gems-tools-arcmap/wiki) [![pro](https://img.shields.io/badge/gems--tools-pro-orange)](https://github.com/usgs/gems-tools-pro) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community) [![gems on USGS](https://img.shields.io/badge/gems-%40%20USGS-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/)
 
 <img width="250" align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/USGS_logo_green.svg/500px-USGS_logo_green.svg.png"/>
 
 # GeMS Tools for ArcMap
 
-This repository contains an ArcGIS toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Note that some files previously distributed in the Resources folder have been moved to a separate repository called [gems-resources.](https://github.com/usgs/gems-resources)
+This repository contains an ArcGIS toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Additional resources; vocabularies, symbology, links to other projects, etc.; are available at the [NGMDB GeMS site](https://ngmdb.usgs.gov/Info/standards/GeMS/#reso).
 
 If you are looking for tools that work in ArcGIS Pro, go to the [gems-tools-pro](https://github.com/usgs/gems-tools-pro) repository.
 
