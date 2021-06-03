@@ -6,7 +6,7 @@
 #  Ralph Haugerud, 19 August 2016 
 # 
 
-versionString = 'GeMS_Definition.py, version of 4 May 2021'
+versionString = 'GeMS_Definition.py, version of 2 June 2021'
 
 # fixes errors in Station feature class definition
 # 16 Jan 2014: added ObservedMapUnit to Station feature class definition
@@ -29,6 +29,7 @@ versionString = 'GeMS_Definition.py, version of 4 May 2021'
 # 29 October 2020: Changed NoNulls to NullsOK for ObservedMapUnit in Stations per documentation - ET
 # 1 December 2020: Added ErrorMeasure to GeochronPoints, to conform with documentation - RH
 # 4 May 2021: changed MapUnit in GenericPoints to NullsOk because standard says "Values of MapUnit should not be null, except for points that lie outside the extent of the MapUnitPolys feature class." and Chris Halstead was getting validate errors with that situation; points outside of polygons in map and cross section views. Left MapUnit as NoNulls for other point feature classes because they are more likely to be tied to a map unit and within the map area.
+# 2 June 2021: In Stations feature class, changed GPSX and GPSY to NullsOK. Removed MapX and MapY, to conform to published standard
 
 # to think about: Maybe change all NoNulls to NullsOK?
 
@@ -146,11 +147,9 @@ startDict = {
 					['TimeDate','Date','NullsOK'],
 					['Observer','String','NullsOK',defaultLength],
 					['SignificantDimensionMeters','Single','NullsOK'],
-					['GPSX','Double','NoNulls'],
-					['GPSY','Double','NoNulls'],  
-					['PDOP','Single','NullsOK'],
-					['MapX','Double','NoNulls'],
-					['MapY','Double','NoNulls']],
+					['GPSX','Double','NullsOK'],
+					['GPSY','Double','NullsOK'],  
+					['PDOP','Single','NullsOK']],
 		   'GeologicLines':    [['Type','String','NoNulls',defaultLength],
                                         ['IsConcealed','String','NoNulls',booleanLength],
 					['LocationConfidenceMeters','Single','NoNulls'],
