@@ -29,8 +29,8 @@ from GeMS_utilityFunctions import *
 from numbers import Number
 import io
 
-versionString = 'GeMS_TranslateToShape_Arc10.5.py, version of 27 June 2019'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.5.py'
+versionString = 'GeMS_TranslateToShape_Arc10.py, version of 11 August 2021'
+rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False
@@ -273,7 +273,7 @@ def description(unitDesc):
 def makeStdLithDict():
     addMsgAndPrint('  Making StdLith dictionary...')
     stdLithDict = {}
-    rows = arcpy.searchcursor('StandardLithology', "", "", "", "MapUnit")
+    rows = arcpy.da.SearchCursor('StandardLithology', ["MapUnit"])
     row = rows.next()
     unit = row.getValue('MapUnit')
     unitDesc = []
