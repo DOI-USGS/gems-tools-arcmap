@@ -273,7 +273,7 @@ def description(unitDesc):
 def makeStdLithDict():
     addMsgAndPrint('  Making StdLith dictionary...')
     stdLithDict = {}
-    rows = arcpy.da.SearchCursor('StandardLithology', ["MapUnit"])
+    rows = arcpy.SearchCursor('StandardLithology', '', '', '', "MapUnit"])
     row = rows.next()
     unit = row.getValue('MapUnit')
     unitDesc = []
