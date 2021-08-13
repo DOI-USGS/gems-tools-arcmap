@@ -185,7 +185,7 @@ def makeNodeFC(fd, fc):
     # add fields nArcs,ArcOIDs,ArcTypes,Note
     arcpy.AddField_management(fdfc,'nArcs','SHORT')
     for f in ['ArcOIDs','ArcTypes','Note']:
-        arcpy.AddField_management(fdfc,f,'TEXT','','',100)        
+        arcpy.AddField_management(fdfc,f,'TEXT','','',500)        
     return fdfc
 
 def makeNodeFCXY(fd, fc):
