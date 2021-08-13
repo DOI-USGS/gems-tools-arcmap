@@ -47,7 +47,7 @@ Significant assumptions:
 import arcpy, os, sys, math, os.path, operator, time
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_TopologyCheck_Arc10.py, version of 13 AugustS 2021'
+versionString = 'GeMS_TopologyCheck_Arc10.py, version of 13 August 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TopologyCheck_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 # see gems-tools version<=1.3 to get earlier TopologyCheck tool
