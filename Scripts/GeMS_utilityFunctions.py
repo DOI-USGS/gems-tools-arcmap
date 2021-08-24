@@ -1,8 +1,15 @@
 # utility functions for scripts that work with GeMS geodatabase schema
 ## 28 December 2020: added function editSessionActive(gdb)   - RH
 ## 7 March 2021: Extended list of keywords for isPlanar()
+# 24 August 2021: editSessionActive now looks for ed.lock files in gdb folder. Was running into 
+#   problems with gdb's that did not have GeoMaterialDict. Though a violation of the schema, discovering
+#   that absence is not the point of editSessionActive. Looking for ed.lock files is very easy. This won't 
+#   be a good method if trying to validate a format other than gdb, but we'll kick the can until then.
 
-import arcpy, os.path, time
+import arcpy
+import os.path
+import time
+import glob
 import requests
 editPrefixes = ('xxx','edit_','errors_','ed_')
 debug = False
@@ -186,36 +193,12 @@ def isPlanar(orientationType):
             isPlanarType = True
     return isPlanarType
 
-def editSessionActive(gdb):
-    # returns True if edit session active, else False
-    # test for 
-    if arcpy.Exists(gdb+'/GeoMaterialDict'):
-        tbl = gdb+'/GeoMaterialDict'
-        fld = 'GeoMaterial'
-    elif arcpy.Exists(gdb+'/GeologicMap/MapUnitPolys') and numberOfRows(gdb+'/GeologicMap/MapUnitPolys') > 2:
-        tbl = gdb+'/GeologicMap/MapUnitPolys'
-        fld = 'MapUnit'
+def editSessionActive(gdb_path):
+    if glob.glob(os.path.join(gdb_path, '*.ed.lock')):
+        edit_session = True
     else:
-        # doesn't appear to be a GeMS database
-        # default to no edit session active and bail
-        return False 
-    ## Following code modified from routine posted by Curtis Price at
-    ## https://gis.stackexchange.com/questions/61708/checking-via-arcpy-if-arcmap-is-in-edit-session
-    edit_session = True
-    try:
-        # attempt to open two cursors on the input
-        # this generates a RuntimeError if no edit session is active
-        with arcpy.da.UpdateCursor(tbl, fld) as rows:
-            row = next(rows)
-            with arcpy.da.UpdateCursor(tbl, fld) as rows2:
-                row2 = next(rows2)
-    except RuntimeError as e:
-        if e.message == "workspace already in transaction mode":
-            # this error means that no edit session is active
-            edit_session = False
-        else:
-            # we have some other error going on, report it
-            raise
+        edit_session = False
+
     return edit_session
     
 def checkVersion(vString, rawurl, toolbox):
