@@ -6,7 +6,7 @@
 import arcpy, os, os.path, sys
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_FixStrings_Arc10.py, version of 30 July 2020'
+versionString = 'GeMS_FixStrings_Arc10.py, version of 9 September 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FixStrings_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -20,7 +20,7 @@ def fixTableStrings(fc):
             trash = ''
             updateRowFlag = False
             row1 = [row[0]]
-            for f in row[1:]:
+            for f in row[1:]:        
                 updateFieldFlag = False
                 f0 = f
                 if f <> None:
@@ -32,14 +32,12 @@ def fixTableStrings(fc):
                         updateFieldFlag = True
                     if updateFieldFlag:
                         updateRowFlag = True
-                        addMsgAndPrint( ' '+str(row[0])+' **'+ str(f0)+'**')
                 row1.append(f)
             if updateRowFlag:
                 try:
                     cursor.updateRow(row1)
-                except:
-                    addMsgAndPrint('failed to update row '+str(row[0])+'. Perhaps a field is not nullable')
-    del cursor, row
+                except Exception as error:
+                    addMsgAndPrint('  Row {}. {}'.format(str(row[0]), error))
     
 #########################
 
@@ -50,7 +48,7 @@ arcpy.env.workspace = db
 
 tables = arcpy.ListTables()
 for tb in tables:
-    addMsgAndPrint(' ')
+    addMsgAndPrint(".........")
     addMsgAndPrint(os.path.basename(tb))
     fixTableStrings(tb)
 
@@ -59,11 +57,9 @@ datasets = [''] + datasets if datasets is not None else []
 for ds in datasets:
     for fc in arcpy.ListFeatureClasses(feature_dataset=ds):
         path = os.path.join(arcpy.env.workspace, ds, fc)
-        addMsgAndPrint(' ')
-        addMsgAndPrint(os.path.basename(fc))
         try:
             fixTableStrings(path)
-        except:
-            addMsgAndPrint('  failed to fix strings')
+        except Exception as error:
+            addMsgAndPrint(error)
 
 addMsgAndPrint('DONE')
