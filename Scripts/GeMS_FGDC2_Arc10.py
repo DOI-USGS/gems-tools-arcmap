@@ -197,11 +197,11 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
                         #this is how we will enumerate through the enumerated_domain section
                         defs[t] = []
                         if row.FullName <> None:
-                            defs[t].append(row.FullName.encode('utf_8'))
+                            defs[t].append(row.FullName.decode('utf_8'))
                             defs[t].append('this report, table DescriptionOfMapUnits')
                         else:
                             addMsgAndPrint('MapUnit = '+t+', FullName not defined')
-                            defs[t].append(row.Name.encode('utf_8'))
+                            defs[t].append(row.Name.decode('utf_8'))
                             defs[t].append('this report, table DescriptionOfMapUnits')
                     else:
                         if not t in ('',' '): cantfindValue.append([fld,t])
@@ -222,11 +222,11 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
                     #if the searchcursor contains a row
                     if row:
                         if debug:
-                            addMsgAndPrint(row.GeoMaterial+' : '+row.Definition.encode('utf_8'))
+                            addMsgAndPrint(row.GeoMaterial+' : '+row.Definition.decode('utf_8'))
                         #create an entry in the dictionary of term:[definition, source] key:value pairs
                         #this is how we will enumerate through the enumerated_domain section
                         defs[t] = []
-                        defs[t].append(row.Definition.encode('utf_8'))
+                        defs[t].append(row.Definition.decode('utf_8'))
                         defs[t].append(' GeMS documentation')
                     else:
                         addMsgAndPrint('GeoMaterial = '+t+': not defined in GeoMaterialDict')
@@ -245,7 +245,7 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
                         #create an entry in the dictionary of term:[definition, source] key:value pairs
                         #this is how we will enumerate through the enumerated_domain section
                         defs[t] = []
-                        defs[t].append(row.Source.encode('utf_8'))
+                        defs[t].append(row.Source.decode('utf_8'))
                         defs[t].append('this report, table DataSources')
                     else:
                         cantfindValue.append([fld,t])
@@ -261,8 +261,8 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
                         #create an entry in the dictionary of term:[definition, source] key:value pairs
                         #this is how we will enumerate through the enumerated_domain section
                         defs[t] = []
-                        defs[t].append(row.Definition.encode('utf_8'))
-                        defs[t].append(__findInlineRef(row.DefinitionSourceID).encode('utf_8'))
+                        defs[t].append(row.Definition.decode('utf_8'))
+                        defs[t].append(__findInlineRef(row.DefinitionSourceID).decode('utf_8'))
                     else:
                         if fld <> 'GeoMaterial' and fc <> 'GeoMaterialDict':
                             cantfindValue.append([fld,t])
@@ -443,7 +443,7 @@ def fixObjXML(objName,objType,objLoc,domMR, fdDataSourceValues=[]):
     #dom = replaceTitleSupplinf('Non-spatial table',objName,gdb,dom)
     dom = replaceTitleSupplinf(objType,objName,gdb,dom)
     domName = gdb[:-4]+'_'+objName+'-metadata.xml'
-    writeDomToFile(wksp,dom,domName)
+    (wksp,dom,domName)writeDomToFile
     if not debug:
         os.remove(arcXMLfile)
 
