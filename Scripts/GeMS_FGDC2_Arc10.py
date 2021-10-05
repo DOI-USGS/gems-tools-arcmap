@@ -9,7 +9,7 @@ import codecs
 
 debug = False
 
-versionString = 'GeMS_FGDC2_Arc10.py, version of 4 May 2021'
+versionString = 'GeMS_FGDC2_Arc10.py, version of 5 October 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -37,7 +37,9 @@ def __appendOrReplace(rootNode,newNode,nodeTag):
 
 def __newElement(dom,tag,text):
     nd = dom.createElement(tag)
-    ndText = dom.createTextNode(text)
+    # dom needs bytes. For text coming from table fields, we need to decode it from unicode to bytes in case there are non-ASCII characters
+    # tags coming from field names will never have non-ASCII characters
+    ndText = dom.createTextNode(str(text).decode("utf-8"))
     nd.appendChild(ndText)
     return nd
 
@@ -339,10 +341,10 @@ def updateTableDom(dom,fc,logFile):
         if len(eainfo.getElementsByTagName('detailed')) == 0:
             #add detailed/enttyp/enttypl nodes
             detailed = dom.createElement('detailed')
-            enttyp = dom.createElement('enttyp')
-            enttypl = __newElement(dom,'enttypl',fc)
-            enttypd = __newElement(dom,'enttypd',descText)
-            enttypds = __newElement(dom,'enttypds',descSourceText)
+            enttyp = dom.createElement(b'enttyp')
+            enttypl = __newElement(dom, 'enttypl', fc)
+            enttypd = __newElement(dom, 'enttypd', descText)
+            enttypds = __newElement(dom, 'enttypds', descSourceText)
             for nd in enttypl,enttypd,enttypds:
                 enttyp.appendChild(nd)
             detailed.appendChild(enttyp)
@@ -403,8 +405,11 @@ def replaceSpatialStuff(dom, arcXML):
     if len(spds) > 0:
         addMsgAndPrint('    Replacing spdoinfo and spref')
         __appendOrReplace(md,spds[0],'spdoinfo')
-        spr = arcXML.getElementsByTagName('spref')[0]
-        __appendOrReplace(md,spr,'spref')
+        try:
+            spr = arcXML.getElementsByTagName('spref')[0]
+            __appendOrReplace(md,spr,'spref')
+        except Exception as error:
+            arcpy.AddMessage('      Spatial reference is "Unknown"')
     return dom
 
 def replaceTitleSupplinf(objectType,aTable,gdb,dom):
@@ -427,12 +432,15 @@ def fixObjXML(objName,objType,objLoc,domMR, fdDataSourceValues=[]):
     arcXMLfile = wksp+'/'+objName+'.xml'
     testAndDelete(arcXMLfile)
     arcpy.ExportMetadata_conversion(objLoc,translator,arcXMLfile)
-    #with open(xml_file) as xml:
-    #    arcXML = parse(xml)
-    arcXML = xml.dom.minidom.parse(arcXMLfile)
+    with open(arcXMLfile) as xml:
+       arcXML = parse(xml)
+       
+    #arcXML = xml.dom.minidom.parse(arcXMLfile)
     dom = copy.deepcopy(domMR)
+    
     # updateTableDom updates entity-attribute info, also returns dataSourceValues
     dom, dataSourceValues = updateTableDom(dom,objLoc,logFile)
+    
     if objType <> 'Feature dataset':
         # delete unused dataqual/lineage/srcinfo branches
         dom = pruneSrcInfo(dom,dataSourceValues)
@@ -441,14 +449,14 @@ def fixObjXML(objName,objType,objLoc,domMR, fdDataSourceValues=[]):
     
     # add spdoinfo and spref from arcXML
     dom = replaceSpatialStuff(dom, arcXML)
+    
     # redo title and supplinfo
-    #dom = replaceTitleSupplinf('Non-spatial table',objName,gdb,dom)
     dom = replaceTitleSupplinf(objType,objName,gdb,dom)
     domName = gdb[:-4]+'_'+objName+'-metadata.xml'
     writeDomToFile(wksp,dom,domName)
     if not debug:
         os.remove(arcXMLfile)
-
+    
     return dataSourceValues
 
 def writeDomToFile(workDir,dom,fileName):
@@ -484,8 +492,10 @@ logFileName = inGdb+'-metadataLog.txt'
 
 # read mrXML into domMR
 addMsgAndPrint('  Parsing '+mrXML)
-try:
-    domMR = xml.dom.minidom.parse(mrXML)
+try:    
+    with open(mrXML) as xml:
+       domMR = parse(xml)
+    #domMR = xml.dom.minidom.parse(mrXML)
     addMsgAndPrint('  Master record parsed successfully')
 except:
     addMsgAndPrint(arcpy.GetMessages())
@@ -504,29 +514,29 @@ for aTable in tables:
     objLoc = inGdb+'/'+aTable
     fixObjXML(objName,objType,objLoc,domMR)
 
-# fcs = arcpy.ListFeatureClasses()
-# for fc in fcs:
-    # objName = fc
-    # objType = 'Feature class'
-    # objLoc = inGdb+'/'+fc
-    # fixObjXML(objName,objType,objLoc,domMR)
+fcs = arcpy.ListFeatureClasses()
+for fc in fcs:
+    objName = fc
+    objType = 'Feature class'
+    objLoc = inGdb+'/'+fc
+    fixObjXML(objName,objType,objLoc,domMR)
 
-# fds = arcpy.ListDatasets('','Feature')
-# for fd in fds:
-    # arcpy.env.workspace = inGdb+'/'+fd
-    # fcs = arcpy.ListFeatureClasses()
-    # arcpy.env.workspace = inGdb
-    # fdDS = []  # inventory of all DataSource_IDs used in feature dataset
-    # for fc in fcs:
-        # objName = fc
-        # objType = 'Feature class'
-        # objLoc = inGdb+'/'+fd+'/'+fc
-        # localDS = fixObjXML(objName,objType,objLoc,domMR)
-        # for ds in localDS:
-            # fdDS.append(ds)
-    # objName = fd
-    # objType = 'Feature dataset'
-    # objLoc = inGdb+'/'+fd
-    # fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
+fds = arcpy.ListDatasets('','Feature')
+for fd in fds:
+    arcpy.env.workspace = inGdb+'/'+fd
+    fcs = arcpy.ListFeatureClasses()
+    arcpy.env.workspace = inGdb
+    fdDS = []  # inventory of all DataSource_IDs used in feature dataset
+    for fc in fcs:
+        objName = fc
+        objType = 'Feature class'
+        objLoc = inGdb+'/'+fd+'/'+fc
+        localDS = fixObjXML(objName,objType,objLoc,domMR)
+        for ds in localDS:
+            fdDS.append(ds)
+    objName = fd
+    objType = 'Feature dataset'
+    objLoc = inGdb+'/'+fd
+    fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
 
 logFile.close()

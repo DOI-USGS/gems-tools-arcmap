@@ -25,7 +25,7 @@ translator = arcpy.GetInstallInfo("desktop")["InstallDir"]+'Metadata/Translator/
 ###########################################
 def __newElement(dom,tag,text):
     nd = dom.createElement(tag)
-    ndText = dom.createTextNode(text)
+    ndText = dom.createTextNode(str(text).decode("utf-8"))
     nd.appendChild(ndText)
     return nd
 
@@ -89,7 +89,7 @@ def writeDomToFile(workDir,dom,fileName):
     outf = os.path.join(workDir,fileName)
     
     with codecs.open(outf, "w", encoding="utf-8", errors="xmlcharrefreplace") as out:
-        dom.writexml(out, addindent="")
+        dom.writexml(out, encoding="utf-8")
 
 ###########################################
 inGdb = sys.argv[1]
