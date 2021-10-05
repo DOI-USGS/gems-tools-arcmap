@@ -3,10 +3,11 @@
 import sys, os, os.path, arcpy
 from GeMS_utilityFunctions import *
 from xml.dom.minidom import *
+import codecs
 
 debug = False
 
-versionString = 'GeMS_FGDC1_Arc10.py, version of 20 July 2020'
+versionString = 'GeMS_FGDC1_Arc10.py, version of 5 October 2021'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC1_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -85,9 +86,10 @@ def writeDomToFile(workDir,dom,fileName):
     if debug:
         addMsgAndPrint(arcpy.env.workspace)
         addMsgAndPrint('fileName='+fileName)
-    outf = open(os.path.join(workDir,fileName),'w')
-    dom.writexml(outf)
-    outf.close()
+    outf = os.path.join(workDir,fileName)
+    
+    with codecs.open(outf, "w", encoding="utf-8", errors="xmlcharrefreplace") as out:
+        dom.writexml(out, addindent="")
 
 ###########################################
 inGdb = sys.argv[1]
@@ -113,7 +115,9 @@ addMsgAndPrint('    '+mrXML)
 
 # parse mrXML to DOM
 try:
-    domMR = xml.dom.minidom.parse(mrXML)
+    with open(mrXML) as xml:
+        domMR = parse(xml)
+    #domMR = xml.dom.minidom.parse(mrXML)
     addMsgAndPrint('  Master record parsed successfully')
 except:
     addMsgAndPrint(arcpy.GetMessages())

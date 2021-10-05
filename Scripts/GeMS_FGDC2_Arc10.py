@@ -427,6 +427,8 @@ def fixObjXML(objName,objType,objLoc,domMR, fdDataSourceValues=[]):
     arcXMLfile = wksp+'/'+objName+'.xml'
     testAndDelete(arcXMLfile)
     arcpy.ExportMetadata_conversion(objLoc,translator,arcXMLfile)
+    #with open(xml_file) as xml:
+    #    arcXML = parse(xml)
     arcXML = xml.dom.minidom.parse(arcXMLfile)
     dom = copy.deepcopy(domMR)
     # updateTableDom updates entity-attribute info, also returns dataSourceValues
@@ -502,29 +504,29 @@ for aTable in tables:
     objLoc = inGdb+'/'+aTable
     fixObjXML(objName,objType,objLoc,domMR)
 
-fcs = arcpy.ListFeatureClasses()
-for fc in fcs:
-    objName = fc
-    objType = 'Feature class'
-    objLoc = inGdb+'/'+fc
-    fixObjXML(objName,objType,objLoc,domMR)
+# fcs = arcpy.ListFeatureClasses()
+# for fc in fcs:
+    # objName = fc
+    # objType = 'Feature class'
+    # objLoc = inGdb+'/'+fc
+    # fixObjXML(objName,objType,objLoc,domMR)
 
-fds = arcpy.ListDatasets('','Feature')
-for fd in fds:
-    arcpy.env.workspace = inGdb+'/'+fd
-    fcs = arcpy.ListFeatureClasses()
-    arcpy.env.workspace = inGdb
-    fdDS = []  # inventory of all DataSource_IDs used in feature dataset
-    for fc in fcs:
-        objName = fc
-        objType = 'Feature class'
-        objLoc = inGdb+'/'+fd+'/'+fc
-        localDS = fixObjXML(objName,objType,objLoc,domMR)
-        for ds in localDS:
-            fdDS.append(ds)
-    objName = fd
-    objType = 'Feature dataset'
-    objLoc = inGdb+'/'+fd
-    fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
+# fds = arcpy.ListDatasets('','Feature')
+# for fd in fds:
+    # arcpy.env.workspace = inGdb+'/'+fd
+    # fcs = arcpy.ListFeatureClasses()
+    # arcpy.env.workspace = inGdb
+    # fdDS = []  # inventory of all DataSource_IDs used in feature dataset
+    # for fc in fcs:
+        # objName = fc
+        # objType = 'Feature class'
+        # objLoc = inGdb+'/'+fd+'/'+fc
+        # localDS = fixObjXML(objName,objType,objLoc,domMR)
+        # for ds in localDS:
+            # fdDS.append(ds)
+    # objName = fd
+    # objType = 'Feature dataset'
+    # objLoc = inGdb+'/'+fd
+    # fixObjXML(objName,objType,objLoc,domMR,set(fdDS))
 
 logFile.close()
