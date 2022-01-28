@@ -24,6 +24,8 @@
 #    Added reminder to document any schema extensions
 #    Added feature dataset SRF names to database inventory     - RH
 # 8 March 2021:  Added D_North_American_1983 to list of datums that don't generate a warning
+# 1/27/22: added clause to parse DataSourceIDs that might take the form of 'DAS1 | DAS2 | DAS3', etc. That is, allows for multiple datasources
+#        to be related to a table row. in def ScanTable under 'for i in dataSourceIndices:'
 
 import arcpy, os, os.path, sys, time, glob
 import traceback
@@ -31,7 +33,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 5 May 2021'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 27 January 2022'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -751,9 +753,11 @@ def scanTable(table, fds=''):
             for i in dataSourceIndices:
                 xx = row[i]
                 if notEmpty(xx):
-                    xxft = [fixSpecialChars(xx),fieldNames[i],table]     #$@
-                    if not xx in allDataSourcesRefs:
-                        allDataSourcesRefs.append(xxft)
+                    ids = [e.strip() for e in xx.split('|') if e.strip()]
+                    for xxref in ids:
+                        xxft = [xxref, fieldNames[i], table]
+                        if not xxref in allDataSourcesRefs:
+                            allDataSourcesRefs.append(xxft)
             if mapUnitFieldIndex <> [] and row[mapUnitFieldIndex[0]] <> None:
                 for i in specialDmuFieldIndices:
                     xx = row[i]
