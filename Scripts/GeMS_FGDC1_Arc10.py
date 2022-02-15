@@ -191,9 +191,10 @@ if arcpy.Exists(dataSources):
                 srcinfo = domMR.createElement('srcinfo')
                 srccite = domMR.createElement('srccite')
                 citeinfo = domMR.createElement('citeinfo')
-                titleText = str(row[1].encode("ASCII",'ignore'))
+                # change here from .encode("ASCII", 'ignore') and in if statement below. Hope it works!
+                titleText = str(row[1].encode('utf-8'))
                 if row[2] <> None:
-                    titleText = titleText + ' '+str(row[2])
+                    titleText = titleText + ' '+str(row[2].encode('utf-8'))
                 title = __newElement(domMR,'title',titleText)
                 citeinfo.appendChild(title)
                 if row[3] <> None:
