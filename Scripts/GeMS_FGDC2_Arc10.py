@@ -1,5 +1,9 @@
 ## Note that Metadata Translation tools must run in 32-bit Python. This happens
-## automatically if this script is run from an ArcGIS toolbox.  
+## automatically if this script is run from an ArcGIS toolbox. 
+# 3/35/22 
+#   -added function __updateCSdom to add codeset domains, specifically for GeoMaterial
+#   -re-wrote def __updateEdom to produce the same structure as the 'upgrade' function in mp
+#   -re-wrote def __updateRdom to catch ESRI fields shape, shape_length, and shape_area
 
 import sys, os, os.path, arcpy, copy, imp
 from GeMS_utilityFunctions import *
@@ -9,7 +13,7 @@ import codecs
 
 debug = False
 
-versionString = 'GeMS_FGDC2_Arc10.py, version of 5 October 2021'
+versionString = 'GeMS_FGDC2_Arc10.py, version of 15 March 2022'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -21,6 +25,13 @@ if debug:
 gems = 'GeMS'
 gemsFullRef = '"GeMS (Geologic Map Schema)--a standard format for the digital publication of geologic maps", available at http://ngmdb.usgs.gov/Info/standards/GeMS/'
 EsriDefinedAttributes = ('OBJECTID','Shape','Shape_Length','Shape_area','Shape_Area')
+
+esri_attribs = {
+    'objectid': 'Internal feature number',
+    'shape' : 'Internal geometry object',
+    'shape_length' : 'Internal feature length, double',
+    'shape_area' : 'Internal feature area, double'
+}
 
 translator = arcpy.GetInstallInfo("desktop")["InstallDir"]+'Metadata/Translator/ARCGIS2FGDC.xml'
 
@@ -57,8 +68,8 @@ def __updateAttrDef(fld,dom):
                 # substitute generic _ID field for specific
                 attrdefText = attribDict['_ID']
                 attrdefSource = gems
-            elif fld == 'OBJECTID':
-                attrdefText = 'Internal feature number.'
+            elif fld.lower() in esri_attribs:
+                attrdefText = esri_attribs[fld.lower()]
                 attrdefSource = 'Esri'
             else:
                 attrdefText = attribDict[fld]
@@ -81,8 +92,9 @@ def __updateEdom(fld, defs, dom):
     for attrlabl in labelNodes:
         if attrlabl.firstChild.data == fld:
             attr = attrlabl.parentNode
-            attrdomv = dom.createElement('attrdomv')
+            # attrdomv = dom.createElement('attrdomv')
             for k in defs.iteritems():
+                attrdomv = dom.createElement('attrdomv')
                 edom = dom.createElement('edom')
                 edomv = __newElement(dom,'edomv',k[0])
                 edomvd = __newElement(dom,'edomvd',k[1][0])
@@ -92,7 +104,7 @@ def __updateEdom(fld, defs, dom):
                     edomvds = __newElement(dom,'edomvds',k[1][1])
                     edom.appendChild(edomvds)                                
                 attrdomv.appendChild(edom)
-            __appendOrReplace(attr,attrdomv,'attrdomv')
+                attr.appendChild(attrdomv)
     return dom
 
 def __updateRdom(fld,dom):
@@ -121,6 +133,22 @@ def __updateUdom(fld,dom,udomTextString):
             udom = __newElement(dom,'udom',udomTextString)
             attrdomv.appendChild(udom)
             __appendOrReplace(attr,attrdomv,'attrdomv')
+    return dom
+   
+# new function 3/25,22 to deal with codeset domains, specifically GeoMaterial
+def __updateCSdom(fld, dom, csdomTextString, csdomSourceString):
+    labelNodes = dom.getElementsByTagName('attrlabl')
+    for attrlabl in labelNodes:
+        if attrlabl.firstChild.data == fld:
+            attr = attrlabl.parentNode
+            attrdomv = dom.createElement('attrdomv')
+            codesetd = dom.createElement('codesetd')
+            codesetn = __newElement(dom, 'codesetn', csdomTextString)
+            codesets = __newElement(dom, 'codesets', csdomSourceString)
+            codesetd.appendChild(codesetn)
+            codesetd.appendChild(codesets)
+            attrdomv.appendChild(codesetd)
+            __appendOrReplace(attr, attrdomv, 'attrdomv')
     return dom
 
 def __findInlineRef(sourceID):
@@ -155,7 +183,8 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
     for fld in fldList:      
         addMsgAndPrint( '      Field: '+ fld)
         # if is _ID field or if field definition is available or if OBJECTID, update definition
-        if fld.find('_ID') > -1 or attribDict.has_key(fld) or fld == 'OBJECTID':
+        #if fld.find('_ID') > -1 or attribDict.has_key(fld) or fld == 'OBJECTID':
+        if fld.find('_ID') > -1 or attribDict.has_key(fld) or fld.lower() in esri_attribs:
             dom = __updateAttrDef(fld,dom)
         else:
             if not fld in EsriDefinedAttributes:
@@ -172,6 +201,8 @@ def __updateEntityAttributes(fc, fldList, dom, logFile):
         #or if this is MapUnit in DMU
         elif fld == 'MapUnit' and fc == 'DescriptionOfMapUnits':
             dom = __updateUdom(fld,dom,unrepresentableDomainDict['default'])
+        elif fld == 'GeoMaterial':
+            dom = __updateCSdom(fld, dom, 'GeoMaterial Dictionary', 'GeMS')
         #if this is a defined Enumerated Value Domain field
         elif fld in enumeratedValueDomainFieldList:
             if debug: addMsgAndPrint('this is a recognized enumeratedValueDomainField')
@@ -294,8 +325,6 @@ def eaoverviewDom(dom,eainfo,eaoverText,edcTxt):
     return dom
 
 def updateTableDom(dom,fc,logFile):
-    #def __updateTable(domMR,fc,gdbFolder,titleSuffix,logFile,isAnno):
-    #try to export metadata from fc
     addMsgAndPrint('    Updating E-A stuff')
     desc = arcpy.Describe(fc)
     if desc.datasetType == 'FeatureClass' and desc.FeatureType == 'Annotation':
@@ -342,7 +371,7 @@ def updateTableDom(dom,fc,logFile):
             #add detailed/enttyp/enttypl nodes
             detailed = dom.createElement('detailed')
             enttyp = dom.createElement(b'enttyp')
-            enttypl = __newElement(dom, 'enttypl', fc)
+            enttypl = __newElement(dom, 'enttypl', fcShortName)
             enttypd = __newElement(dom, 'enttypd', descText)
             enttypds = __newElement(dom, 'enttypds', descSourceText)
             for nd in enttypl,enttypd,enttypds:
@@ -465,10 +494,23 @@ def writeDomToFile(workDir,dom,fileName):
         addMsgAndPrint('fileName='+fileName)
     addMsgAndPrint('    Writing XML to '+fileName)
     
+    tempxml = os.path.join(workDir, 'xml_temp.xml')
     outxml = os.path.join(workDir, fileName)
-    with codecs.open(outxml, "w", encoding="utf-8", errors="xmlcharrefreplace") as out:
-        dom.writexml(out, encoding="utf-8")
-
+    
+    for f_path in [tempxml, outxml]:
+        if os.path.exists(f_path):
+            os.remove(f_path)
+        
+    with codecs.open(tempxml, "w", encoding="utf-8", errors="xmlcharrefreplace") as out:
+        dom.writexml(out, encoding="utf-8", addindent="\t")
+    
+    # mp.exe (called through USGSMPTranslator) does an excellent job of 
+    # 1) sorting out of order elements
+    # 2) removing unnecessary new lines
+    # 3) adding newline characters after the closing tag for each element
+    arcpy.USGSMPTranslator_conversion(tempxml, "", "XML", outxml)
+    os.remove(tempxml)
+    
 #####################################
 
 inGdb = sys.argv[1]
