@@ -7,7 +7,7 @@ import codecs
 
 debug = False
 
-versionString = 'GeMS_FGDC1_Arc10.py, version of 2 February 2022'
+versionString = 'GeMS_FGDC1_Arc10.py, version of 29 March 2022'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC1_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -72,8 +72,10 @@ def writeGdbDesc(gdb):
     for anFds in arcpy.ListDatasets():
         desc = desc + 'feature dataset '+anFds+' which contains '
         fcs = arcpy.ListFeatureClasses('','All',anFds)
-        if len(fcs) == 1:
-            desc = desc + 'feature class '+fcs[0]+' ('+str(numberOfRows(fcs[0]))+' features);  '
+        if len(fcs) == 0:
+            desc = desc + 'no feature classes; '
+        elif len(fcs) == 1:
+            desc = desc + 'feature class '+fcs[0]+' ('+str(numberOfRows(fcs[0]))+' features); '
         else:
             for n in range(0,len(fcs)-1):
                 desc = desc+'feature class '+fcs[n]+' ('+str(numberOfRows(fcs[n]))+' features), '
