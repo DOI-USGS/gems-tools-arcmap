@@ -29,7 +29,7 @@ import arcpy, sys, os.path, math
 from GeMS_Definition import tableDict
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 31 March 2022'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectCrossSectionData_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -130,7 +130,7 @@ def getIdField(fc):
             idField = fld.name
     return idField
 
-#  copied from NCGMP09v1.1_CreateDatabase_Arc10.0.py, version of 20 September 2012
+#  copied from NCGMP09v1.1_CreateDatabase_Arc10.0.py, version of 20 September 2012, with update to ignore fDef[2]
 def createFeatureClass(thisDB,featureDataSet,featureClass,shapeType,fieldDefs):
     try:
         arcpy.env.workspace = thisDB
@@ -139,9 +139,9 @@ def createFeatureClass(thisDB,featureDataSet,featureClass,shapeType,fieldDefs):
         for fDef in fieldDefs:
             try:
                 if fDef[1] == 'String':
-                    arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#',fDef[3],'#',transDict[fDef[2]])
+                    arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#',fDef[3],'#','NULLABLE')
                 else:
-                    arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#','#','#',transDict[fDef[2]])
+                    arcpy.AddField_management(thisFC,fDef[0],transDict[fDef[1]],'#','#','#','#','NULLABLE')
             except:
                 addMsgAndPrint('Failed to add field '+fDef[0]+' to feature class '+featureClass)
                 addMsgAndPrint(arcpy.GetMessages(2))
