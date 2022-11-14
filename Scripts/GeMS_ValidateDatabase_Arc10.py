@@ -33,7 +33,7 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 27 January 2022'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 14 November 2022'
 rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
@@ -281,8 +281,8 @@ def checkTopology(workdir,inGdb,outGdb,fd,MUP,CAF,level=2):
     outTop = outFd+'/'+fd+'_topology'
     for i in outTop,outMup,outCaf:
         testAndDelete(i)
-    arcpy.Copy_management(inGdb+'/'+fd+'/'+MUP,outMup)
-    arcpy.Copy_management(inGdb+'/'+fd+'/'+CAF,outCaf)
+    arcpy.CopyFeatures_management(inGdb+'/'+fd+'/'+MUP,outMup)
+    arcpy.CopyFeatures_management(inGdb+'/'+fd+'/'+CAF,outCaf)
 
     # create topology
     addMsgAndPrint('    creating '+outTop)
