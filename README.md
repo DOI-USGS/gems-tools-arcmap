@@ -28,7 +28,7 @@ or
 
     `C:\Documents and Settings\<user>\AppData\Roaming\ESRI\Desktop10.5\ArcToolbox\My Toolboxes`
 
-    This is the pathname for ArcGIS 10.5 on Windows 7 and Windows 10; it may differ with other operating systems and ArcGIS versions. Delete the .tbx file that is not needed. Note that the AppData folder is hidden by default. To navigate to it in Windows Explorer, turn on Hidden items from the View tab. You can also open it by typing `%appdata%` in the run box, the search bar, or in the address bar of Windows Explorer
+    This is the path for ArcGIS 10.5 on Windows 7 and Windows 10; it may differ with other operating systems and ArcGIS versions. Delete the .tbx file that is not needed. Note that the AppData folder is hidden by default. To navigate to it in Windows Explorer, turn on Hidden items from the View tab. You can also open it by typing `%appdata%` in the run box, the search bar, or in the address bar of Windows Explorer
   * In ArcCatalog, scroll to the bottom of the left-hand "Catalog Tree" pane, open Toolboxes/My Toolboxes, and the new toolboxes should be present. You may need to refresh the listing.
 
 ## Getting Help
