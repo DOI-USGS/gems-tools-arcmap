@@ -436,7 +436,7 @@ def main(gdbCopy, outWS, oldgdb):
     # list tables
     arcpy.env.workspace = gdbCopy
     for tbl in arcpy.ListTables():
-        if arcpy.GetCount_management(tb) > 0:
+        if arcpy.GetCount_management(tbl) > 0:
             outName = tbl+'.csv'
             dumpTable(tbl, outName, False, outputDir, logfile, isOpen, tbl)
     logfile.close()
