@@ -29,8 +29,8 @@ from GeMS_utilityFunctions import *
 from numbers import Number
 import io
 
-versionString = 'GeMS_TranslateToShape_Arc10.py, version of 11 August 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.py'
+versionString = 'GeMS_TranslateToShape_Arc10.py, version of 5 March 2023'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False
@@ -422,12 +422,13 @@ def main(gdbCopy, outWS, oldgdb):
         if fcList <> None:
             arcpy.AddMessage(fc)
             for fc in fcList:
-                # don't dump Anno classes
-                if arcpy.Describe(fc).featureType <> 'Annotation':
-                    outName = '{}_{}.shp'.format(pfx, fc)
-                    dumpTable(fc, outName, True, outputDir, logfile, isOpen, fc)
-                else:
-                    addMsgAndPrint('    Skipping annotation feature class {}\n'.format(fc))
+                if arcpy.GetCount_management(fc) > 0:
+                    # don't dump Anno classes
+                    if arcpy.Describe(fc).featureType <> 'Annotation':
+                        outName = '{}_{}.shp'.format(pfx, fc)
+                        dumpTable(fc, outName, True, outputDir, logfile, isOpen, fc)
+                    else:
+                        addMsgAndPrint('    Skipping annotation feature class {}\n'.format(fc))
         else:
             addMsgAndPrint('   No feature classes in this dataset!')
         logfile.write('\n')
@@ -435,8 +436,9 @@ def main(gdbCopy, outWS, oldgdb):
     # list tables
     arcpy.env.workspace = gdbCopy
     for tbl in arcpy.ListTables():
-        outName = tbl+'.csv'
-        dumpTable(tbl, outName, False, outputDir, logfile, isOpen, tbl)
+        if arcpy.GetCount_management(tb) > 0:
+            outName = tbl+'.csv'
+            dumpTable(tbl, outName, False, outputDir, logfile, isOpen, tbl)
     logfile.close()
 
 
