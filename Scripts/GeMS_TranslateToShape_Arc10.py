@@ -371,10 +371,10 @@ def main(gdbCopy, outWS, oldgdb):
     outputDir, logfile = makeOutputDir(oldgdb, outWS, isOpen)
     arcpy.env.workspace = gdbCopy
     
-    if 'StandardLithology' in arcpy.ListTables():
-        stdLithDict = makeStdLithDict()
-    else:
-        stdLithDict = 'None'
+    # if 'StandardLithology' in arcpy.ListTables():
+        # stdLithDict = makeStdLithDict()
+    # else:
+    stdLithDict = 'None'
     mapUnitPolys(stdLithDict, outputDir, logfile)
     
     arcpy.env.workspace = os.path.join(gdbCopy, 'GeologicMap')
