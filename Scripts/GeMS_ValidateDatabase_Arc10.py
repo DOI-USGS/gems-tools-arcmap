@@ -257,9 +257,11 @@ def isFeatureDatasetAMap(fd):
     MUP = ''
     fcs = arcpy.ListFeatureClasses()
     for fc in fcs:
-        if fc.find('ContactsAndFaults') > -1 and fc.lower().find('anno') == -1:
+        desc = arcpy.da.Describe(fc)
+        shape = desc.shapeType(fc)
+        if fc.find('ContactsAndFaults') > -1 and fc.lower().find('anno') == -1 and shape in ('Line', 'Polyline'):
             CAF = fc
-        if fc.find('MapUnitPolys') > -1 and fc.lower().find('anno') == -1:
+        if fc.find('MapUnitPolys') > -1 and fc.lower().find('anno') == -1 and shape == 'Polygon':
             MUP = fc
     if CAF == '' or MUP == '':
         isMap = False
