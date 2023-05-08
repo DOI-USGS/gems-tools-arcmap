@@ -203,7 +203,7 @@ def editSessionActive(gdb_path):
     
 def checkVersion(vString, rawurl, toolbox):
     # compares versionString of tool script to the current script at the repo
-    repourl = 'https://github.com/usgs/{}/releases'.format(toolbox)
+    repourl = 'https://github.com/doi-usgs/{}/releases'.format(toolbox)
     try:
         page = requests.get(rawurl)
         raw = page.text

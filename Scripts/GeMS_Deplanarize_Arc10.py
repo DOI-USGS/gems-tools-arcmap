@@ -59,7 +59,7 @@ import arcpy, os.path, sys
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_Deplanarize_Arc10.4.py, version of 2 September 2017'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_Deplanarize_Arc10.4.py'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_Deplanarize_Arc10.4.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 # globals

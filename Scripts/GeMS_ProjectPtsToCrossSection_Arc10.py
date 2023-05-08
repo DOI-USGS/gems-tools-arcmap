@@ -37,7 +37,7 @@ import arcpy, sys, os, os.path, math
 from GeMS_utilityFunctions import *
 
 versionString = 'GeMS_ProjectPtsToCrossSection_Arc10.py, version of 28 April 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectPtsToCrossSection_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectPtsToCrossSection_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False

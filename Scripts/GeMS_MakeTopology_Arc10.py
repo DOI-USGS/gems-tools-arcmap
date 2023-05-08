@@ -4,7 +4,7 @@ from GeMS_utilityFunctions import *
 
 # 5 January: added switch to optionally add/subtract polygon-based rules
 versionString = 'GeMS_MakeTopology_Arc10.py, version of 5 January 2018'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_MakeTopology_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_MakeTopology_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False

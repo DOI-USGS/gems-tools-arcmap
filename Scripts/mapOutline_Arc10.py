@@ -14,7 +14,7 @@ import arcpy, sys, os, os.path
 from GeMS_utilityFunctions import *
 
 versionString = 'mapOutline_Arc10.py, version of 21 February 2021'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/mapOutline_Arc10.py'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/mapOutline_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 """
