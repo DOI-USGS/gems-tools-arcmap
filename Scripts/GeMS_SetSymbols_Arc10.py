@@ -5,7 +5,7 @@ from GeMS_utilityFunctions import *
 # September 2017: now invokes arcpy.da.Editor in line 183
 # 5 October 2017: fixed crash when symbolizing CMU feature dataset
 
-versionString = 'GeMS_SetSymbols_Arc10.py, version of 5 October 2017'
+versionString = 'GeMS_SetSymbols_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_SetSymbols_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

@@ -6,7 +6,7 @@ import arcpy, sys, time, os.path, math, uuid
 from string import whitespace
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_reID_Arc10.py, version of 10 February 2020'
+versionString = 'GeMS_reID_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_reID_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

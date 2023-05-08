@@ -13,7 +13,7 @@ import codecs
 
 debug = False
 
-versionString = 'GeMS_FGDC2_Arc10.py, version of 15 March 2022'
+versionString = 'GeMS_FGDC2_Arc10.py, version of version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_FGDC2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

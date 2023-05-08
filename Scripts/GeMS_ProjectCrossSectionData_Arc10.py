@@ -29,7 +29,7 @@ import arcpy, sys, os.path, math
 from GeMS_Definition import tableDict
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 31 March 2022'
+versionString = 'GeMS_ProjectCrossSectionData_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_ProjectCrossSectionData_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

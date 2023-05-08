@@ -6,7 +6,7 @@
 import arcpy, os, os.path, sys
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_FixStrings_Arc10.py, version of 9 September 2021'
+versionString = 'GeMS_FixStrings_Arc10.py, version of version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_FixStrings_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

@@ -29,7 +29,7 @@ from GeMS_utilityFunctions import *
 from numbers import Number
 import io
 
-versionString = 'GeMS_TranslateToShape_Arc10.py, version of 5 March 2023'
+versionString = 'GeMS_TranslateToShape_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_TranslateToShape_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

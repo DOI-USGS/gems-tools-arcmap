@@ -8,7 +8,7 @@ import sys, copy, arcpy
 from GeMS_utilityFunctions import *
 from docxModified import *
 
-versionString = 'GeMS_DocxToDMU_Arc10.py, version of 2 September 2017'
+versionString = 'GeMS_DocxToDMU_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_DocxToDMU_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

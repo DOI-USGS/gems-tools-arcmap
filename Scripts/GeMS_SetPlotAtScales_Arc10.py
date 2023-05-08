@@ -4,7 +4,7 @@
 import arcpy, os.path, sys
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 28 April 2021'
+versionString = 'GeMS_SetPlotAtScales_Arc10.py, version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_SetPlotAtScales_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

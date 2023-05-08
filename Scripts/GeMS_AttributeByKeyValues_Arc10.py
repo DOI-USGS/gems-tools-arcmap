@@ -17,7 +17,7 @@ import arcpy, sys
 import io
 from GeMS_utilityFunctions import *
 
-versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of 15 March 2021'
+versionString = 'GeMS_AttributeByKeyValues_Arc10.py, version of version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_AttributeByKeyValues_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

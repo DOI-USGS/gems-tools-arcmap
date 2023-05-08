@@ -54,7 +54,7 @@ from GeMS_Definition import enumeratedValueDomainFieldList, rangeDomainDict, unr
 from GeMS_utilityFunctions import *
 from xml.dom.minidom import *
 
-versionString = 'GeMS_MetadataCSDGM2_Arc10.py, version of 10 December 2017'
+versionString = 'GeMS_MetadataCSDGM2_Arc10.py, version of version of 8 May 2023'
 rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_MetadataCSDGM2_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 

@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-*.pyc
-=======
-*.pyc
->>>>>>> names-check
+.pyc
+code.json
