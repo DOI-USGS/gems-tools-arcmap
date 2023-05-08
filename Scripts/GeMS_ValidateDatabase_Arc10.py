@@ -33,8 +33,8 @@ from GeMS_utilityFunctions import *
 from GeMS_Definition import *
 import copy
 
-versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 14 November 2022'
-rawurl = 'https://raw.githubusercontent.com/usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
+versionString = 'GeMS_ValidateDatabase_Arc10.py, version of 8 May 2023'
+rawurl = 'https://raw.githubusercontent.com/doi-usgs/gems-tools-arcmap/master/Scripts/GeMS_ValidateDatabase_Arc10.py'
 checkVersion(versionString, rawurl, 'gems-tools-arcmap')
 
 debug = False
