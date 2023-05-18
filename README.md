@@ -38,9 +38,9 @@ or
 
 * Each tool comes with documentation inside the parameter form.
 * Check out the [wiki](https://github.com/DOI-USGS/gems-tools-arcmap/wiki) for help on these tools and extensive advice on using these tools to create, edit, and validate GeMS-style databases.
+*  If you have a question about how to build or attribute a GeMS-compliant database or the schema in general, visit the [Discussions](https://github.com/DOI-USGS/gems-tools-pro/discussions) tab of this ArcGIS Pro repo. You will need a GitHub acccount to post there. <b>NOTE</b> we are no longer using Gitter for discussions.
 * Documentation for the toolbox and all tools is also available in **GeMS_Tools_Arc10.docx** and **GeMS_Tools_Arc10.pdf** found in the `Docs` sub-folder.
 * If, when using a tool, it fails to run and produces an error message, first check that you have the latest release of the tool. If that is not the source of the problem, start a new issue at this repository (see the [Issues](https://github.com/DOI-USGS/gems-tools-arcmap/issues) tab above). Provide a screenshot of the error message if you can.
-* If you have a question about how to build or attribute a GeMS-compliant database or the schema in general, please visit the [GeMS Gitter](https://gitter.im/gems-schema/community#) chat room. If you already have a GitHub account, you can sign in there with those credentials.
 
 ## Collaboration
 Suggestions for improvements and edited files submitted by [email](gems@usgs.gov) will be considered, but you are encouraged to use GitHub to fork the project, create a new branch (e.g., "MyFixToProblemXXX"), make changes to this branch, and submit a pull request to have your changes merged with the master branch. Excellent guides for various aspects of the git workflow can be found here:
