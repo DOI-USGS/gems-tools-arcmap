@@ -1,7 +1,10 @@
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/release/DOI-USGS/gems-tools-arcmap)](https://github.com/DOI-USGS/gems-tools-arcmap/releases/latest)
 [![Wiki](https://img.shields.io/badge/-wiki-orange)](https://github.com/DOI-USGS/gems-tools-arcmap/wiki)
+[![Discuss](https://img.shields.io/badge/-discuss-orange)](https://github.com/DOI-USGS/gems-tools-arcmap/discussions) 
 [![HTMLdoc](https://img.shields.io/badge/-jupyter_notebooks-orange)](https://github.com/DOI-USGS/gems-tools-pro/tree/notebooks)
-[![ArcGISPro](https://img.shields.io/badge/-tools_for_arcgispro-orange)](https://github.com/DOI-USGS/gems-tools-pro) [![HTMLdoc](https://img.shields.io/badge/-online_gems_documentation-orange)](https://scgeology.github.io/GeMS/index.html) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gems-schema/community) [![gems on USGS](https://img.shields.io/badge/-NGMDB_GeMS-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/)
+[![ArcGISPro](https://img.shields.io/badge/-tools_for_arcgispro-orange)](https://github.com/DOI-USGS/gems-tools-pro) 
+[![HTMLdoc](https://img.shields.io/badge/-online_gems_documentation-brightgreen)](https://scgeology.github.io/GeMS/index.html)  
+[![gems on USGS](https://img.shields.io/badge/-NGMDB-brightgreen)](https://ngmdb.usgs.gov/Info/standards/GeMS/)
 
 <img width="250" align="right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/USGS_logo_green.svg/500px-USGS_logo_green.svg.png"/>
 
