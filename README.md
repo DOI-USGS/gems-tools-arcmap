@@ -12,7 +12,9 @@
 
 > **NOTE**
 > 
-> **ArcMap 10.8x will go into Mature support in March of 2024, there are no plans by Esri for a 10.9 update. USGS Enterprise Security Standards (ESS) will consider February 1, 2024, to be the USGS End of Life (EOL) date for ArcMap, as there will no longer be software updates and patches released from Esri. ArcMap must be removed from USGS systems by February 1, 2024.**
+> **ArcMap 10.8x will go into Mature support in March of 2024, there are no plans by Esri for a 10.9 update. USGS Enterprise Security Standards (ESS) will consider February 1, 2024, to be the USGS End of Life (EOL) date for ArcMap, as there will no longer be software updates and patches released from Esri.
+>
+> ArcMap must be removed from USGS systems by February 1, 2024.**
 > 
 > This means that although the tools here will still be available for download and use, we will have limited resources for troubleshooting any errors you may run into after February 1, 2024 and possibly earlier.
 
