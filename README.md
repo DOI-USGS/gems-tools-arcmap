@@ -12,7 +12,9 @@
 
 > **NOTE**
 > 
-> **ArcGIS Desktop (ArcMap) is in [mature support](https://desktop.arcgis.com/en/arcmap/latest/get-started/introduction/whats-new-in-arcgis.htm) and will be retired March 1, 2026. There are no plans for future releases of ArcGIS Desktop, and it is recommended that you migrate to ArcGIS Pro. See Migrate from ArcMap to ArcGIS Pro for more information.**
+> **From ESRI: ArcGIS Desktop (ArcMap) is in mature support and will be retired March 1, 2026. There are no plans for future releases of ArcGIS Desktop, and it is recommended that you migrate to ArcGIS Pro.**
+>
+> **Read [more](https://desktop.arcgis.com/en/arcmap/latest/get-started/introduction/whats-new-in-arcgis.htm)
 >
 > **At the USGS, all instances of ArcMap have been removed from computers.**
 > 
