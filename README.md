@@ -16,7 +16,7 @@
 >
 > **At the USGS, all instances of ArcMap have been removed from computers.**
 > 
-> This means that although the tools here will still be available for download and use, we will have limited resources for troubleshooting any errors you may run into after February 1, 2024 and possibly earlier.
+> This means that although the tools here will still be available for download and use, we will have limited resources for troubleshooting any errors you may run into.
 
 
 This repository contains an ArcGIS toolbox of Python 2.7 geoprocessing tools for creating, manipulating, and validating [GeMS](https://ngmdb.usgs.gov/Info/standards/GeMS/)-style geologic map databases for use in ArcMap. Additional resources; vocabularies, symbology, links to other projects, etc.; are available at the [NGMDB GeMS site](https://ngmdb.usgs.gov/Info/standards/GeMS/#reso).
